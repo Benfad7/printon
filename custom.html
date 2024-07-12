@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Upload and Manipulation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="main-container">
+  <div class="left-side">
+    <label for="upload" class="cloud-upload">
+      <input type="file" id="upload" accept="image/*">
+    </label>
+  </div>
+  <div class="right-side">
+    <div class="canvas" id="canvas">
+      <div class="image-container" id="image-container">
+        <img id="image" src="" alt="">
+        <div class="resize-handle" id="resize-handle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="scripts.js"></script>
+</body>
+</html>
