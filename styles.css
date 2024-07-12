@@ -1,7 +1,7 @@
 body, html {
   height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Rubik', sans-serif;
   background-image: url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png');
   background-size: cover;
   background-position: center;
@@ -29,31 +29,63 @@ body, html {
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);  /* Optional: adds a subtle shadow */
- margin-left: 28px;
- margin-bottom: 20px;
-
+  margin-left: 28px;
+  margin-bottom: 20px;
+  position: relative;
 }
 
-.cloud-upload {
+.black-strip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 11%;  /* 1 חלקי 10 מרוחב הריבוע הלבן */
+  background-color: #333333;
+}
+
+.title {
+  margin-bottom: 20px;
+  font-size: 28px; /* Smaller font size */
+  position: absolute;
+  top: 7%;
+  left: 55.5%;
+  transform: translate(-50%, -50%);
+}
+
+
+.options {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cloud-upload, .add-text {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   text-align: center;
-  height: 100%;  /* Takes full height of white-square */
+  height: 100%;
+  margin: 0 10px;
 }
 
-.cloud-icon {
-  font-size: 80px;  /* Increased size */
-  margin-bottom: 20px;
+.cloud-icon, .text-icon {
+  font-size: 80px; /* Smaller icon size */
+  margin-bottom: 0px; /* Reduced spacing */
 }
 
-.upload-text {
-  font-size: 24px;  /* Increased size */
+.upload-text, .text-label {
+  font-size: 16px; /* Smaller text size */
 }
+
 .cloud-upload input[type="file"] {
   display: none;
+}
+
+.add-text {
+  cursor: default;
 }
 
 .right-side {

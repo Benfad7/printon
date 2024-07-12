@@ -4,17 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Upload and Manipulation</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="main-container">
   <div class="left-side">
     <div class="white-square">
-      <label for="upload" class="cloud-upload">
-        <input type="file" id="upload" accept="image/*">
-        <span class="cloud-icon">☁</span>
-        <span class="upload-text">העלאה</span>
-      </label>
+      <div class="black-strip"></div>
+      <h2 class="title">?מה מעצבים היום</h2>
+      <div class="options">
+        <label for="upload" class="cloud-upload">
+          <input type="file" id="upload" accept="image/*">
+          <span class="cloud-icon">☁</span>
+          <span class="upload-text">העלאה</span>
+        </label>
+        <div class="add-text">
+          <span class="text-icon">📝</span>
+          <span class="text-label">הוספת טקסט</span>
+        </div>
+      </div>
     </div>
   </div>
   <div class="right-side">
