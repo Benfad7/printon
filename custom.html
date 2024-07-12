@@ -16,7 +16,7 @@
       <h2 class="title">?מה מעצבים היום</h2>
       <div class="options">
         <label for="upload" class="cloud-upload">
-          <input type="file" id="upload" accept="image/*">
+          <input type="file" id="upload" accept="image/*" multiple>
           <span class="cloud-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
           <span class="upload-text">העלאה</span>
         </label>
@@ -29,10 +29,7 @@
   </div>
   <div class="right-side">
     <div class="canvas" id="canvas">
-      <div class="image-container" id="image-container">
-        <img id="image" src="" alt="">
-        <div class="resize-handle" id="resize-handle"></div>
-      </div>
+      <!-- Image containers will be dynamically added here -->
     </div>
   </div>
 </div>
