@@ -202,3 +202,29 @@ body, html {
   mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="white" d="M18.36 6.64l-1.41-1.41L12 10.59 7.05 5.64 5.64 7.05 10.59 12l-4.95 4.95 1.41 1.41L12 13.41l4.95 4.95 1.41-1.41L13.41 12l4.95-4.95z"/></svg>') no-repeat center;
   mask-size: contain;
 }
+/* Custom context menu styles */
+.context-menu {
+  position: absolute;
+  display: none;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.context-menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-align: right; /* Align text to the right */
+}
+
+.context-menu-item:hover {
+  background-color: #eee;
+}
+
+.context-menu-item:before {
+  content: none;
+}

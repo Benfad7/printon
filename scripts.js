@@ -1,5 +1,11 @@
 const canvas = document.getElementById('canvas');
 const fileInput = document.getElementById('upload');
+const contextMenu = document.getElementById('context-menu');
+const moveForward = document.getElementById('move-forward');
+const moveBackward = document.getElementById('move-backward');
+const centerImage = document.getElementById('center-image');
+
+let selectedImageContainer = null;
 
 fileInput.addEventListener('change', function(event) {
   const files = event.target.files;
@@ -33,14 +39,13 @@ function createImageContainer(src, fileName) {
   imgContainer.appendChild(resizeHandle);
   imgContainer.appendChild(deleteHandle);
 
-  // Set initial position and size before adding to canvas
   imgContainer.style.position = 'absolute';
   imgContainer.style.visibility = 'hidden';
   canvas.appendChild(imgContainer);
 
   img.onload = function() {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
-    const startSize = 200; // Initial size in pixels
+    const startSize = 200;
 
     if (aspectRatio > 1) {
       img.style.width = startSize + 'px';
@@ -56,14 +61,13 @@ function createImageContainer(src, fileName) {
     imgContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
     imgContainer.style.top = (containerRect.height / 2 - imgRect.height / 2) + 'px';
 
-    // Make the container visible after positioning
     imgContainer.style.visibility = 'visible';
 
-    setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle);
+    setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName);
   }
 }
 
-function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle) {
+function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName) {
   let isDragging = false;
   let isResizing = false;
   let startX, startY, startLeft, startTop, startWidth, startHeight;
@@ -167,4 +171,41 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle) {
       deleteHandle.style.display = 'none';
     }
   });
+
+  imgContainer.addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+    selectedImageContainer = imgContainer;
+    contextMenu.style.display = 'block';
+    contextMenu.style.left = event.pageX + 'px';
+    contextMenu.style.top = event.pageY + 'px';
+  });
 }
+
+document.addEventListener('click', function(event) {
+  if (contextMenu.style.display === 'block') {
+    contextMenu.style.display = 'none';
+  }
+});
+
+moveForward.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    canvas.appendChild(selectedImageContainer);
+    contextMenu.style.display = 'none';
+  }
+});
+
+moveBackward.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    canvas.insertBefore(selectedImageContainer, canvas.firstChild.nextSibling);
+    contextMenu.style.display = 'none';
+  }
+});
+
+centerImage.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    const containerRect = canvas.getBoundingClientRect();
+    const imgRect = selectedImageContainer.getBoundingClientRect();
+    selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+    contextMenu.style.display = 'none';
+  }
+});
