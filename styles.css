@@ -1,3 +1,6 @@
+* {
+  outline: none;
+}
 body, html {
   height: 100%;
   margin: 0;
@@ -44,7 +47,6 @@ body, html {
 }
 
 .title {
-  margin-bottom: 20px;
   font-size: 28px; /* Smaller font size */
   position: absolute;
   top: 7%;
@@ -52,8 +54,11 @@ body, html {
   transform: translate(-50%, -50%);
 }
 
-
 .options {
+  position: absolute;
+  top: 30%;
+  left: 55.5%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -61,23 +66,23 @@ body, html {
 }
 
 .cloud-upload, .add-text {
+  white-space: nowrap;  /* Prevents text from wrapping */
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   text-align: center;
-  height: 100%;
-  margin: 0 10px;
+  margin: 0 60px; /* מרווח בין האופציות */
 }
 
 .cloud-icon, .text-icon {
-  font-size: 80px; /* Smaller icon size */
-  margin-bottom: 0px; /* Reduced spacing */
+  font-size: 80px; /* גודל האייקון */
 }
 
 .upload-text, .text-label {
-  font-size: 16px; /* Smaller text size */
+  font-size: 16px; /* גודל הטקסט */
 }
 
 .cloud-upload input[type="file"] {
