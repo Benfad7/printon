@@ -225,6 +225,12 @@ body, html {
   background-color: #eee;
 }
 
+.context-menu-separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 4px 0;
+}
+
 .context-menu-item:before {
   content: none;
 }

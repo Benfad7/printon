@@ -4,6 +4,7 @@ const contextMenu = document.getElementById('context-menu');
 const moveForward = document.getElementById('move-forward');
 const moveBackward = document.getElementById('move-backward');
 const centerImage = document.getElementById('center-image');
+const cutImage = document.getElementById('cut-image');
 
 let selectedImageContainer = null;
 
@@ -206,6 +207,33 @@ centerImage.addEventListener('click', function() {
     const containerRect = canvas.getBoundingClientRect();
     const imgRect = selectedImageContainer.getBoundingClientRect();
     selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+    contextMenu.style.display = 'none';
+  }
+});
+
+cutImage.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    const img = selectedImageContainer.querySelector('img');
+    const imgWidth = img.offsetWidth;
+    const imgHeight = img.offsetHeight;
+    const cutRatio = 0.2; // Example: Cut 20% of each side
+
+    // Calculate new dimensions
+    const newWidth = imgWidth * (1 - 2 * cutRatio);
+    const newHeight = imgHeight * (1 - 2 * cutRatio);
+
+    // Calculate new position
+    const containerRect = canvas.getBoundingClientRect();
+    const imgRect = selectedImageContainer.getBoundingClientRect();
+    const newLeft = imgRect.left + imgWidth * cutRatio;
+    const newTop = imgRect.top + imgHeight * cutRatio;
+
+    // Apply new size and position
+    img.style.width = newWidth + 'px';
+    img.style.height = newHeight + 'px';
+    selectedImageContainer.style.left = newLeft + 'px';
+    selectedImageContainer.style.top = newTop + 'px';
+
     contextMenu.style.display = 'none';
   }
 });
