@@ -9,16 +9,51 @@ body, html {
 
 .main-container {
   display: flex;
-  height: 100%;
-  overflow: visible;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .left-side {
   width: 50%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* Aligns the white square to the left */
   align-items: center;
-  overflow: visible;
+}
+
+.white-square {
+  background-color: white;
+  width: 62%;  /* Takes full width of its parent */
+  height: 80%;  /* Takes full height of its parent */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);  /* Optional: adds a subtle shadow */
+ margin-left: 28px;
+ margin-bottom: 20px;
+
+}
+
+.cloud-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  height: 100%;  /* Takes full height of white-square */
+}
+
+.cloud-icon {
+  font-size: 80px;  /* Increased size */
+  margin-bottom: 20px;
+}
+
+.upload-text {
+  font-size: 24px;  /* Increased size */
+}
+.cloud-upload input[type="file"] {
+  display: none;
 }
 
 .right-side {
@@ -29,31 +64,6 @@ body, html {
   overflow: visible;
 }
 
-.cloud-upload {
-  display: inline-block;
-  position: relative;
-  cursor: pointer;
-  padding: 15px 25px;
-  background-color: #f0f0f0; /* Cloud color */
-  border: 1px solid #ccc;
-  border-radius: 50px; /* Rounded shape */
-  transition: background-color 0.3s ease;
-}
-
-.cloud-upload::before {
-  content: '\2601'; /* Unicode for cloud icon (☁) */
-  font-size: 20px;
-  margin-right: 10px;
-}
-
-.cloud-upload:hover {
-  background-color: #e0e0e0; /* Darker shade on hover */
-}
-
-.cloud-upload input[type="file"] {
-  display: none; /* Hide the original file input */
-}
-
 .canvas {
   right: 46.5%;
   bottom: 30px;
@@ -61,7 +71,7 @@ body, html {
   height: 53vh;
   border: 2px solid #ccc;
   position: relative;
-  overflow: visible; /* Allow elements to overflow */
+  overflow: visible;
 }
 
 .image-container {
@@ -87,7 +97,7 @@ body, html {
   max-height: 100%;
   position: relative;
   cursor: move;
-  user-select: none; /* Prevents the blue overlay effect */
+  user-select: none;
 }
 
 .resize-handle, .delete-handle {
