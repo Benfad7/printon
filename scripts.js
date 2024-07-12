@@ -1,14 +1,11 @@
 const canvas = document.getElementById('canvas');
 const fileInput = document.getElementById('upload');
 
-let uploadedFiles = new Set();
-
 fileInput.addEventListener('change', function(event) {
   const files = event.target.files;
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (file && !uploadedFiles.has(file.name)) {
-      uploadedFiles.add(file.name);
+    if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
         createImageContainer(e.target.result, file.name);
@@ -62,11 +59,11 @@ function createImageContainer(src, fileName) {
     // Make the container visible after positioning
     imgContainer.style.visibility = 'visible';
 
-    setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName);
+    setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle);
   }
 }
 
-function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName) {
+function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle) {
   let isDragging = false;
   let isResizing = false;
   let startX, startY, startLeft, startTop, startWidth, startHeight;
@@ -161,7 +158,6 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
   deleteHandle.addEventListener('click', function(event) {
     canvas.removeChild(imgContainer);
-    uploadedFiles.delete(fileName);
   });
 
   document.addEventListener('click', function(event) {
