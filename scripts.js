@@ -281,3 +281,16 @@ closeButtons.forEach(button => {
 uploadBox.addEventListener('click', function() {
   fileInput.click();
 });
+
+const mainContainer = document.getElementById('main-container');
+
+mainContainer.addEventListener('click', function(event) {
+  // Check if we're in screen2 or screen3
+  if (screen2.classList.contains('active') || screen3.classList.contains('active')) {
+    // Check if the click is outside the white square
+    if (!event.target.closest('.white-square')) {
+      showScreen(screen1);
+      blackStripOptions.forEach(option => option.classList.remove('clicked'));
+    }
+  }
+});
