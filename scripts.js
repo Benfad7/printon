@@ -176,7 +176,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
   });
 
   document.addEventListener('click', function(event) {
-    if (!imgContainer.contains(event.target)) {
+    if (!imgContainer.contains(event.target) && !event.target.closest('.white-square')) {
       imgContainer.classList.remove('selected');
       resizeHandle.style.display = 'none';
       deleteHandle.style.display = 'none';
@@ -297,9 +297,9 @@ const mainContainer = document.getElementById('main-container');
 
 mainContainer.addEventListener('click', function(event) {
   // Check if we're in screen2 or screen3
-  if (screen2.classList.contains('active') || screen3.classList.contains('active')) {
+  if (screen2.classList.contains('active') || screen3.classList.contains('active')|| screen4.classList.contains('active')) {
     // Check if the click is outside the white square
-    if (!event.target.closest('.white-square')) {
+    if (!event.target.closest('.white-square') && !event.target.closest('.image-container')) {
       showScreen(screen1);
       blackStripOptions.forEach(option => option.classList.remove('clicked'));
     }
