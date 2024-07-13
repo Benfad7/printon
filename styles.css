@@ -368,6 +368,13 @@ body, html {
 
 .image-size-container {
   padding: 20px;
-  text-align: center;
+  text-align: right; /* Align text to the right */
   font-size: 18px;
+    position: absolute;
+    top: 7%;
+    transform: translate(-50%, -50%);
+}
+
+.image-size-container #image-size {
+  float: left; /* Align the image size to the left */
 }
