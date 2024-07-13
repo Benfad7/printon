@@ -1,98 +1,102 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Image Upload and Manipulation</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload and Manipulation</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div class="main-container" id="main-container">
-  <div class="left-side">
-    <div class="white-square">
-      <div class="black-strip">
-        <div class="black-strip-options">
-          <label for="upload-black-strip" class="black-strip-upload black-strip-option">
-            <input type="file" id="upload-black-strip" accept="image/*" multiple>
-            <span class="black-strip-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
-            <span class="black-strip-text">העלאה</span>
-          </label>
-          <div class="black-strip-add-text black-strip-option">
-            <span class="black-strip-icon"><i class="fa-solid fa-font"></i></span>
-            <span class="black-strip-text">הוסף טקסט</span>
-          </div>
-        </div>
-      </div>
+    <div class="left-side">
+        <div class="white-square">
+            <div class="black-strip">
+                <div class="black-strip-options">
+                    <label for="upload-black-strip" class="black-strip-upload black-strip-option">
+                        <input type="file" id="upload-black-strip" accept="image/*" multiple>
+                        <span class="black-strip-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+                        <span class="black-strip-text">העלאה</span>
+                    </label>
+                    <div class="black-strip-add-text black-strip-option">
+                        <span class="black-strip-icon"><i class="fa-solid fa-font"></i></span>
+                        <span class="black-strip-text">הוסף טקסט</span>
+                    </div>
+                </div>
+            </div>
 
-      <div id="screen1" class="screen active">
-        <h2 class="title">?מה מעצבים היום</h2>
-        <div class="options">
-          <label for="upload" class="cloud-upload">
-            <input type="file" id="upload" accept="image/*" multiple>
-            <span class="cloud-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
-            <span class="upload-text">העלאה</span>
-          </label>
-          <div class="add-text">
-            <span class="text-icon"><i class="fa-solid fa-font"></i></span>
-            <span class="text-label">הוספת טקסט</span>
-          </div>
-        </div>
-      </div>
+            <div id="screen1" class="screen active">
+                <h2 class="title">?מה מעצבים היום</h2>
+                <div class="options">
+                    <label for="upload" class="cloud-upload">
+                        <input type="file" id="upload" accept="image/*" multiple>
+                        <span class="cloud-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+                        <span class="upload-text">העלאה</span>
+                    </label>
+                    <div class="add-text">
+                        <span class="text-icon"><i class="fa-solid fa-font"></i></span>
+                        <span class="text-label">הוספת טקסט</span>
+                    </div>
+                </div>
+            </div>
 
-      <div id="screen2" class="screen">
-        <div class="screen-header">
-          <button class="close-button">&times;</button>
-          <h2 class="header-title">העלאת תמונה</h2>
-        </div>
-        <div class="screen-content">
-          <div class="upload-box" id="upload-box">
-            <span class="cloud-icon" style="font-size: 30px;"><i class="fa-solid fa-cloud-arrow-up"></i></span>
-            <span class="upload-text-box">לחץ כאן להעלאת תמונה</span>
-          </div>
-        </div>
-      </div>
+            <div id="screen2" class="screen">
+                <div class="screen-header">
+                    <button class="close-button">&times;</button>
+                    <h2 class="header-title">העלאת תמונה</h2>
+                </div>
+                <div class="screen-content">
+                    <div class="upload-box" id="upload-box">
+                        <span class="cloud-icon" style="font-size: 30px;"><i
+                                class="fa-solid fa-cloud-arrow-up"></i></span>
+                        <span class="upload-text-box">לחץ כאן להעלאת תמונה</span>
+                    </div>
+                </div>
+            </div>
 
-      <div id="screen3" class="screen">
-        <div class="screen-header">
-          <button class="close-button">&times;</button>
-          <h2 class="header-title">הוסף טקסט</h2>
-        </div>
-        <div class="screen-content">
-          <h2 class="title">?מה מעצבים היום</h2>
-          <!-- Add content for screen 3 here -->
-        </div>
-      </div>
-      <div id="screen4" class="screen">
-        <div class="screen-header">
-          <button class="close-button">&times;</button>
-          <h2 class="header-title">ערוך תמונה</h2>
-        </div>
-        <div class="screen-content">
-          <div class="image-size-container">
-            <span id="image-size" style="float: left;"></span>
-            <span style="float: right;">גודל תמונה:</span>
-          </div>
-        </div>
-      </div>
+            <div id="screen3" class="screen">
+                <div class="screen-header">
+                    <button class="close-button">&times;</button>
+                    <h2 class="header-title">הוסף טקסט</h2>
+                </div>
+                <div class="screen-content">
+                    <h2 class="title">?מה מעצבים היום</h2>
+                    <!-- Add content for screen 3 here -->
+                </div>
+            </div>
+            <div id="screen4" class="screen">
+                <div class="screen-header">
+                    <button class="close-button">&times;</button>
+                    <h2 class="header-title">ערוך תמונה</h2>
+                </div>
+                <div class="screen-content">
+                    <div class="image-size-container">
+                        <span>:גודל תמונה</span>
+                    </div>
+                    <div class="image-size-container2">
+                        <span id="image-size"></span>
+                    </div>
+
+                </div>
+            </div>
 
 
+        </div>
     </div>
-  </div>
-  <div class="right-side">
-    <div class="canvas" id="canvas">
-      <!-- Image containers will be dynamically added here -->
+    <div class="right-side">
+        <div class="canvas" id="canvas">
+            <!-- Image containers will be dynamically added here -->
+        </div>
     </div>
-  </div>
 </div>
 <!-- Context Menu -->
 <div class="context-menu" id="context-menu">
-  <div class="context-menu-item" id="center-image">מרכוז</div>
-  <div class="context-menu-item" id="move-forward">העבר קדימה</div>
-  <div class="context-menu-item" id="move-backward">העבר אחורה</div>
-  <div class="context-menu-separator"></div> <!-- Separator line -->
-  <div class="context-menu-item" id="cut-image">לחתוך</div> <!-- Cut option -->
+    <div class="context-menu-item" id="center-image">מרכוז</div>
+    <div class="context-menu-item" id="move-forward">העבר קדימה</div>
+    <div class="context-menu-item" id="move-backward">העבר אחורה</div>
+    <div class="context-menu-separator"></div> <!-- Separator line -->
+    <div class="context-menu-item" id="cut-image">לחתוך</div> <!-- Cut option -->
 </div>
 
 <script src="scripts.js"></script>
