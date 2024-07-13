@@ -39,24 +39,22 @@
           </div>
         </div>
       </div>
+
       <div id="screen2" class="screen">
         <div class="screen-header">
           <button class="close-button">&times;</button>
           <h2 class="header-title">יצירות אמנות ברזולוציה גבוהה ייראו הכי טוב</h2>
         </div>
         <div class="screen-content">
-          <div class="upload-box">
-            <label for="upload-high-res" class="high-res-upload">
-              <input type="file" id="upload-high-res" accept="image/*" multiple>
-              <span class="upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></span>
-              <span class="upload-text">גרור קבצים לכאן או לחץ לבחירה</span>
-              <div class="upload-separator"></div>
+          <div class="upload-box" onclick="document.getElementById('upload').click()">
+            <label for="upload" class="cloud-upload">
+              <input type="file" id="upload2" accept="image/*" multiple>
+              <span class="cloud-icon" style="font-size: 30px;"><i class="fa-solid fa-cloud-arrow-up"></i></span>
+              <span class="upload-text-box">לחץ כאן להעלאת תמונה</span>
             </label>
           </div>
         </div>
       </div>
-
-
 
       <div id="screen3" class="screen">
         <div class="screen-header">
