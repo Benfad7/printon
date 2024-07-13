@@ -267,3 +267,19 @@ body, html {
   background-color: #ccc;
   margin: 4px 0;
 }
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+.black-strip-option.clicked {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+}
+
+.black-strip-option.clicked .black-strip-icon,
+.black-strip-option.clicked .black-strip-text {
+  color: #fff;
+}

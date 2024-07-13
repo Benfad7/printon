@@ -238,3 +238,45 @@ cutImage.addEventListener('click', function() {
   }
 });
 
+// Add this to your existing scripts.js file
+
+const uploadBlackStrip = document.querySelector('.black-strip-upload');
+const blackStripAddText = document.querySelector('.black-strip-add-text');
+const screen1 = document.getElementById('screen1');
+const screen2 = document.getElementById('screen2');
+const screen3 = document.getElementById('screen3');
+const blackStripOptions = document.querySelectorAll('.black-strip-option');
+
+function showScreen(screenToShow) {
+  [screen1, screen2, screen3].forEach(screen => screen.classList.remove('active'));
+  screenToShow.classList.add('active');
+}
+
+function setClickedOption(clickedOption) {
+  blackStripOptions.forEach(option => option.classList.remove('clicked'));
+  clickedOption.classList.add('clicked');
+}
+
+uploadBlackStrip.addEventListener('click', function(event) {
+  event.preventDefault();
+  showScreen(screen2);
+  setClickedOption(this);
+});
+
+blackStripAddText.addEventListener('click', function() {
+  showScreen(screen3);
+  setClickedOption(this);
+});
+
+// You might want to add a way to return to screen1 and reset the clicked state
+document.querySelector('.white-square').addEventListener('click', function(event) {
+  if (event.target === this) {
+    showScreen(screen1);
+    blackStripOptions.forEach(option => option.classList.remove('clicked'));
+  }
+});
+
+// Prevent the file input from opening when clicking on the upload button
+document.getElementById('upload-black-strip').addEventListener('click', function(event) {
+  event.stopPropagation();
+});
