@@ -5,10 +5,20 @@ const moveForward = document.getElementById('move-forward');
 const moveBackward = document.getElementById('move-backward');
 const centerImage = document.getElementById('center-image');
 const cutImage = document.getElementById('cut-image');
+const uploadBox = document.getElementById('upload-box');
+const uploadBlackStrip = document.querySelector('.black-strip-upload');
+const blackStripAddText = document.querySelector('.black-strip-add-text');
+const screen1 = document.getElementById('screen1');
+const screen2 = document.getElementById('screen2');
+const screen3 = document.getElementById('screen3');
+const blackStripOptions = document.querySelectorAll('.black-strip-option');
+const closeButtons = document.querySelectorAll('.close-button');
 
 let selectedImageContainer = null;
 
-fileInput.addEventListener('change', function(event) {
+fileInput.addEventListener('change', handleFileSelection);
+
+function handleFileSelection(event) {
   const files = event.target.files;
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
@@ -20,8 +30,8 @@ fileInput.addEventListener('change', function(event) {
       reader.readAsDataURL(file);
     }
   }
-  fileInput.value = '';
-});
+  event.target.value = ''; // Reset the file input
+}
 
 function createImageContainer(src, fileName) {
   const imgContainer = document.createElement('div');
@@ -238,15 +248,6 @@ cutImage.addEventListener('click', function() {
   }
 });
 
-// Add this to your existing scripts.js file
-const uploadBlackStrip = document.querySelector('.black-strip-upload');
-const blackStripAddText = document.querySelector('.black-strip-add-text');
-const screen1 = document.getElementById('screen1');
-const screen2 = document.getElementById('screen2');
-const screen3 = document.getElementById('screen3');
-const blackStripOptions = document.querySelectorAll('.black-strip-option');
-const closeButtons = document.querySelectorAll('.close-button');
-
 function showScreen(screenToShow) {
   [screen1, screen2, screen3].forEach(screen => screen.classList.remove('active'));
   screenToShow.classList.add('active');
@@ -276,7 +277,7 @@ closeButtons.forEach(button => {
   });
 });
 
-// Prevent the file input from opening when clicking on the upload button
-document.getElementById('upload-black-strip').addEventListener('click', function(event) {
-  event.stopPropagation();
+// Upload box click handler
+uploadBox.addEventListener('click', function() {
+  fileInput.click();
 });
