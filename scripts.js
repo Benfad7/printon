@@ -190,6 +190,17 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     contextMenu.style.left = event.pageX + 'px';
     contextMenu.style.top = event.pageY + 'px';
   });
+    imgContainer.addEventListener('click', function() {
+      const img = imgContainer.querySelector('img');
+      const imgWidth = img.offsetWidth;
+      const imgHeight = img.offsetHeight;
+
+      const sizeDisplay = document.getElementById('image-size');
+      sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
+
+      showScreen(screen4);
+    });
+
 }
 
 document.addEventListener('click', function(event) {
@@ -249,7 +260,7 @@ cutImage.addEventListener('click', function() {
 });
 
 function showScreen(screenToShow) {
-  [screen1, screen2, screen3].forEach(screen => screen.classList.remove('active'));
+  [screen1, screen2, screen3, screen4].forEach(screen => screen.classList.remove('active'));
   screenToShow.classList.add('active');
 }
 

@@ -358,3 +358,16 @@ body, html {
   display: none;
 }
 
+#screen4 {
+  display: none;
+}
+
+#screen4.active {
+  display: block;
+}
+
+.image-size-container {
+  padding: 20px;
+  text-align: center;
+  font-size: 18px;
+}
