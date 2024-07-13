@@ -237,3 +237,4 @@ cutImage.addEventListener('click', function() {
     contextMenu.style.display = 'none';
   }
 });
+
