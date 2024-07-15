@@ -392,9 +392,15 @@ body, html {
     background-color: #ccc;
     margin: 10px auto;
     position: absolute;
+    left: 13%; /* Adjust as needed */
     top: 10.5%;
-    left: 13%;
 }
+
+
+.separator-line.at-40 {
+    top: 17.8%; /* Position at 40% */
+}
+
 .image-size-container3 {
     padding: 0px;
     margin-right: 25px;

@@ -381,3 +381,14 @@ backgroundRemovalToggle.addEventListener('change', function() {
         }, 50);
     }
 });
+
+// Add this after your existing event listeners
+document.getElementById('center-image-button').addEventListener('click', function() {
+  if (selectedImageContainer) {
+    const containerRect = canvas.getBoundingClientRect();
+    const imgRect = selectedImageContainer.getBoundingClientRect();
+    selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+    selectedImageContainer.style.top = (containerRect.height / 2 - imgRect.height / 2) + 'px';
+    contextMenu.style.display = 'none';
+  }
+});
