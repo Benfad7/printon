@@ -344,6 +344,17 @@ function removeBackground(imgElement) {
 backgroundRemovalToggle.addEventListener('change', function() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
+
+        // Save the current position and dimensions
+        const savedLeft = selectedImageContainer.style.left;
+        const savedTop = selectedImageContainer.style.top;
+        const savedWidth = img.style.width;
+        const savedHeight = img.style.height;
+
+        // Temporarily remove the onload event handler
+        const originalOnload = img.onload;
+        img.onload = null;
+
         if (this.checked) {
             if (!isBackgroundRemoved) {
                 const newSrc = removeBackground(img);
@@ -356,5 +367,16 @@ backgroundRemovalToggle.addEventListener('change', function() {
                 isBackgroundRemoved = false;
             }
         }
+
+        // Apply saved styles after the image has been updated
+        setTimeout(() => {
+            selectedImageContainer.style.left = savedLeft;
+            selectedImageContainer.style.top = savedTop;
+            img.style.width = savedWidth;
+            img.style.height = savedHeight;
+
+            // Restore the onload event handler
+            img.onload = originalOnload;
+        }, 50); // Delay for 50 milliseconds
     }
 });
