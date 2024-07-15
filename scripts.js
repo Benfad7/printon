@@ -47,6 +47,7 @@ function createImageContainer(src, fileName) {
   const img = document.createElement('img');
   img.src = src;
   img.setAttribute('data-original-src', src);  // Store the original source
+  imgContainer.setAttribute('data-layer-state', 'default');
 
   const resizeHandle = document.createElement('div');
   resizeHandle.classList.add('resize-handle');
@@ -208,6 +209,8 @@ imgContainer.addEventListener('click', function() {
 
     showScreen(screen4);
     selectedImageContainer = imgContainer;
+        updateLayerButtons(selectedImageContainer);
+
 
     // Set background removal toggle based on stored state
     const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
@@ -380,42 +383,53 @@ document.getElementById('center-image-button').addEventListener('click', functio
   }
 });
 const layerControl = document.getElementById('layer-control');
-
-function updateLayerButtons(clickedButton) {
-    const buttons = [layerMoveForward, layerMoveBackward];
-    buttons.forEach(button => {
-        if (button === clickedButton) {
-            button.classList.remove('active');
-        } else {
-            button.classList.add('active');
-        }
-    });
+function updateLayerButtons(imgContainer) {
+    const layerState = imgContainer.getAttribute('data-layer-state');
+    if (layerState === 'forward') {
+        layerMoveForward.classList.remove('active');
+        layerMoveBackward.classList.add('active');
+    } else if (layerState === 'backward') {
+        layerMoveForward.classList.add('active');
+        layerMoveBackward.classList.remove('active');
+    } else {
+        // Default state
+        layerMoveForward.classList.add('active');
+        layerMoveBackward.classList.add('active');
+    }
 }
 
+function moveLayerForward(imgContainer) {
+    canvas.appendChild(imgContainer);
+    imgContainer.setAttribute('data-layer-state', 'forward');
+    updateLayerButtons(imgContainer);
+}
+
+function moveLayerBackward(imgContainer) {
+    canvas.insertBefore(imgContainer, canvas.firstChild);
+    imgContainer.setAttribute('data-layer-state', 'backward');
+    updateLayerButtons(imgContainer);
+}
 
 contextMoveForward.addEventListener('click', function() {
     if (selectedImageContainer) {
-        canvas.appendChild(selectedImageContainer);
-        updateLayerButtons(layerMoveForward);
+        moveLayerForward(selectedImageContainer);
     }
 });
 
 contextMoveBackward.addEventListener('click', function() {
     if (selectedImageContainer) {
-        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
-        updateLayerButtons(layerMoveBackward);
+        moveLayerBackward(selectedImageContainer);
     }
 });
+
 layerMoveForward.addEventListener('click', function() {
     if (selectedImageContainer && this.classList.contains('active')) {
-        canvas.appendChild(selectedImageContainer);
-        updateLayerButtons(this);
+        moveLayerForward(selectedImageContainer);
     }
 });
 
 layerMoveBackward.addEventListener('click', function() {
     if (selectedImageContainer && this.classList.contains('active')) {
-        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
-        updateLayerButtons(this);
+        moveLayerBackward(selectedImageContainer);
     }
 });
