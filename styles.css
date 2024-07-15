@@ -462,17 +462,20 @@ body, html {
 .center-button {
   display: inline-block;
   padding: 20px 40px;
-  border: 2px solid #6c757d; /* Border color */
+  border: 1px solid #6c757d; /* Border color */
   border-radius: 10px; /* Adjust curve size */
   background-color: #f8f9fa; /* Button background color */
   color: #6c757d; /* Text color */
   font-size: 18px;
   text-align: center;
-  transition: all 0.3s ease;
-  position: relative; /* Allows absolute positioning inside */
-  overflow: hidden; /* Ensures inner elements respect button boundaries */
-  width: 200px; /* Adjust button width */
-  height: 180px; /* Adjust button height */
+    transition: all 0.0s ease;
+  position: absolute;
+ top: 18%;
+  left: 11%;
+  margin-left: 25px;
+    overflow: hidden; /* Ensures inner elements respect button boundaries */
+  width: 20px; /* Adjust button width */
+  height: 20px; /* Adjust button height */
 }
 
 .center-button:hover {
@@ -481,7 +484,7 @@ body, html {
 }
 
 .icon {
-  font-size: 36px;
+  font-size: 30px;
   margin-bottom: 10px; /* Space between icon and text */
 }
 
@@ -501,3 +504,5 @@ body, html {
 .center-button {
   font-weight: bold;
   font-size: larger;
+
+  }
