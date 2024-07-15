@@ -1,8 +1,11 @@
 const canvas = document.getElementById('canvas');
 const fileInput = document.getElementById('upload');
 const contextMenu = document.getElementById('context-menu');
-const moveForward = document.getElementById('move-forward');
-const moveBackward = document.getElementById('move-backward');
+const contextMoveForward = document.getElementById('context-move-forward');
+const contextMoveBackward = document.getElementById('context-move-backward');
+const layerMoveForward = document.getElementById('move-forward');
+const layerMoveBackward = document.getElementById('move-backward');
+
 const centerImage = document.getElementById('center-image');
 const cutImage = document.getElementById('cut-image');
 const uploadBox = document.getElementById('upload-box');
@@ -217,19 +220,7 @@ document.addEventListener('click', function(event) {
   }
 });
 
-moveForward.addEventListener('click', function() {
-    if (selectedImageContainer && !this.classList.contains('active')) {
-        canvas.appendChild(selectedImageContainer);
-        updateLayerButtons(this);
-    }
-});
 
-moveBackward.addEventListener('click', function() {
-    if (selectedImageContainer && !this.classList.contains('active')) {
-        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
-        updateLayerButtons(this);
-    }
-});
 centerImage.addEventListener('click', function() {
   if (selectedImageContainer) {
     const containerRect = canvas.getBoundingClientRect();
@@ -391,7 +382,7 @@ document.getElementById('center-image-button').addEventListener('click', functio
 const layerControl = document.getElementById('layer-control');
 
 function updateLayerButtons(clickedButton) {
-    const buttons = [moveForward, moveBackward];
+    const buttons = [layerMoveForward, layerMoveBackward];
     buttons.forEach(button => {
         if (button === clickedButton) {
             button.classList.add('active');
@@ -400,3 +391,31 @@ function updateLayerButtons(clickedButton) {
         }
     });
 }
+
+contextMoveForward.addEventListener('click', function() {
+    if (selectedImageContainer) {
+        canvas.appendChild(selectedImageContainer);
+        updateLayerButtons(layerMoveForward);
+    }
+});
+
+contextMoveBackward.addEventListener('click', function() {
+    if (selectedImageContainer) {
+        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
+        updateLayerButtons(layerMoveBackward);
+    }
+});
+
+layerMoveForward.addEventListener('click', function() {
+    if (selectedImageContainer && !this.classList.contains('active')) {
+        canvas.appendChild(selectedImageContainer);
+        updateLayerButtons(this);
+    }
+});
+
+layerMoveBackward.addEventListener('click', function() {
+    if (selectedImageContainer && !this.classList.contains('active')) {
+        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
+        updateLayerButtons(this);
+    }
+});
