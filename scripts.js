@@ -385,12 +385,13 @@ function updateLayerButtons(clickedButton) {
     const buttons = [layerMoveForward, layerMoveBackward];
     buttons.forEach(button => {
         if (button === clickedButton) {
-            button.classList.add('active');
-        } else {
             button.classList.remove('active');
+        } else {
+            button.classList.add('active');
         }
     });
 }
+
 
 contextMoveForward.addEventListener('click', function() {
     if (selectedImageContainer) {
@@ -405,16 +406,15 @@ contextMoveBackward.addEventListener('click', function() {
         updateLayerButtons(layerMoveBackward);
     }
 });
-
 layerMoveForward.addEventListener('click', function() {
-    if (selectedImageContainer && !this.classList.contains('active')) {
+    if (selectedImageContainer && this.classList.contains('active')) {
         canvas.appendChild(selectedImageContainer);
         updateLayerButtons(this);
     }
 });
 
 layerMoveBackward.addEventListener('click', function() {
-    if (selectedImageContainer && !this.classList.contains('active')) {
+    if (selectedImageContainer && this.classList.contains('active')) {
         canvas.insertBefore(selectedImageContainer, canvas.firstChild);
         updateLayerButtons(this);
     }
