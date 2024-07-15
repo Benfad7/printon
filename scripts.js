@@ -39,6 +39,7 @@ function handleFileSelection(event) {
 function createImageContainer(src, fileName) {
   const imgContainer = document.createElement('div');
   imgContainer.classList.add('image-container');
+  imgContainer.setAttribute('data-background-removed', 'false');  imgContainer.classList.add('image-container');
 
   const img = document.createElement('img');
   img.src = src;
@@ -195,7 +196,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     contextMenu.style.top = event.pageY + 'px';
   });
 
-  imgContainer.addEventListener('click', function() {
+imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
 
@@ -205,11 +206,10 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     showScreen(screen4);
     selectedImageContainer = imgContainer;
 
-    // Reset background removal state
-    isBackgroundRemoved = false;
-    backgroundRemovalToggle.checked = false;
-  });
-}
+    // Set background removal toggle based on stored state
+    const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
+    backgroundRemovalToggle.checked = isBackgroundRemoved;
+});}
 
 document.addEventListener('click', function(event) {
   if (contextMenu.style.display === 'block') {
@@ -344,6 +344,7 @@ function removeBackground(imgElement) {
 backgroundRemovalToggle.addEventListener('change', function() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
+        const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
 
         // Save the current position and dimensions
         const savedLeft = selectedImageContainer.style.left;
@@ -359,12 +360,12 @@ backgroundRemovalToggle.addEventListener('change', function() {
             if (!isBackgroundRemoved) {
                 const newSrc = removeBackground(img);
                 img.src = newSrc;
-                isBackgroundRemoved = true;
+                selectedImageContainer.setAttribute('data-background-removed', 'true');
             }
         } else {
             if (isBackgroundRemoved) {
                 img.src = img.getAttribute('data-original-src');
-                isBackgroundRemoved = false;
+                selectedImageContainer.setAttribute('data-background-removed', 'false');
             }
         }
 
@@ -377,6 +378,6 @@ backgroundRemovalToggle.addEventListener('change', function() {
 
             // Restore the onload event handler
             img.onload = originalOnload;
-        }, 50); // Delay for 50 milliseconds
+        }, 50);
     }
 });
