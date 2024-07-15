@@ -459,50 +459,85 @@ body, html {
 .on-off-button input:checked + .slider:before {
   transform: translateX(18px); /* Adjusted from 26px */
 }
+
+
 .center-button {
-  display: inline-block;
-  padding: 20px 40px;
-  border: 1px solid #6c757d; /* Border color */
-  border-radius: 10px; /* Adjust curve size */
-  background-color: #f8f9fa; /* Button background color */
-  color: #6c757d; /* Text color */
-  font-size: 18px;
-  text-align: center;
-    transition: all 0.0s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
   position: absolute;
- top: 18%;
+  top: 22%;
   left: 11%;
   margin-left: 25px;
-    overflow: hidden; /* Ensures inner elements respect button boundaries */
-  width: 20px; /* Adjust button width */
-  height: 20px; /* Adjust button height */
+  width: 60px;  /* Adjust as needed */
+  height: 60px; /* Adjust as needed */
+}
+
+.center-button .icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.center-button span {
+  font-size: 10px;
 }
 
 .center-button:hover {
-  background-color: #6c757d; /* Change background color on hover */
-  color: #ffffff; /* Change text color on hover */
+  background-color: #f0f0f0;
 }
 
-.icon {
-  font-size: 30px;
-  margin-bottom: 10px; /* Space between icon and text */
+
+
+.layer-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 22%;
+    left: 25%; /* Adjust as needed */
+    margin-left: 25px;
 }
 
-.center-button .icon i {
-  display: block;
+.layer-buttons {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-/* Absolute positioning for icon */
-.center-button .icon {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.layer-button {
+    background-color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease;
 }
 
-/* Text styling */
-.center-button {
-  font-weight: bold;
-  font-size: larger;
+.layer-button:first-child {
+    border-right: 1px solid #ccc;
+}
 
-  }
+.layer-button.active {
+    background-color: white;
+    color: #000;
+}
+
+.layer-button:not(.active) {
+    background-color: #f0f0f0;
+    color: #999;
+}
+
+.layer-text {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #333;
+}

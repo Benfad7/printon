@@ -218,19 +218,18 @@ document.addEventListener('click', function(event) {
 });
 
 moveForward.addEventListener('click', function() {
-  if (selectedImageContainer) {
-    canvas.appendChild(selectedImageContainer);
-    contextMenu.style.display = 'none';
-  }
+    if (selectedImageContainer && !this.classList.contains('active')) {
+        canvas.appendChild(selectedImageContainer);
+        updateLayerButtons(this);
+    }
 });
 
 moveBackward.addEventListener('click', function() {
-  if (selectedImageContainer) {
-    canvas.insertBefore(selectedImageContainer, canvas.firstChild.nextSibling);
-    contextMenu.style.display = 'none';
-  }
+    if (selectedImageContainer && !this.classList.contains('active')) {
+        canvas.insertBefore(selectedImageContainer, canvas.firstChild);
+        updateLayerButtons(this);
+    }
 });
-
 centerImage.addEventListener('click', function() {
   if (selectedImageContainer) {
     const containerRect = canvas.getBoundingClientRect();
@@ -382,13 +381,22 @@ backgroundRemovalToggle.addEventListener('change', function() {
     }
 });
 
-// Add this after your existing event listeners
 document.getElementById('center-image-button').addEventListener('click', function() {
   if (selectedImageContainer) {
     const containerRect = canvas.getBoundingClientRect();
     const imgRect = selectedImageContainer.getBoundingClientRect();
     selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
-    selectedImageContainer.style.top = (containerRect.height / 2 - imgRect.height / 2) + 'px';
-    contextMenu.style.display = 'none';
   }
 });
+const layerControl = document.getElementById('layer-control');
+
+function updateLayerButtons(clickedButton) {
+    const buttons = [moveForward, moveBackward];
+    buttons.forEach(button => {
+        if (button === clickedButton) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
