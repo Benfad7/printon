@@ -11,10 +11,13 @@ const blackStripAddText = document.querySelector('.black-strip-add-text');
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const screen3 = document.getElementById('screen3');
+const screen4 = document.getElementById('screen4');
 const blackStripOptions = document.querySelectorAll('.black-strip-option');
 const closeButtons = document.querySelectorAll('.close-button');
+const backgroundRemovalToggle = document.querySelector('.on-off-button input');
 
 let selectedImageContainer = null;
+let isBackgroundRemoved = false;
 
 fileInput.addEventListener('change', handleFileSelection);
 
@@ -39,6 +42,7 @@ function createImageContainer(src, fileName) {
 
   const img = document.createElement('img');
   img.src = src;
+  img.setAttribute('data-original-src', src);  // Store the original source
 
   const resizeHandle = document.createElement('div');
   resizeHandle.classList.add('resize-handle');
@@ -190,17 +194,21 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     contextMenu.style.left = event.pageX + 'px';
     contextMenu.style.top = event.pageY + 'px';
   });
-    imgContainer.addEventListener('click', function() {
-      const img = imgContainer.querySelector('img');
-      const imgWidth = img.offsetWidth;
-      const imgHeight = img.offsetHeight;
 
-      const sizeDisplay = document.getElementById('image-size');
-      sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
+  imgContainer.addEventListener('click', function() {
+    const imgWidth = img.offsetWidth;
+    const imgHeight = img.offsetHeight;
 
-      showScreen(screen4);
-    });
+    const sizeDisplay = document.getElementById('image-size');
+    sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
 
+    showScreen(screen4);
+    selectedImageContainer = imgContainer;
+
+    // Reset background removal state
+    isBackgroundRemoved = false;
+    backgroundRemovalToggle.checked = false;
+  });
 }
 
 document.addEventListener('click', function(event) {
@@ -297,11 +305,56 @@ const mainContainer = document.getElementById('main-container');
 
 mainContainer.addEventListener('click', function(event) {
   // Check if we're in screen2 or screen3
-  if (screen2.classList.contains('active') || screen3.classList.contains('active')|| screen4.classList.contains('active')) {
+  if (screen2.classList.contains('active') || screen3.classList.contains('active') || screen4.classList.contains('active')) {
     // Check if the click is outside the white square
     if (!event.target.closest('.white-square') && !event.target.closest('.image-container')) {
       showScreen(screen1);
       blackStripOptions.forEach(option => option.classList.remove('clicked'));
     }
   }
+});
+
+// Background removal functionality
+function removeBackground(imgElement) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = imgElement.naturalWidth;
+    canvas.height = imgElement.naturalHeight;
+    ctx.drawImage(imgElement, 0, 0);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // This is a simple background removal. In a real scenario, you'd use a more sophisticated AI service.
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+
+        // If the pixel is light (close to white), make it transparent
+        if (r > 200 && g > 200 && b > 200) {
+            data[i + 3] = 0; // Set alpha to 0
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+    return canvas.toDataURL();
+}
+
+backgroundRemovalToggle.addEventListener('change', function() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        if (this.checked) {
+            if (!isBackgroundRemoved) {
+                const newSrc = removeBackground(img);
+                img.src = newSrc;
+                isBackgroundRemoved = true;
+            }
+        } else {
+            if (isBackgroundRemoved) {
+                img.src = img.getAttribute('data-original-src');
+                isBackgroundRemoved = false;
+            }
+        }
+    }
 });
