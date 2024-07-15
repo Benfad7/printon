@@ -78,7 +78,7 @@
                     <div class="image-size-container2">
                         <span id="image-size"></span>
                     </div>
-                    <div class="separator-line"></div> <!-- Add this line -->
+                    <div class="separator-line"></div>
                     <div class="image-size-container3">
                         <span>AI הסר רקע עם</span>
                     </div>
@@ -86,26 +86,50 @@
                         <input type="checkbox">
                         <span class="slider"></span>
                     </label>
-                    <div class="separator-line at-40"></div> <!-- Add this line -->
-                    <button id="center-image-button" class="center-button">
-                        <div class="icon"><i class="fa-solid fa-align-center"></i></div>
-                        Center
-                    </button>
-                    <div id="layer-control" class="layer-control">
-                        <div class="layer-buttons">
-                            <button id="move-forward" class="layer-button active">
-                                <i class="fa-solid fa-arrow-up"></i></i>
-                            </button>
-                            <button id="move-backward" class="layer-button">
-                                <i class="fa-solid fa-arrow-down"></i></i>
+                    <div class="separator-line at-40"></div>
+
+                    <div id="center-button-group" class="button-group">
+                        <div class="button-container">
+                            <button id="center-image-button" class="custom-button">
+                                <i class="fa-solid fa-align-center"></i>
                             </button>
                         </div>
-                        <span class="layer-text">Layering</span>
+                        <span class="button-text">מרכוז</span>
                     </div>
 
+                    <div id="layer-control" class="button-group">
+                        <div class="button-container">
+                            <button id="move-forward" class="custom-button">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button id="move-backward" class="custom-button">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                        </div>
+                        <span class="button-text">שכבות</span>
+                    </div>
+
+                    <div id="flip-control" class="button-group">
+                        <div class="button-container">
+                            <button id="flip-horizontal" class="custom-button">
+                                <i class="fa-solid fa-arrows-left-right"></i>
+                            </button>
+                            <button id="flip-vertical" class="custom-button">
+                                <i class="fa-solid fa-arrows-up-down"></i>
+                            </button>
+                        </div>
+                        <span class="button-text">היפוך</span>
+                    </div>
+                    <div id="duplicate-control" class="button-group">
+                        <div class="button-container">
+                            <button id="duplicate-image" class="custom-button">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                        <span class="button-text">שכפול</span>
+                    </div>
                 </div>
             </div>
-
 
         </div>
     </div>

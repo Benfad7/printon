@@ -400,7 +400,6 @@ body, html {
 .separator-line.at-40 {
     top: 17.8%; /* Position at 40% */
 }
-
 .image-size-container3 {
     padding: 0px;
     margin-right: 25px;
@@ -412,132 +411,156 @@ body, html {
 }
 
 .on-off-button {
-  position: relative;
-  display: inline-block;
-  width: 40px;  /* Reduced from 60px */
-  height: 22px; /* Reduced from 34px */
-  position: absolute;
-  top: 14%;
-  left: 11%;
-  margin-left: 25px;
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 22px;
+    position: absolute;
+    top: 14%;
+    left: 11%;
+    margin-left: 25px;
 }
 
 .on-off-button input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
 
 .on-off-button .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 22px; /* Adjusted to match new height */
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 22px;
 }
 
 .on-off-button .slider:before {
-  position: absolute;
-  content: "";
-  height: 18px; /* Reduced from 26px */
-  width: 18px;  /* Reduced from 26px */
-  left: 2px;    /* Adjusted from 4px */
-  bottom: 2px;  /* Adjusted from 4px */
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
 }
 
 .on-off-button input:checked + .slider {
-  background-color: #2196F3;
+    background-color: #2196F3;
 }
 
 .on-off-button input:checked + .slider:before {
-  transform: translateX(18px); /* Adjusted from 26px */
+    transform: translateX(18px);
 }
 
-
-.center-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: #333;
-  cursor: pointer;
-  position: absolute;
-  top: 22%;
-  left: 11%;
-  margin-left: 25px;
-  width: 60px;  /* Adjust as needed */
-  height: 60px; /* Adjust as needed */
-}
-
-.center-button .icon {
-  font-size: 20px;
-  margin-bottom: 4px;
-}
-
-.center-button span {
-  font-size: 10px;
-}
-
-.center-button:hover {
-  background-color: #f0f0f0;
-}
-
-
-
-.layer-control {
+.button-group {
     display: flex;
     flex-direction: column;
     align-items: center;
     position: absolute;
     top: 22%;
-    left: 25%; /* Adjust as needed */
-    margin-left: 25px;
+    margin: 0 25px;
 }
 
-.layer-buttons {
+.button-container {
     display: flex;
     border: 1px solid #ccc;
     border-radius: 4px;
     overflow: hidden;
 }
 
-.layer-button {
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: white;
     border: none;
-    padding: 10px 15px;
-    cursor: pointer;
+    padding: 0;
     font-size: 20px;
-    transition: all 0.3s ease;
+    color: #333;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
 }
 
-.layer-button:first-child {
+.custom-button:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-button:not(:last-child) {
     border-right: 1px solid #ccc;
 }
 
-.layer-button.active {
-    background-color: white;
-    color: #000;
-}
-
-.layer-button:not(.active) {
-    background-color: #f0f0f0;
-    color: #999;
-}
-
-.layer-text {
+.button-text {
     margin-top: 5px;
-    font-size: 12px;
+    font-size: 16px;
     color: #333;
+    text-align: center;
+}
+
+#center-button-group {
+    left: 11%;
+}
+
+#layer-control {
+    left: 25%;
+}
+
+#flip-control {
+    right: 25%;
+}
+
+#duplicate-control {
+    right: 10%; /* Adjust this value as needed to position it correctly */
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 22%;
+    margin: 0 25px;
+}
+
+.button-container {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: none;
+    padding: 0;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.custom-button:hover {
+    background-color: #f0f0f0;
+}
+
+.custom-button:not(:last-child) {
+    border-right: 1px solid #ccc;
+}
+
+.button-text {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
 }

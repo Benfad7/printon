@@ -385,29 +385,34 @@ document.getElementById('center-image-button').addEventListener('click', functio
 const layerControl = document.getElementById('layer-control');
 function updateLayerButtons(imgContainer) {
     const layerState = imgContainer.getAttribute('data-layer-state');
-    if (layerState === 'forward') {
+    const isTopLayer = imgContainer === canvas.lastElementChild;
+    const isBottomLayer = imgContainer === canvas.firstElementChild;
+
+    if (isTopLayer) {
         layerMoveForward.classList.remove('active');
         layerMoveBackward.classList.add('active');
-    } else if (layerState === 'backward') {
+    } else if (isBottomLayer) {
         layerMoveForward.classList.add('active');
         layerMoveBackward.classList.remove('active');
     } else {
-        // Default state
+        // Middle layer
         layerMoveForward.classList.add('active');
         layerMoveBackward.classList.add('active');
     }
 }
 
 function moveLayerForward(imgContainer) {
-    canvas.appendChild(imgContainer);
-    imgContainer.setAttribute('data-layer-state', 'forward');
-    updateLayerButtons(imgContainer);
+    if (imgContainer.nextElementSibling) {
+        canvas.insertBefore(imgContainer.nextElementSibling, imgContainer);
+        updateLayerButtons(imgContainer);
+    }
 }
 
 function moveLayerBackward(imgContainer) {
-    canvas.insertBefore(imgContainer, canvas.firstChild);
-    imgContainer.setAttribute('data-layer-state', 'backward');
-    updateLayerButtons(imgContainer);
+    if (imgContainer.previousElementSibling) {
+        canvas.insertBefore(imgContainer, imgContainer.previousElementSibling);
+        updateLayerButtons(imgContainer);
+    }
 }
 
 contextMoveForward.addEventListener('click', function() {
@@ -431,5 +436,64 @@ layerMoveForward.addEventListener('click', function() {
 layerMoveBackward.addEventListener('click', function() {
     if (selectedImageContainer && this.classList.contains('active')) {
         moveLayerBackward(selectedImageContainer);
+    }
+});
+
+const flipHorizontal = document.getElementById('flip-horizontal');
+const flipVertical = document.getElementById('flip-vertical');
+
+function toggleTransform(img, transform) {
+  const currentTransform = img.style.transform || '';
+  if (currentTransform.includes(transform)) {
+    img.style.transform = currentTransform.replace(transform, '');
+  } else {
+    img.style.transform = currentTransform + ' ' + transform;
+  }
+}
+
+flipHorizontal.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    const img = selectedImageContainer.querySelector('img');
+    toggleTransform(img, 'scaleX(-1)');
+  }
+});
+
+flipVertical.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    const img = selectedImageContainer.querySelector('img');
+    toggleTransform(img, 'scaleY(-1)');
+  }
+});
+
+const duplicateButton = document.getElementById('duplicate-image');
+
+duplicateButton.addEventListener('click', function() {
+    if (selectedImageContainer) {
+        const originalImg = selectedImageContainer.querySelector('img');
+        const clonedContainer = selectedImageContainer.cloneNode(true);
+        const clonedImg = clonedContainer.querySelector('img');
+
+        // Reset the position of the cloned container
+        clonedContainer.style.left = (parseFloat(selectedImageContainer.style.left) + 20) + 'px';
+        clonedContainer.style.top = (parseFloat(selectedImageContainer.style.top) + 20) + 'px';
+
+        // Ensure unique ids for the cloned elements if needed
+        clonedContainer.id = '';
+        clonedImg.id = '';
+
+        // Add the cloned container to the canvas
+        canvas.appendChild(clonedContainer);
+
+        // Setup interactions for the cloned image
+        setupImageInteractions(clonedContainer, clonedImg,
+            clonedContainer.querySelector('.resize-handle'),
+            clonedContainer.querySelector('.delete-handle'),
+            originalImg.getAttribute('data-original-src'));
+
+        // Update layer buttons
+        updateLayerButtons(clonedContainer);
+
+        // Set the cloned container as the selected container
+        selectedImageContainer = clonedContainer;
     }
 });
