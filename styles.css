@@ -459,3 +459,45 @@ body, html {
 .on-off-button input:checked + .slider:before {
   transform: translateX(18px); /* Adjusted from 26px */
 }
+.center-button {
+  display: inline-block;
+  padding: 20px 40px;
+  border: 2px solid #6c757d; /* Border color */
+  border-radius: 10px; /* Adjust curve size */
+  background-color: #f8f9fa; /* Button background color */
+  color: #6c757d; /* Text color */
+  font-size: 18px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative; /* Allows absolute positioning inside */
+  overflow: hidden; /* Ensures inner elements respect button boundaries */
+  width: 200px; /* Adjust button width */
+  height: 180px; /* Adjust button height */
+}
+
+.center-button:hover {
+  background-color: #6c757d; /* Change background color on hover */
+  color: #ffffff; /* Change text color on hover */
+}
+
+.icon {
+  font-size: 36px;
+  margin-bottom: 10px; /* Space between icon and text */
+}
+
+.center-button .icon i {
+  display: block;
+}
+
+/* Absolute positioning for icon */
+.center-button .icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Text styling */
+.center-button {
+  font-weight: bold;
+  font-size: larger;
