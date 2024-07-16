@@ -658,36 +658,34 @@ function finishCropping() {
     const imgRect = img.getBoundingClientRect();
     const cropRect = cropOverlay.getBoundingClientRect();
 
-    const cropX = (cropRect.left - imgRect.left) / imgRect.width;
-    const cropY = (cropRect.top - imgRect.top) / imgRect.height;
-    const cropWidth = cropRect.width / imgRect.width;
-    const cropHeight = cropRect.height / imgRect.height;
+    // Calculate crop dimensions relative to the original image
+    const cropX = (cropRect.left - imgRect.left) / imgRect.width * img.naturalWidth;
+    const cropY = (cropRect.top - imgRect.top) / imgRect.height * img.naturalHeight;
+    const cropWidth = cropRect.width / imgRect.width * img.naturalWidth;
+    const cropHeight = cropRect.height / imgRect.height * img.naturalHeight;
 
-    // Create a canvas to crop the image
+    // Create a canvas with the same dimensions as the current image display size
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = cropWidth * img.naturalWidth;
-    canvas.height = cropHeight * img.naturalHeight;
+    canvas.width = img.width;
+    canvas.height = img.height;
 
+    // Draw the cropped portion of the image onto the canvas, scaling it to fit
     ctx.drawImage(img,
-        cropX * img.naturalWidth, cropY * img.naturalHeight,
-        cropWidth * img.naturalWidth, cropHeight * img.naturalHeight,
-        0, 0, canvas.width, canvas.height);
+        cropX, cropY, cropWidth, cropHeight,  // Source rectangle
+        0, 0, canvas.width, canvas.height);   // Destination rectangle (full canvas)
 
-    // Update the image with the cropped version
+    // Update the image source with the new canvas content
     img.src = canvas.toDataURL();
 
     // Store the cropped image data
     img.setAttribute('data-cropped-src', canvas.toDataURL());
 
-    // Restore original position and z-index
+    // Restore original z-index
     selectedImageContainer.style.zIndex = originalZIndex;
-    selectedImageContainer.style.left = originalPosition.left;
-    selectedImageContainer.style.top = originalPosition.top;
 
     cleanupCropping();
 }
-
 function cancelCropping() {
     // Restore original position and z-index
     selectedImageContainer.style.zIndex = originalZIndex;
