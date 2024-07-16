@@ -163,12 +163,19 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
   });
 
-  document.addEventListener('mouseup', function() {
-    isDragging = false;
-    isResizing = false;
-    img.style.cursor = 'grab';
-  });
+   document.addEventListener('mouseup', function() {
+        isDragging = false;
+        isResizing = false;
+        img.style.cursor = 'grab';
 
+        // Recalculate center option state
+        const centerOption = document.getElementById('center-image');
+        if (isImageCentered(imgContainer)) {
+            centerOption.classList.add('disabled');
+        } else {
+            centerOption.classList.remove('disabled');
+        }
+    });
   resizeHandle.addEventListener('mousedown', function(event) {
     isResizing = true;
     isDragging = false;
@@ -197,22 +204,27 @@ imgContainer.addEventListener('contextmenu', function(event) {
     selectedImageContainer = imgContainer;
     contextMenu.style.display = 'block';
 
-    // Position the menu
+    // Update the center option state
+    const centerOption = document.getElementById('center-image');
+    if (isImageCentered(imgContainer)) {
+        centerOption.classList.add('disabled');
+    } else {
+        centerOption.classList.remove('disabled');
+    }
+
+    // Position the menu (existing code)
     const menuWidth = contextMenu.offsetWidth;
     const menuHeight = contextMenu.offsetHeight;
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
 
-    // Default position
     let left = event.pageX;
     let top = event.pageY;
 
-    // Adjust if too close to right edge
     if (left + menuWidth > windowWidth) {
         left = windowWidth - menuWidth;
     }
 
-    // Adjust if too close to bottom edge
     if (top + menuHeight > windowHeight) {
         top = windowHeight - menuHeight;
     }
@@ -220,7 +232,6 @@ imgContainer.addEventListener('contextmenu', function(event) {
     contextMenu.style.left = left + 'px';
     contextMenu.style.top = top + 'px';
 });
-
 imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
@@ -246,14 +257,13 @@ document.addEventListener('click', function(event) {
 
 
 centerImage.addEventListener('click', function() {
-  if (selectedImageContainer) {
-    const containerRect = canvas.getBoundingClientRect();
-    const imgRect = selectedImageContainer.getBoundingClientRect();
-    selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
-    contextMenu.style.display = 'none';
-  }
+    if (selectedImageContainer && !this.classList.contains('disabled')) {
+        const containerRect = canvas.getBoundingClientRect();
+        const imgRect = selectedImageContainer.getBoundingClientRect();
+        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+        contextMenu.style.display = 'none';
+    }
 });
-
 cutImage.addEventListener('click', function() {
   if (selectedImageContainer) {
     startCropping();
@@ -765,3 +775,13 @@ pasteImage.addEventListener('click', function() {
         updatePasteButtonState();
     }
 });
+
+function isImageCentered(imgContainer) {
+    const containerRect = canvas.getBoundingClientRect();
+    const imgRect = imgContainer.getBoundingClientRect();
+    const centerX = containerRect.width / 2;
+    const imageCenterX = imgRect.left - containerRect.left + imgRect.width / 2;
+
+    // Allow for a small margin of error (e.g., 1 pixel)
+    return Math.abs(centerX - imageCenterX) < 5;
+}

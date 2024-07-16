@@ -640,3 +640,7 @@ body, html {
 .button-text.disabled {
     color: #999;
 }
+.context-menu-item.disabled {
+    color: #999;
+    cursor: default;
+}
