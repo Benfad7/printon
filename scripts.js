@@ -688,11 +688,26 @@ deleteImage.addEventListener('click', function() {
         canvas.removeChild(selectedImageContainer);
         selectedImageContainer = null;
         contextMenu.style.display = 'none';
+
+        // Clear copied data if the deleted image was the copied one
+        if (copiedImageData && copiedImageData.src === selectedImageContainer.querySelector('img').src) {
+            copiedImageData = null;
+            updatePasteButtonState();
+        }
     }
 });
 const copyImage = document.getElementById('copy-image');
 const pasteImage = document.getElementById('paste-image');
 let copiedImageData = null;
+
+function updatePasteButtonState() {
+    if (copiedImageData) {
+        pasteImage.classList.remove('disabled');
+    } else {
+        pasteImage.classList.add('disabled');
+    }
+}
+updatePasteButtonState();
 
 copyImage.addEventListener('click', function() {
     if (selectedImageContainer) {
@@ -704,6 +719,7 @@ copyImage.addEventListener('click', function() {
             transform: img.style.transform
         };
         contextMenu.style.display = 'none';
+        updatePasteButtonState();
     }
 });
 
@@ -742,5 +758,7 @@ pasteImage.addEventListener('click', function() {
         updateLayerButtons(newContainer);
 
         contextMenu.style.display = 'none';
+                updatePasteButtonState();
+
     }
 });
