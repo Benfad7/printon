@@ -514,6 +514,8 @@ cropButton.addEventListener('click', function() {
 });
 
 function startCropping() {
+    document.addEventListener('mousedown', handleOutsideClick);
+
     isCropping = true;
     cropButton.classList.add('active');
 
@@ -669,4 +671,12 @@ function cleanupCropping() {
     cropOverlay = null;
     cropButtonBelow = null;
     cancelCropButton = null;
+        document.removeEventListener('mousedown', handleOutsideClick);
+
+}
+
+function handleOutsideClick(event) {
+    if (isCropping && selectedImageContainer && !selectedImageContainer.contains(event.target)) {
+        cancelCropping();
+    }
 }
