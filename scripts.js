@@ -577,37 +577,40 @@ function startCropping() {
     });
 
     // Create crop button below the image
-    cropButtonBelow = document.createElement('div');
-    cropButtonBelow.className = 'button-group';
-    cropButtonBelow.style.position = 'absolute';
-    cropButtonBelow.style.bottom = '-60px';
-    cropButtonBelow.style.left = '50%';
-    cropButtonBelow.style.transform = 'translateX(-50%)';
-    cropButtonBelow.innerHTML = `
-        <div class="button-container">
-            <button class="custom-button">
-                <i class="fa-solid fa-check"></i>
-            </button>
-        </div>
-        <span class="button-text">חתוך</span>
-    `;
-    selectedImageContainer.appendChild(cropButtonBelow);
+  // Create crop button below the image
+  cropButtonBelow = document.createElement('div');
+  cropButtonBelow.className = 'button-group';
+  cropButtonBelow.style.position = 'absolute';
+  cropButtonBelow.style.top = '100%';  // Changed from bottom to top
+  cropButtonBelow.style.left = '50%';
+  cropButtonBelow.style.transform = 'translateX(-50%)';
+  cropButtonBelow.style.marginTop = '10px';  // Add some margin from the image
+  cropButtonBelow.innerHTML = `
+      <div class="button-container">
+          <button class="custom-button">
+              <i class="fa-solid fa-check"></i>
+          </button>
+      </div>
+      <span class="button-text">חתוך</span>
+  `;
+  selectedImageContainer.appendChild(cropButtonBelow);
 
-    // Create cancel button
-    cancelCropButton = document.createElement('div');
-    cancelCropButton.className = 'button-group';
-    cancelCropButton.style.position = 'absolute';
-    cancelCropButton.style.bottom = '-60px';
-    cancelCropButton.style.left = 'calc(50% + 70px)';  // Adjust this value to position it correctly
-    cancelCropButton.innerHTML = `
-        <div class="button-container">
-            <button class="custom-button">
-                <i class="fa-solid fa-times"></i>
-            </button>
-        </div>
-        <span class="button-text">בטל</span>
-    `;
-    selectedImageContainer.appendChild(cancelCropButton);
+  // Create cancel button
+  cancelCropButton = document.createElement('div');
+  cancelCropButton.className = 'button-group';
+  cancelCropButton.style.position = 'absolute';
+  cancelCropButton.style.top = '100%';  // Changed from bottom to top
+  cancelCropButton.style.left = 'calc(50% + 70px)';
+  cancelCropButton.style.marginTop = '10px';  // Add some margin from the image
+  cancelCropButton.innerHTML = `
+      <div class="button-container">
+          <button class="custom-button">
+              <i class="fa-solid fa-times"></i>
+          </button>
+      </div>
+      <span class="button-text">בטל</span>
+  `;
+  selectedImageContainer.appendChild(cancelCropButton);
 
     cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
     cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
