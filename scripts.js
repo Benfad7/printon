@@ -242,11 +242,10 @@ imgContainer.addEventListener('click', function() {
 
     const sizeDisplay = document.getElementById('image-size');
     sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
+        selectedImageContainer = imgContainer;
 
     showScreen(screen4);
-    selectedImageContainer = imgContainer;
-        updateLayerButtons(selectedImageContainer);
-
+    updateLayerButtons(selectedImageContainer);
 
     // Set background removal toggle based on stored state
     const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
@@ -390,21 +389,13 @@ document.getElementById('center-image-button').addEventListener('click', functio
 });
 const layerControl = document.getElementById('layer-control');
 function updateLayerButtons(imgContainer) {
-    const layerState = imgContainer.getAttribute('data-layer-state');
-    const isTopLayer = imgContainer === canvas.lastElementChild;
-    const isBottomLayer = imgContainer === canvas.firstElementChild;
-
-    if (isTopLayer) {
-        layerMoveForward.classList.remove('active');
-        layerMoveBackward.classList.add('active');
-    } else if (isBottomLayer) {
-        layerMoveForward.classList.add('active');
-        layerMoveBackward.classList.remove('active');
-    } else {
-        // Middle layer
-        layerMoveForward.classList.add('active');
-        layerMoveBackward.classList.add('active');
-    }
+const backgroundRemovalToggle = document.querySelector('.on-off-button input');
+const backGroundState = imgContainer.getAttribute('data-background-removed');
+if (backGroundState === 'true') {
+    backgroundRemovalToggle.checked = true;
+} else {
+    backgroundRemovalToggle.checked = false;
+}
 
     // Update center button state
     const centerButton = document.getElementById('center-image-button');
