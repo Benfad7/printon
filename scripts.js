@@ -204,17 +204,18 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
     const clickedOnImage = event.target.closest('.image-container');
+    const hasImagesOnCanvas = canvas.querySelector('.image-container') !== null;
 
     contextMenu.style.display = 'block';
 
-    // Disable or enable menu items based on whether an image was clicked
+    // Disable or enable menu items based on context
     const menuItems = contextMenu.querySelectorAll('.context-menu-item');
     menuItems.forEach(item => {
         if (item.id === 'paste-image') {
             // Always enable paste if there's copied data
             item.classList.toggle('disabled', !copiedImageData);
         } else {
-            item.classList.toggle('disabled', !clickedOnImage);
+            item.classList.toggle('disabled', !clickedOnImage || !hasImagesOnCanvas);
         }
     });
 
@@ -240,7 +241,12 @@ document.addEventListener('contextmenu', function(event) {
 
     // Set the selected image container
     selectedImageContainer = clickedOnImage;
-});imgContainer.addEventListener('click', function() {
+});
+
+
+
+
+imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
 
@@ -750,6 +756,13 @@ function updatePasteButtonState() {
         pasteButton.classList.add('disabled');
         contextPasteItem.classList.add('disabled');
     }
+
+    // Update other context menu items based on whether there are images on the canvas
+    const hasImages = hasImagesOnCanvas();
+    const otherMenuItems = contextMenu.querySelectorAll('.context-menu-item:not(#paste-image)');
+    otherMenuItems.forEach(item => {
+        item.classList.toggle('disabled', !hasImages);
+    });
 }
 updatePasteButtonState();
 
@@ -769,16 +782,23 @@ copyImage.addEventListener('click', function() {
     }
 });
 pasteImage.addEventListener('click', function() {
-    if (copiedImageData && selectedImageContainer) {
+    if (copiedImageData) {
         const newContainer = document.createElement('div');
         newContainer.classList.add('image-container');
         newContainer.style.position = 'absolute';
 
-        // Set position near the original image
-        const originalLeft = parseFloat(selectedImageContainer.style.left) || 0;
-        const originalTop = parseFloat(selectedImageContainer.style.top) || 0;
-        newContainer.style.left = (originalLeft + 20) + 'px';
-        newContainer.style.top = (originalTop + 20) + 'px';
+        // Set position in the center of the canvas if no image is selected
+        if (!selectedImageContainer) {
+            const canvasRect = canvas.getBoundingClientRect();
+            newContainer.style.left = (canvasRect.width / 2 - parseInt(copiedImageData.width) / 2) + 'px';
+            newContainer.style.top = (canvasRect.height / 2 - parseInt(copiedImageData.height) / 2) + 'px';
+        } else {
+            // Set position near the original image if one is selected
+            const originalLeft = parseFloat(selectedImageContainer.style.left) || 0;
+            const originalTop = parseFloat(selectedImageContainer.style.top) || 0;
+            newContainer.style.left = (originalLeft + 20) + 'px';
+            newContainer.style.top = (originalTop + 20) + 'px';
+        }
 
         const newImg = document.createElement('img');
         newImg.src = copiedImageData.src;
@@ -808,7 +828,6 @@ pasteImage.addEventListener('click', function() {
         updatePasteButtonState();
     }
 });
-
 function isImageCentered(imgContainer) {
     const containerRect = canvas.getBoundingClientRect();
     const imgRect = imgContainer.getBoundingClientRect();
@@ -827,4 +846,12 @@ function updateCenterButtonState(imgContainer) {
         centerButton.classList.remove('disabled');
         centerButton.querySelector('.button-text').classList.remove('disabled');
     }
+}
+function hasImagesOnCanvas() {
+    return canvas.querySelector('.image-container') !== null;
+}
+
+function updateCanvasState() {
+    updatePasteButtonState();
+    // Add any other state updates here
 }
