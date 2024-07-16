@@ -192,13 +192,34 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
   });
 
-  imgContainer.addEventListener('contextmenu', function(event) {
+imgContainer.addEventListener('contextmenu', function(event) {
     event.preventDefault();
     selectedImageContainer = imgContainer;
     contextMenu.style.display = 'block';
-    contextMenu.style.left = event.pageX + 'px';
-    contextMenu.style.top = event.pageY + 'px';
-  });
+
+    // Position the menu
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    // Default position
+    let left = event.pageX;
+    let top = event.pageY;
+
+    // Adjust if too close to right edge
+    if (left + menuWidth > windowWidth) {
+        left = windowWidth - menuWidth;
+    }
+
+    // Adjust if too close to bottom edge
+    if (top + menuHeight > windowHeight) {
+        top = windowHeight - menuHeight;
+    }
+
+    contextMenu.style.left = left + 'px';
+    contextMenu.style.top = top + 'px';
+});
 
 imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
@@ -660,3 +681,12 @@ function handleOutsideClick(event) {
         cancelCropping();
     }
 }
+const deleteImage = document.getElementById('delete-image');
+
+deleteImage.addEventListener('click', function() {
+    if (selectedImageContainer) {
+        canvas.removeChild(selectedImageContainer);
+        selectedImageContainer = null;
+        contextMenu.style.display = 'none';
+    }
+});
