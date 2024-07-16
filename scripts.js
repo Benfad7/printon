@@ -262,17 +262,9 @@ document.addEventListener('click', function(event) {
 
 centerImage.addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled')) {
-        const containerRect = canvas.getBoundingClientRect();
-        const imgRect = selectedImageContainer.getBoundingClientRect();
-        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+        centerSelectedImage();
         contextMenu.style.display = 'none';
     }
-});
-cutImage.addEventListener('click', function() {
-  if (selectedImageContainer) {
-    startCropping();
-    contextMenu.style.display = 'none';
-  }
 });
 
 function showScreen(screenToShow) {
@@ -393,10 +385,7 @@ backgroundRemovalToggle.addEventListener('change', function() {
 
 document.getElementById('center-image-button').addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled')) {
-        const containerRect = canvas.getBoundingClientRect();
-        const imgRect = selectedImageContainer.getBoundingClientRect();
-        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
-        updateLayerButtons(selectedImageContainer);
+        centerSelectedImage();
     }
 });
 const layerControl = document.getElementById('layer-control');
@@ -420,12 +409,16 @@ function updateLayerButtons(imgContainer) {
     // Update center button state
     const centerButton = document.getElementById('center-image-button');
     const centerButtonText = centerButton.nextElementSibling;
+    const centerOption = document.getElementById('center-image');
+
     if (isImageCentered(imgContainer)) {
         centerButton.classList.add('disabled');
         centerButtonText.classList.add('disabled');
+        centerOption.classList.add('disabled');
     } else {
         centerButton.classList.remove('disabled');
         centerButtonText.classList.remove('disabled');
+        centerOption.classList.remove('disabled');
     }
 }
 
@@ -802,4 +795,25 @@ function isImageCentered(imgContainer) {
 
     // Allow for a small margin of error (e.g., 1 pixel)
     return Math.abs(centerX - imageCenterX) < 5;
+}
+
+function centerSelectedImage() {
+    if (selectedImageContainer) {
+        const containerRect = canvas.getBoundingClientRect();
+        const imgRect = selectedImageContainer.getBoundingClientRect();
+        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+
+        // Update the context menu option
+        const centerOption = document.getElementById('center-image');
+        centerOption.classList.add('disabled');
+
+        // Update the button in the fourth screen
+        const centerButton = document.getElementById('center-image-button');
+        const centerButtonText = centerButton.nextElementSibling;
+        centerButton.classList.add('disabled');
+        centerButtonText.classList.add('disabled');
+
+        // Update layer buttons
+        updateLayerButtons(selectedImageContainer);
+    }
 }
