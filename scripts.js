@@ -690,3 +690,57 @@ deleteImage.addEventListener('click', function() {
         contextMenu.style.display = 'none';
     }
 });
+const copyImage = document.getElementById('copy-image');
+const pasteImage = document.getElementById('paste-image');
+let copiedImageData = null;
+
+copyImage.addEventListener('click', function() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        copiedImageData = {
+            src: img.src,
+            width: img.style.width,
+            height: img.style.height,
+            transform: img.style.transform
+        };
+        contextMenu.style.display = 'none';
+    }
+});
+
+pasteImage.addEventListener('click', function() {
+    if (copiedImageData && selectedImageContainer) {
+        const newContainer = document.createElement('div');
+        newContainer.classList.add('image-container');
+        newContainer.style.position = 'absolute';
+
+        // Set position near the original image
+        const originalLeft = parseFloat(selectedImageContainer.style.left) || 0;
+        const originalTop = parseFloat(selectedImageContainer.style.top) || 0;
+        newContainer.style.left = (originalLeft + 20) + 'px';
+        newContainer.style.top = (originalTop + 20) + 'px';
+
+        const newImg = document.createElement('img');
+        newImg.src = copiedImageData.src;
+        newImg.style.width = copiedImageData.width;
+        newImg.style.height = copiedImageData.height;
+        newImg.style.transform = copiedImageData.transform;
+
+        const resizeHandle = document.createElement('div');
+        resizeHandle.classList.add('resize-handle');
+
+        const deleteHandle = document.createElement('div');
+        deleteHandle.classList.add('delete-handle');
+
+        newContainer.appendChild(newImg);
+        newContainer.appendChild(resizeHandle);
+        newContainer.appendChild(deleteHandle);
+
+        canvas.appendChild(newContainer);
+
+        setupImageInteractions(newContainer, newImg, resizeHandle, deleteHandle, 'Pasted Image');
+        selectedImageContainer = newContainer;
+        updateLayerButtons(newContainer);
+
+        contextMenu.style.display = 'none';
+    }
+});
