@@ -429,7 +429,7 @@ function moveLayerBackward(imgContainer) {
 
 contextMoveForward.addEventListener('click', function() {
     if (selectedImageContainer) {
-        moveLayerForward(selectedImageContainer);
+        moveLayerForward(selectedImageContainer) ;
     }
 });
 
