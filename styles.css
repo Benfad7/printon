@@ -507,24 +507,25 @@ body, html {
 }
 
 #center-button-group {
-    left: 11%;
+     right: 0%;
 }
 
 #layer-control {
-    left: 25%;
+    right: 13%;
 }
 
 #crop-control {
-    right: 0%; /* Adjust this value as needed to position it correctly */
+ right: 67%;
+    /* Adjust this value as needed to position it correctly */
 }
 
 /* Add this if you need to adjust the position of other buttons */
 #flip-control {
-    right: 25%;
+    right: 34%;
 }
 
 #duplicate-control {
-    right: 10%;
+    right: 55%;
 }
 .button-group {
     display: flex;
