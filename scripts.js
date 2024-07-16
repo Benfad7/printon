@@ -201,20 +201,24 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
   });
 
-imgContainer.addEventListener('contextmenu', function(event) {
+document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
-    selectedImageContainer = imgContainer;
+    const clickedOnImage = event.target.closest('.image-container');
+
     contextMenu.style.display = 'block';
 
-    // Update the center option state
-    const centerOption = document.getElementById('center-image');
-    if (isImageCentered(imgContainer)) {
-        centerOption.classList.add('disabled');
-    } else {
-        centerOption.classList.remove('disabled');
-    }
+    // Disable or enable menu items based on whether an image was clicked
+    const menuItems = contextMenu.querySelectorAll('.context-menu-item');
+    menuItems.forEach(item => {
+        if (item.id === 'paste-image') {
+            // Always enable paste if there's copied data
+            item.classList.toggle('disabled', !copiedImageData);
+        } else {
+            item.classList.toggle('disabled', !clickedOnImage);
+        }
+    });
 
-    // Position the menu (existing code)
+    // Position the menu
     const menuWidth = contextMenu.offsetWidth;
     const menuHeight = contextMenu.offsetHeight;
     const windowWidth = window.innerWidth;
@@ -233,8 +237,10 @@ imgContainer.addEventListener('contextmenu', function(event) {
 
     contextMenu.style.left = left + 'px';
     contextMenu.style.top = top + 'px';
-});
-imgContainer.addEventListener('click', function() {
+
+    // Set the selected image container
+    selectedImageContainer = clickedOnImage;
+});imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
 
@@ -734,10 +740,15 @@ const pasteImage = document.getElementById('paste-image');
 let copiedImageData = null;
 
 function updatePasteButtonState() {
+    const pasteButton = document.getElementById('paste-image');
+    const contextPasteItem = contextMenu.querySelector('#paste-image');
+
     if (copiedImageData) {
-        pasteImage.classList.remove('disabled');
+        pasteButton.classList.remove('disabled');
+        contextPasteItem.classList.remove('disabled');
     } else {
-        pasteImage.classList.add('disabled');
+        pasteButton.classList.add('disabled');
+        contextPasteItem.classList.add('disabled');
     }
 }
 updatePasteButtonState();
