@@ -497,9 +497,11 @@ duplicateButton.addEventListener('click', function() {
         selectedImageContainer = clonedContainer;
     }
 });
+
 const cropButton = document.getElementById('crop-image');
 let isCropping = false;
 let cropHandles = [];
+let cropOverlay, cropButtonBelow, cancelCropButton;
 
 cropButton.addEventListener('click', function() {
     if (selectedImageContainer) {
@@ -519,7 +521,7 @@ function startCropping() {
     const imgRect = img.getBoundingClientRect();
 
     // Create crop overlay
-    const cropOverlay = document.createElement('div');
+    cropOverlay = document.createElement('div');
     cropOverlay.className = 'crop-overlay';
     cropOverlay.style.position = 'absolute';
     cropOverlay.style.top = '0';
@@ -547,10 +549,21 @@ function startCropping() {
                 const deltaX = moveEvent.clientX - startX;
                 const deltaY = moveEvent.clientY - startY;
 
-                if (pos.includes('n')) cropOverlay.style.top = `${startRect.top - imgRect.top + deltaY}px`;
-                if (pos.includes('s')) cropOverlay.style.bottom = `${imgRect.bottom - startRect.bottom - deltaY}px`;
-                if (pos.includes('w')) cropOverlay.style.left = `${startRect.left - imgRect.left + deltaX}px`;
-                if (pos.includes('e')) cropOverlay.style.right = `${imgRect.right - startRect.right - deltaX}px`;
+                let newTop = startRect.top - imgRect.top + (pos.includes('n') ? deltaY : 0);
+                let newBottom = imgRect.bottom - startRect.bottom - (pos.includes('s') ? deltaY : 0);
+                let newLeft = startRect.left - imgRect.left + (pos.includes('w') ? deltaX : 0);
+                let newRight = imgRect.right - startRect.right - (pos.includes('e') ? deltaX : 0);
+
+                // Ensure crop area stays within image bounds
+                newTop = Math.max(0, Math.min(newTop, imgRect.height - 10));
+                newBottom = Math.max(0, Math.min(newBottom, imgRect.height - 10));
+                newLeft = Math.max(0, Math.min(newLeft, imgRect.width - 10));
+                newRight = Math.max(0, Math.min(newRight, imgRect.width - 10));
+
+                cropOverlay.style.top = `${newTop}px`;
+                cropOverlay.style.bottom = `${newBottom}px`;
+                cropOverlay.style.left = `${newLeft}px`;
+                cropOverlay.style.right = `${newRight}px`;
             };
 
             const mouseup = () => {
@@ -562,15 +575,49 @@ function startCropping() {
             document.addEventListener('mouseup', mouseup);
         });
     });
+
+    // Create crop button below the image
+    cropButtonBelow = document.createElement('div');
+    cropButtonBelow.className = 'button-group';
+    cropButtonBelow.style.position = 'absolute';
+    cropButtonBelow.style.bottom = '-60px';
+    cropButtonBelow.style.left = '50%';
+    cropButtonBelow.style.transform = 'translateX(-50%)';
+    cropButtonBelow.innerHTML = `
+        <div class="button-container">
+            <button class="custom-button">
+                <i class="fa-solid fa-check"></i>
+            </button>
+        </div>
+        <span class="button-text">חתוך</span>
+    `;
+    selectedImageContainer.appendChild(cropButtonBelow);
+
+    // Create cancel button
+    cancelCropButton = document.createElement('div');
+    cancelCropButton.className = 'button-group';
+    cancelCropButton.style.position = 'absolute';
+    cancelCropButton.style.bottom = '-60px';
+    cancelCropButton.style.left = 'calc(50% + 70px)';  // Adjust this value to position it correctly
+    cancelCropButton.innerHTML = `
+        <div class="button-container">
+            <button class="custom-button">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        <span class="button-text">בטל</span>
+    `;
+    selectedImageContainer.appendChild(cancelCropButton);
+
+    cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
+    cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
 }
 
 function finishCropping() {
-    isCropping = false;
-    cropButton.classList.remove('active');
+    if (!cropOverlay) return;
 
     const img = selectedImageContainer.querySelector('img');
     const imgRect = img.getBoundingClientRect();
-    const cropOverlay = selectedImageContainer.querySelector('.crop-overlay');
     const cropRect = cropOverlay.getBoundingClientRect();
 
     const cropX = (cropRect.left - imgRect.left) / imgRect.width;
@@ -592,7 +639,23 @@ function finishCropping() {
     // Update the image with the cropped version
     img.src = canvas.toDataURL();
 
-    // Remove crop overlay and handles
-    selectedImageContainer.removeChild(cropOverlay);
+    cleanupCropping();
+}
+
+function cancelCropping() {
+    cleanupCropping();
+}
+
+function cleanupCropping() {
+    isCropping = false;
+    cropButton.classList.remove('active');
+
+    // Remove crop overlay, handles, and the buttons below
+    if (cropOverlay) selectedImageContainer.removeChild(cropOverlay);
+    if (cropButtonBelow) selectedImageContainer.removeChild(cropButtonBelow);
+    if (cancelCropButton) selectedImageContainer.removeChild(cancelCropButton);
     cropHandles = [];
+    cropOverlay = null;
+    cropButtonBelow = null;
+    cancelCropButton = null;
 }

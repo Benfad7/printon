@@ -568,12 +568,7 @@ body, html {
     color: #333;
     text-align: center;
 }
-.crop-rect {
-    position: absolute;
-    border: 2px dashed #fff;
-    background-color: rgba(0,0,0,0.5);
-    pointer-events: none;
-}
+
 .crop-overlay {
     position: absolute;
     border: 2px solid #fff;
@@ -592,3 +587,41 @@ body, html {
 .crop-handle.ne { top: -5px; right: -5px; cursor: ne-resize; }
 .crop-handle.se { bottom: -5px; right: -5px; cursor: se-resize; }
 .crop-handle.sw { bottom: -5px; left: -5px; cursor: sw-resize; }
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.button-container {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: none;
+    padding: 0;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.custom-button:hover {
+    background-color: #f0f0f0;
+}
+
+.button-text {
+    margin-top: 5px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+}
