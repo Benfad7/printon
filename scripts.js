@@ -578,42 +578,50 @@ function startCropping() {
 
     // Create crop button below the image
   // Create crop button below the image
-  cropButtonBelow = document.createElement('div');
-  cropButtonBelow.className = 'button-group';
-  cropButtonBelow.style.position = 'absolute';
-  cropButtonBelow.style.top = '100%';  // Changed from bottom to top
-  cropButtonBelow.style.left = '50%';
-  cropButtonBelow.style.transform = 'translateX(-50%)';
-  cropButtonBelow.style.marginTop = '10px';  // Add some margin from the image
-  cropButtonBelow.innerHTML = `
-      <div class="button-container">
-          <button class="custom-button">
-              <i class="fa-solid fa-check"></i>
-          </button>
-      </div>
-      <span class="button-text">חתוך</span>
-  `;
-  selectedImageContainer.appendChild(cropButtonBelow);
+      const buttonContainer = document.createElement('div');
+       buttonContainer.style.position = 'absolute';
+       buttonContainer.style.top = '100%';
+       buttonContainer.style.left = '50%';
+       buttonContainer.style.transform = 'translateX(-50%)';
+       buttonContainer.style.marginTop = '10px';
+       buttonContainer.style.display = 'flex';
+       buttonContainer.style.justifyContent = 'center';
+       buttonContainer.style.width = '100%';
 
-  // Create cancel button
-  cancelCropButton = document.createElement('div');
-  cancelCropButton.className = 'button-group';
-  cancelCropButton.style.position = 'absolute';
-  cancelCropButton.style.top = '100%';  // Changed from bottom to top
-  cancelCropButton.style.left = 'calc(50% + 70px)';
-  cancelCropButton.style.marginTop = '10px';  // Add some margin from the image
-  cancelCropButton.innerHTML = `
-      <div class="button-container">
-          <button class="custom-button">
-              <i class="fa-solid fa-times"></i>
-          </button>
-      </div>
-      <span class="button-text">בטל</span>
-  `;
-  selectedImageContainer.appendChild(cancelCropButton);
+       // Create crop button
+       cropButtonBelow = document.createElement('div');
+       cropButtonBelow.className = 'button-group';
+       cropButtonBelow.style.marginRight = '300px';  // Increased from 10px to 50px
+       cropButtonBelow.innerHTML = `
+           <div class="button-container">
+               <button class="custom-button">
+                   <i class="fa-solid fa-check"></i>
+               </button>
+           </div>
+           <span class="button-text">חתוך</span>
+       `;
 
-    cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
-    cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
+       // Create cancel button
+       cancelCropButton = document.createElement('div');
+       cancelCropButton.className = 'button-group';
+       cancelCropButton.innerHTML = `
+           <div class="button-container">
+               <button class="custom-button">
+                   <i class="fa-solid fa-times"></i>
+               </button>
+           </div>
+           <span class="button-text">בטל</span>
+       `;
+
+       // Add buttons to the container
+       buttonContainer.appendChild(cropButtonBelow);
+       buttonContainer.appendChild(cancelCropButton);
+
+       // Add the container to the image container
+       selectedImageContainer.appendChild(buttonContainer);
+
+       cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
+       cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
 }
 
 function finishCropping() {
@@ -653,10 +661,10 @@ function cleanupCropping() {
     isCropping = false;
     cropButton.classList.remove('active');
 
-    // Remove crop overlay, handles, and the buttons below
+    // Remove crop overlay and the button container
     if (cropOverlay) selectedImageContainer.removeChild(cropOverlay);
-    if (cropButtonBelow) selectedImageContainer.removeChild(cropButtonBelow);
-    if (cancelCropButton) selectedImageContainer.removeChild(cancelCropButton);
+    const buttonContainer = selectedImageContainer.querySelector('div[style*="position: absolute"]');
+    if (buttonContainer) selectedImageContainer.removeChild(buttonContainer);
     cropHandles = [];
     cropOverlay = null;
     cropButtonBelow = null;
