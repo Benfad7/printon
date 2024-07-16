@@ -578,48 +578,52 @@ function startCropping() {
 
     // Create crop button below the image
   // Create crop button below the image
-        const buttonContainer = document.createElement('div');
-        buttonContainer.style.position = 'absolute';
-        buttonContainer.style.top = '100%';
-        buttonContainer.style.left = '0';
-        buttonContainer.style.right = '0';
-        buttonContainer.style.display = 'flex';
-        buttonContainer.style.justifyContent = 'center';
-        buttonContainer.style.alignItems = 'center';
-        buttonContainer.style.marginTop = '20px'; // Increase space between image and buttons
+    // Create crop button below the image
+const buttonContainer = document.createElement('div');
+buttonContainer.style.position = 'absolute';
+buttonContainer.style.top = '100%';
+buttonContainer.style.left = '0';
+buttonContainer.style.right = '0';
+buttonContainer.style.display = 'flex';
+buttonContainer.style.justifyContent = 'center';
+buttonContainer.style.alignItems = 'center';
+buttonContainer.style.marginTop = '20px';
 
-        // Create crop (done) button
-        cropButtonBelow = createButton('חתוך', 'fa-check');
+// Create crop (done) button
+cropButtonBelow = createButton('חתוך', 'fa-check');
+cropButtonBelow.style.marginLeft = '100px'; // Position on the left
 
-        // Create cancel button
-        cancelCropButton = createButton('בטל', 'fa-times');
+// Create cancel button
+cancelCropButton = createButton('בטל', 'fa-times');
+cancelCropButton.style.marginRight = '100px'; // Position on the right
 
-        // Add buttons to the container
-        buttonContainer.appendChild(cropButtonBelow);
-        buttonContainer.appendChild(cancelCropButton);
+// Add buttons to the container
+buttonContainer.appendChild(cropButtonBelow);
+buttonContainer.appendChild(cancelCropButton);
 
-        // Add the container to the image container
-        selectedImageContainer.appendChild(buttonContainer);
+// Add the container to the image container
+selectedImageContainer.appendChild(buttonContainer);
 
-        cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
-        cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
+cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
+cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
     }
 
-    function createButton(text, iconClass) {
-        const button = document.createElement('div');
-        button.className = 'button-group';
-        button.style.display = 'inline-block'; // Ensure buttons are inline
-        button.style.margin = '0 20px'; // Add space between buttons
-        button.innerHTML = `
-            <div class="button-container">
-                <button class="custom-button">
-                    <i class="fa-solid ${iconClass}"></i>
-                </button>
-            </div>
-            <span class="button-text">${text}</span>
-        `;
-        return button;
-    }
+function createButton(text, iconClass) {
+    const button = document.createElement('div');
+    button.className = 'button-group';
+    button.style.display = 'flex';
+    button.style.flexDirection = 'column';
+    button.style.alignItems = 'center';
+    button.innerHTML = `
+        <div class="button-container">
+            <button class="custom-button">
+                <i class="fa-solid ${iconClass}"></i>
+            </button>
+        </div>
+        <span class="button-text">${text}</span>
+    `;
+    return button;
+}
 function finishCropping() {
     if (!cropOverlay) return;
 
