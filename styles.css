@@ -631,3 +631,12 @@ body, html {
     color: #999;
     cursor: default;
 }
+
+.custom-button.disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.button-text.disabled {
+    color: #999;
+}
