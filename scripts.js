@@ -611,7 +611,7 @@ cropButtonBelow.style.marginLeft = '100px'; // Position on the left
 
 // Create cancel button
 cancelCropButton = createButton('בטל', 'fa-times');
-cancelCropButton.style.marginRight = '100px'; // Position on the right
+cancelCropButton.style.marginRight = '100px'; // P osition on the right
 
 // Add buttons to the container
 buttonContainer.appendChild(cropButtonBelow);
