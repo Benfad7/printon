@@ -358,7 +358,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
             }
         } else {
             if (isBackgroundRemoved) {
-                img.src = img.getAttribute('data-original-src');
+                // Use the cropped source if available, otherwise fall back to the original source
+                img.src = img.getAttribute('data-cropped-src') || img.getAttribute('data-original-src') || img.src;
                 selectedImageContainer.setAttribute('data-background-removed', 'false');
             }
         }
@@ -374,9 +375,7 @@ backgroundRemovalToggle.addEventListener('change', function() {
             img.onload = originalOnload;
         }, 50);
     }
-});
-
-document.getElementById('center-image-button').addEventListener('click', function() {
+});document.getElementById('center-image-button').addEventListener('click', function() {
   if (selectedImageContainer) {
     const containerRect = canvas.getBoundingClientRect();
     const imgRect = selectedImageContainer.getBoundingClientRect();
@@ -653,9 +652,11 @@ function finishCropping() {
     // Update the image with the cropped version
     img.src = canvas.toDataURL();
 
+    // Store the cropped image data
+    img.setAttribute('data-cropped-src', canvas.toDataURL());
+
     cleanupCropping();
 }
-
 function cancelCropping() {
     cleanupCropping();
 }
@@ -714,6 +715,8 @@ copyImage.addEventListener('click', function() {
         const img = selectedImageContainer.querySelector('img');
         copiedImageData = {
             src: img.src,
+            originalSrc: img.getAttribute('data-original-src') || img.src,
+            croppedSrc: img.getAttribute('data-cropped-src') || img.src,
             width: img.style.width,
             height: img.style.height,
             transform: img.style.transform
@@ -722,7 +725,6 @@ copyImage.addEventListener('click', function() {
         updatePasteButtonState();
     }
 });
-
 pasteImage.addEventListener('click', function() {
     if (copiedImageData && selectedImageContainer) {
         const newContainer = document.createElement('div');
@@ -737,6 +739,8 @@ pasteImage.addEventListener('click', function() {
 
         const newImg = document.createElement('img');
         newImg.src = copiedImageData.src;
+        newImg.setAttribute('data-original-src', copiedImageData.originalSrc);
+        newImg.setAttribute('data-cropped-src', copiedImageData.croppedSrc);
         newImg.style.width = copiedImageData.width;
         newImg.style.height = copiedImageData.height;
         newImg.style.transform = copiedImageData.transform;
@@ -758,7 +762,6 @@ pasteImage.addEventListener('click', function() {
         updateLayerButtons(newContainer);
 
         contextMenu.style.display = 'none';
-                updatePasteButtonState();
-
+        updatePasteButtonState();
     }
 });
