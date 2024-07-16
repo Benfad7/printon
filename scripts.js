@@ -124,6 +124,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
       imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
       imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+                  updateCenterButtonState(imgContainer);
+
     } else if (isResizing && !isDragging) {
       const dx = event.clientX - startX;
       const dy = event.clientY - startY;
@@ -163,23 +165,19 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
   });
 
-    document.addEventListener('mouseup', function() {
+   document.addEventListener('mouseup', function() {
         isDragging = false;
         isResizing = false;
         img.style.cursor = 'grab';
 
-        // Recalculate center option state for context menu
+        // Recalculate center option state
         const centerOption = document.getElementById('center-image');
         if (isImageCentered(imgContainer)) {
             centerOption.classList.add('disabled');
         } else {
             centerOption.classList.remove('disabled');
         }
-
-        // Update layer buttons (which now includes updating the center button)
-        updateLayerButtons(imgContainer);
     });
-
   resizeHandle.addEventListener('mousedown', function(event) {
     isResizing = true;
     isDragging = false;
@@ -242,10 +240,12 @@ imgContainer.addEventListener('click', function() {
 
     const sizeDisplay = document.getElementById('image-size');
     sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
-        selectedImageContainer = imgContainer;
 
     showScreen(screen4);
-    updateLayerButtons(selectedImageContainer);
+    selectedImageContainer = imgContainer;
+        updateLayerButtons(selectedImageContainer);
+
+
 
     // Set background removal toggle based on stored state
     const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
@@ -261,9 +261,17 @@ document.addEventListener('click', function(event) {
 
 centerImage.addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled')) {
-        centerSelectedImage();
+        const containerRect = canvas.getBoundingClientRect();
+        const imgRect = selectedImageContainer.getBoundingClientRect();
+        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
         contextMenu.style.display = 'none';
     }
+});
+cutImage.addEventListener('click', function() {
+  if (selectedImageContainer) {
+    startCropping();
+    contextMenu.style.display = 'none';
+  }
 });
 
 function showScreen(screenToShow) {
@@ -380,36 +388,30 @@ backgroundRemovalToggle.addEventListener('change', function() {
             img.onload = originalOnload;
         }, 50);
     }
-});
-
-document.getElementById('center-image-button').addEventListener('click', function() {
-    if (selectedImageContainer && !this.classList.contains('disabled')) {
-        centerSelectedImage();
-    }
-});
+});document.getElementById('center-image-button').addEventListener('click', function() {
+       if (selectedImageContainer && !this.classList.contains('disabled')) {
+           const containerRect = canvas.getBoundingClientRect();
+           const imgRect = selectedImageContainer.getBoundingClientRect();
+           selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+           updateCenterButtonState(selectedImageContainer);
+       }
+   });
 const layerControl = document.getElementById('layer-control');
 function updateLayerButtons(imgContainer) {
-const backgroundRemovalToggle = document.querySelector('.on-off-button input');
-const backGroundState = imgContainer.getAttribute('data-background-removed');
-if (backGroundState === 'true') {
-    backgroundRemovalToggle.checked = true;
-} else {
-    backgroundRemovalToggle.checked = false;
-}
+    const layerState = imgContainer.getAttribute('data-layer-state');
+    const isTopLayer = imgContainer === canvas.lastElementChild;
+    const isBottomLayer = imgContainer === canvas.firstElementChild;
 
-    // Update center button state
-    const centerButton = document.getElementById('center-image-button');
-    const centerButtonText = centerButton.nextElementSibling;
-    const centerOption = document.getElementById('center-image');
-
-    if (isImageCentered(imgContainer)) {
-        centerButton.classList.add('disabled');
-        centerButtonText.classList.add('disabled');
-        centerOption.classList.add('disabled');
+    if (isTopLayer) {
+        layerMoveForward.classList.remove('active');
+        layerMoveBackward.classList.add('active');
+    } else if (isBottomLayer) {
+        layerMoveForward.classList.add('active');
+        layerMoveBackward.classList.remove('active');
     } else {
-        centerButton.classList.remove('disabled');
-        centerButtonText.classList.remove('disabled');
-        centerOption.classList.remove('disabled');
+        // Middle layer
+        layerMoveForward.classList.add('active');
+        layerMoveBackward.classList.add('active');
     }
 }
 
@@ -787,24 +789,13 @@ function isImageCentered(imgContainer) {
     // Allow for a small margin of error (e.g., 1 pixel)
     return Math.abs(centerX - imageCenterX) < 5;
 }
-
-function centerSelectedImage() {
-    if (selectedImageContainer) {
-        const containerRect = canvas.getBoundingClientRect();
-        const imgRect = selectedImageContainer.getBoundingClientRect();
-        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
-
-        // Update the context menu option
-        const centerOption = document.getElementById('center-image');
-        centerOption.classList.add('disabled');
-
-        // Update the button in the fourth screen
-        const centerButton = document.getElementById('center-image-button');
-        const centerButtonText = centerButton.nextElementSibling;
+function updateCenterButtonState(imgContainer) {
+    const centerButton = document.getElementById('center-image-button');
+    if (isImageCentered(imgContainer)) {
         centerButton.classList.add('disabled');
-        centerButtonText.classList.add('disabled');
-
-        // Update layer buttons
-        updateLayerButtons(selectedImageContainer);
+        centerButton.querySelector('.button-text').classList.add('disabled');
+    } else {
+        centerButton.classList.remove('disabled');
+        centerButton.querySelector('.button-text').classList.remove('disabled');
     }
 }
