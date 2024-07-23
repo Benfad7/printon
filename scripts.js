@@ -1050,12 +1050,13 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             startLeft = textContainer.offsetLeft;
             startTop = textContainer.offsetTop;
             textContainer.classList.add('selected');
-            textContainer.style.border = '2px solid #000'; // Solid border when selected
+            textContainer.style.border = '2px solid #000';
             resizeHandle.style.display = 'block';
             deleteHandle.style.display = 'block';
         }
         event.preventDefault();
     });
+
     document.addEventListener('mousemove', function(event) {
         if (isDragging && !isResizing) {
             const dx = event.clientX - startX;
@@ -1063,8 +1064,11 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             const newLeft = startLeft + dx;
             const newTop = startTop + dy;
 
-            const maxX = canvas.clientWidth - textContainer.offsetWidth;
-            const maxY = canvas.clientHeight - textContainer.offsetHeight;
+            const canvasRect = canvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
+
+            const maxX = canvasRect.width - textRect.width;
+            const maxY = canvasRect.height - textRect.height;
 
             textContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
             textContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
@@ -1072,6 +1076,19 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             const dx = event.clientX - startX;
             let newFontSize = Math.max(10, startFontSize + dx / 2);
             textElement.style.fontSize = newFontSize + 'px';
+
+            // Ensure text doesn't resize beyond canvas boundaries
+            const canvasRect = canvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
+
+            if (textRect.right > canvasRect.right) {
+                newFontSize = startFontSize;
+                textElement.style.fontSize = newFontSize + 'px';
+            }
+            if (textRect.bottom > canvasRect.bottom) {
+                newFontSize = startFontSize;
+                textElement.style.fontSize = newFontSize + 'px';
+            }
         }
     });
 
@@ -1097,17 +1114,15 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         updateCanvasState();
     });
 
-
-   document.addEventListener('click', function(event) {
+    document.addEventListener('click', function(event) {
         if (!textContainer.contains(event.target) && !event.target.closest('.white-square')) {
             textContainer.classList.remove('selected');
-            textContainer.style.border = '2px dashed transparent'; // Revert to dashed transparent when not selected
+            textContainer.style.border = '2px dashed transparent';
             resizeHandle.style.display = 'none';
             deleteHandle.style.display = 'none';
         }
     });
 
-    // Update hover effect
     textContainer.addEventListener('mouseenter', function() {
         if (!textContainer.classList.contains('selected')) {
             textContainer.style.border = '2px dashed #000';
