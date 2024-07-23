@@ -974,6 +974,19 @@ addToDesignButton.addEventListener('click', function() {
     console.log('Text to add:', textInput.value);
     // The actual functionality to add the text to the design will be implemented later
 });
-document.getElementById('text-input').addEventListener('focus', function() {
-    this.value = '';
+let lastInputValue = '';
+
+textInput.addEventListener('focus', function() {
+    // Move the cursor to the end of the text
+    this.selectionStart = this.selectionEnd = this.value.length;
+});
+
+textInput.addEventListener('input', function() {
+    // Store the current value
+    lastInputValue = this.value;
+});
+
+textInput.addEventListener('blur', function() {
+    // Restore the last input value when losing focus
+    this.value = lastInputValue;
 });
