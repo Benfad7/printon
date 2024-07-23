@@ -19,31 +19,36 @@ const screen4 = document.getElementById('screen4');
 const blackStripOptions = document.querySelectorAll('.black-strip-option');
 const closeButtons = document.querySelectorAll('.close-button');
 const backgroundRemovalToggle = document.querySelector('.on-off-button input');
-
+const copyImage = document.getElementById('copy-image');
+const pasteImage = document.getElementById('paste-image');
+let copiedImageData = null;
 let selectedImageContainer = null;
 let isBackgroundRemoved = false;
 
 fileInput.addEventListener('change', handleFileSelection);
 
 function handleFileSelection(event) {
-  const files = event.target.files;
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        createImageContainer(e.target.result, file.name);
-      }
-      reader.readAsDataURL(file);
+    const files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                createImageContainer(e.target.result, file.name);
+            }
+            reader.readAsDataURL(file);
+        }
     }
-  }
-  event.target.value = ''; // Reset the file input
+    event.target.value = ''; // Reset the file input
 }
+
 
 function createImageContainer(src, fileName) {
   const imgContainer = document.createElement('div');
      canvas.appendChild(imgContainer);
       saveState();
+      updateCanvasState();
+
   imgContainer.classList.add('image-container');
   imgContainer.setAttribute('data-background-removed', 'false');  imgContainer.classList.add('image-container');
 
@@ -169,6 +174,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
   });
 
    document.addEventListener('mouseup', function() {
+
         isDragging = false;
         isResizing = false;
         img.style.cursor = 'grab';
@@ -248,7 +254,21 @@ document.addEventListener('contextmenu', function(event) {
 
 
 
+    imgContainer.addEventListener('mouseup', () => {
+        saveState();
+        updateCanvasState();
+    });
 
+    resizeHandle.addEventListener('mouseup', () => {
+        saveState();
+        updateCanvasState();
+    });
+
+    deleteHandle.addEventListener('click', () => {
+        canvas.removeChild(imgContainer);
+        saveState();
+        updateCanvasState();
+    });
 imgContainer.addEventListener('click', function() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
@@ -402,6 +422,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
             // Restore the onload event handler
             img.onload = originalOnload;
         }, 50);
+         saveState();
+                updateCanvasState();
     }
 });document.getElementById('center-image-button').addEventListener('click', function() {
        if (selectedImageContainer && !this.classList.contains('disabled')) {
@@ -409,6 +431,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
            const imgRect = selectedImageContainer.getBoundingClientRect();
            selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
            updateCenterButtonState(selectedImageContainer);
+                saveState();
+                   updateCanvasState();
        }
    });
 const layerControl = document.getElementById('layer-control');
@@ -434,6 +458,8 @@ function moveLayerForward(imgContainer) {
     if (imgContainer.nextElementSibling) {
         canvas.insertBefore(imgContainer.nextElementSibling, imgContainer);
         updateLayerButtons(imgContainer);
+        saveState();
+        updateCanvasState();
     }
 }
 
@@ -441,6 +467,8 @@ function moveLayerBackward(imgContainer) {
     if (imgContainer.previousElementSibling) {
         canvas.insertBefore(imgContainer, imgContainer.previousElementSibling);
         updateLayerButtons(imgContainer);
+        saveState();
+        updateCanvasState();
     }
 }
 
@@ -472,12 +500,14 @@ const flipHorizontal = document.getElementById('flip-horizontal');
 const flipVertical = document.getElementById('flip-vertical');
 
 function toggleTransform(img, transform) {
-  const currentTransform = img.style.transform || '';
-  if (currentTransform.includes(transform)) {
-    img.style.transform = currentTransform.replace(transform, '');
-  } else {
-    img.style.transform = currentTransform + ' ' + transform;
-  }
+    const currentTransform = img.style.transform || '';
+    if (currentTransform.includes(transform)) {
+        img.style.transform = currentTransform.replace(transform, '');
+    } else {
+        img.style.transform = currentTransform + ' ' + transform;
+    }
+    saveState();
+    updateCanvasState();
 }
 
 flipHorizontal.addEventListener('click', function() {
@@ -524,6 +554,8 @@ duplicateButton.addEventListener('click', function() {
 
         // Set the cloned container as the selected container
         selectedImageContainer = clonedContainer;
+                saveState();
+                updateCanvasState();
     }
 });
 
@@ -700,7 +732,9 @@ function finishCropping() {
     selectedImageContainer.style.zIndex = originalZIndex;
 
     cleanupCropping();
-     saveState();
+    saveState();
+
+    updateCanvasState();
 }
 function cancelCropping() {
     // Restore original position and z-index
@@ -709,7 +743,7 @@ function cancelCropping() {
     selectedImageContainer.style.top = originalPosition.top;
 
     cleanupCropping();
-}
+    }
 
 function cleanupCropping() {
     isCropping = false;
@@ -745,13 +779,12 @@ deleteImage.addEventListener('click', function() {
         }
     }
 });
-const copyImage = document.getElementById('copy-image');
-const pasteImage = document.getElementById('paste-image');
-let copiedImageData = null;
+
 
 function updatePasteButtonState() {
-    const pasteButton = document.getElementById('paste-image');
-    const contextPasteItem = contextMenu.querySelector('#paste-image');
+ const pasteButton = document.getElementById('paste-image');
+    pasteButton.classList.toggle('disabled', !copiedImageData);
+        const contextPasteItem = contextMenu.querySelector('#paste-image');
 
     if (copiedImageData) {
         pasteButton.classList.remove('disabled');
@@ -783,6 +816,8 @@ copyImage.addEventListener('click', function() {
         };
         contextMenu.style.display = 'none';
         updatePasteButtonState();
+                updateCanvasState();
+
     }
 });
 pasteImage.addEventListener('click', function() {
@@ -830,6 +865,8 @@ pasteImage.addEventListener('click', function() {
 
         contextMenu.style.display = 'none';
         updatePasteButtonState();
+                saveState();
+                updateCanvasState();
     }
 });
 function isImageCentered(imgContainer) {
@@ -857,17 +894,21 @@ function hasImagesOnCanvas() {
 
 function updateCanvasState() {
     updatePasteButtonState();
+    undoButton.classList.toggle('disabled', undoStack.length <= 1);
+    redoButton.classList.toggle('disabled', redoStack.length === 0);
 
-    // Update undo/redo button states
-    document.getElementById('undo-button').classList.toggle('disabled', undoStack.length <= 1);
-    document.getElementById('redo-button').classList.toggle('disabled', redoStack.length === 0);
-
-    // Add any other state updates here
+    // Update other button states as needed
+    const hasImages = canvas.querySelector('.image-container') !== null;
+    const otherButtons = document.querySelectorAll('.custom-button:not(#undo-button):not(#redo-button)');
+    otherButtons.forEach(button => {
+        button.classList.toggle('disabled', !hasImages);
+    });
 }
 function saveState() {
     const state = canvas.innerHTML;
     undoStack.push(state);
-    redoStack = []; // Clear redo stack when a new action is performed
+    redoStack = [];
+    updateCanvasState();
 }
 function undo() {
     if (undoStack.length > 1) { // Keep at least one state in the stack
@@ -875,6 +916,7 @@ function undo() {
         redoStack.push(currentState);
         canvas.innerHTML = undoStack[undoStack.length - 1];
         reattachEventListeners();
+        updateCanvasState();
     }
 }
 
@@ -884,8 +926,10 @@ function redo() {
         undoStack.push(nextState);
         canvas.innerHTML = nextState;
         reattachEventListeners();
+        updateCanvasState();
     }
 }
+
 function reattachEventListeners() {
     const imageContainers = canvas.querySelectorAll('.image-container');
     imageContainers.forEach(container => {
@@ -895,6 +939,7 @@ function reattachEventListeners() {
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
 }
+
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
 
@@ -902,4 +947,5 @@ undoButton.addEventListener('click', undo);
 redoButton.addEventListener('click', redo);
 window.addEventListener('load', () => {
     saveState(); // Save initial empty state
+    updateCanvasState();
 });
