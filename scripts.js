@@ -316,9 +316,14 @@ cutImage.addEventListener('click', function() {
 });
 
 function showScreen(screenToShow) {
-  [screen1, screen2, screen3, screen4].forEach(screen => screen.classList.remove('active'));
-  screenToShow.classList.add('active');
+    [screen1, screen2, screen3, screen4].forEach(screen => screen.classList.remove('active'));
+    screenToShow.classList.add('active');
+
+    if (screenToShow === screen3) {
+        textInput.value = ''; // Clear the input field
+    }
 }
+
 
 function setClickedOption(clickedOption) {
   blackStripOptions.forEach(option => option.classList.remove('clicked'));
@@ -949,4 +954,23 @@ redoButton.addEventListener('click', redo);
 window.addEventListener('load', () => {
     saveState(); // Save initial empty state
     updateCanvasState();
+});
+
+// Get references to the elements
+const addTextButton = document.querySelector('.add-text');
+const textInput = document.getElementById('text-input');
+const addToDesignButton = document.getElementById('add-to-design-button');
+
+// Add event listener for the "Add Text" button on the first screen
+addTextButton.addEventListener('click', function() {
+    showScreen(screen3);
+    setClickedOption(blackStripAddText);
+});
+
+// Clear the input field when showing screen3
+
+// For now, we'll just log the entered text when the "Add To Design" button is clicked
+addToDesignButton.addEventListener('click', function() {
+    console.log('Text to add:', textInput.value);
+    // The actual functionality to add the text to the design will be implemented later
 });

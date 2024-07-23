@@ -672,3 +672,29 @@ body, html {
 #undo-redo-control .custom-button {
     border-radius: 0 !important;
 }
+.text-input {
+    width: 80%;
+    padding: 10px;
+    margin: 20px auto;
+    display: block;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-to-design-button {
+    display: block;
+    width: 80%;
+    margin: 20px auto;
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #1a73e8;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-to-design-button:hover {
+    background-color: #1557b0;
+}
