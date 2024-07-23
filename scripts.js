@@ -316,10 +316,10 @@ cutImage.addEventListener('click', function() {
 });
 
 function showScreen(screenToShow) {
-    [screen1, screen2, screen3, screen4].forEach(screen => screen.classList.remove('active'));
+    [screen1, screen2, screen3, screen4, screen5].forEach(screen => screen.classList.remove('active'));
     screenToShow.classList.add('active');
 
-    if (screenToShow === screen3) {
+    if (screenToShow === screen3 || screenToShow === screen5) {
         textInput.value = ''; // Clear the input field
     }
 }
@@ -343,12 +343,11 @@ blackStripAddText.addEventListener('click', function() {
 
 // Close button functionality
 closeButtons.forEach(button => {
-  button.addEventListener('click', function() {
-    showScreen(screen1);
-    blackStripOptions.forEach(option => option.classList.remove('clicked'));
-  });
+    button.addEventListener('click', function() {
+        showScreen(screen1);
+        blackStripOptions.forEach(option => option.classList.remove('clicked'));
+    });
 });
-
 // Upload box click handler
 uploadBox.addEventListener('click', function() {
   fileInput.click();
@@ -1070,7 +1069,11 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         }
         event.preventDefault();
     });
-
+        textContainer.addEventListener('click', function(event) {
+            if (event.target === textElement) {
+                showTextEditScreen(textElement);
+            }
+        });
     document.addEventListener('mousemove', function(event) {
         if (isDragging && !isResizing) {
             const dx = event.clientX - startX;
@@ -1099,30 +1102,30 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
             textContainer.style.left = newLeft + 'px';
             textContainer.style.top = newTop + 'px';
-        } else if (isResizing && !isDragging) {
-            const dx = event.clientX - startX;
-            let newFontSize = Math.max(10, startFontSize + dx / 2);
+} else if (isResizing && !isDragging) {
+    const dx = event.clientX - startX;
+let newFontSize = Math.max(10, startFontSize + dx);
 
-            // Apply the new font size temporarily
-            textElement.style.fontSize = newFontSize + 'px';
+    // Apply the new font size temporarily
+    textElement.style.fontSize = newFontSize + 'px';
 
-            // Get the updated rectangles
-            const canvasRect = canvas.getBoundingClientRect();
-            const textRect = textContainer.getBoundingClientRect();
+    // Get the updated rectangles
+    const canvasRect = canvas.getBoundingClientRect();
+    const textRect = textContainer.getBoundingClientRect();
 
-            // Check all boundaries
-            if (textRect.left < canvasRect.left ||
-                textRect.right > canvasRect.right ||
-                textRect.top < canvasRect.top ||
-                textRect.bottom > canvasRect.bottom) {
-                // If any boundary is exceeded, revert to the current font size
-                textElement.style.fontSize = currentFontSize + 'px';
-            } else {
-                // If it doesn't exceed any boundary, update the current font size
-                currentFontSize = newFontSize;
-                textElement.style.fontSize = currentFontSize + 'px';
-            }
-        }
+    // Check all boundaries
+    if (textRect.left < canvasRect.left ||
+        textRect.right > canvasRect.right ||
+        textRect.top < canvasRect.top ||
+        textRect.bottom > canvasRect.bottom) {
+        // If any boundary is exceeded, revert to the current font size
+        textElement.style.fontSize = currentFontSize + 'px';
+    } else {
+        // If it doesn't exceed any boundary, update the current font size
+        currentFontSize = newFontSize;
+        textElement.style.fontSize = currentFontSize + 'px';
+    }
+}
     });
 
     document.addEventListener('mouseup', function() {
@@ -1168,4 +1171,17 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             textContainer.style.border = '2px dashed transparent';
         }
     });
+}
+function showTextEditScreen(textElement) {
+    showScreen(screen5);
+    const editTextInput = document.getElementById('edit-text-input');
+    editTextInput.value = textElement.textContent;
+
+    const updateTextButton = document.getElementById('update-text-button');
+    updateTextButton.onclick = function() {
+        textElement.textContent = editTextInput.value;
+        showScreen(screen1);
+        saveState();
+        updateCanvasState();
+    };
 }
