@@ -21,6 +21,7 @@ body, html {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  position: relative;
 }
 
 .white-square {
@@ -645,19 +646,9 @@ body, html {
     color: #999;
     cursor: default;
 }
-.left-side {
-    position: relative; /* Add this if not already present */
-}
 
-.right-side-controls {
-    position: absolute;
-    right: -60px; /* Adjust this value as needed */
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+
+
 
 #undo-redo-control {
     margin-bottom: 10px; /* Space between button groups if you add more later */
@@ -665,6 +656,7 @@ body, html {
 
 #undo-redo-control .button-container {
     display: flex;
+
     flex-direction: column;
 }
 
@@ -672,10 +664,3 @@ body, html {
     margin-bottom: 5px; /* Space between undo and redo buttons */
 }
 
-#undo-redo-control .button-text {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    white-space: nowrap;
-    margin-top: 5px;
-}
