@@ -33,8 +33,8 @@ body, html {
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  margin-left: 28px;
-  margin-bottom: 20px;
+  margin-left:  2.5%;
+  margin-bottom: 2.2%;
   position: relative;
 }
 
@@ -648,7 +648,11 @@ body, html {
 }
 
 
-
+.right-side-controls {
+    position: fixed;
+    top: 8.8%; /* Adjust this value to move the buttons higher or lower */
+    left: 31.3%; /* Adjust this value to move the buttons left or right */
+}
 
 #undo-redo-control {
     margin-bottom: 10px; /* Space between button groups if you add more later */
@@ -656,11 +660,15 @@ body, html {
 
 #undo-redo-control .button-container {
     display: flex;
-
     flex-direction: column;
+    border: none;
 }
 
 #undo-redo-control .custom-button {
     margin-bottom: 5px; /* Space between undo and redo buttons */
 }
 
+#undo-redo-control .button-container,
+#undo-redo-control .custom-button {
+    border-radius: 0 !important;
+}
