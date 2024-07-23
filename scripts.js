@@ -911,6 +911,13 @@ function updateCanvasState() {
     });
 }
 function saveState() {
+    const textContainers = canvas.querySelectorAll('.text-container');
+    textContainers.forEach(container => {
+        const textElement = container.querySelector('p');
+        container.setAttribute('data-font-size', textElement.style.fontSize);
+        container.setAttribute('data-text-content', textElement.textContent);
+    });
+
     const state = canvas.innerHTML;
     undoStack.push(state);
     redoStack = [];
@@ -950,10 +957,16 @@ function reattachEventListeners() {
         const textElement = container.querySelector('p');
         const resizeHandle = container.querySelector('.resize-handle');
         const deleteHandle = container.querySelector('.delete-handle');
+
+        // Restore text properties
+        const fontSize = container.getAttribute('data-font-size');
+        const textContent = container.getAttribute('data-text-content');
+        if (fontSize) textElement.style.fontSize = fontSize;
+        if (textContent) textElement.textContent = textContent;
+
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
 }
-
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
 
@@ -1041,7 +1054,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let isDragging = false;
     let isResizing = false;
     let startX, startY, startLeft, startTop, startFontSize;
-    let currentFontSize;
+    let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
 
     textContainer.addEventListener('mousedown', function(event) {
         if (event.target === textElement && !isResizing) {
@@ -1058,60 +1071,58 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         event.preventDefault();
     });
 
-document.addEventListener('mousemove', function(event) {
-    if (isDragging && !isResizing) {
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
-        let newLeft = startLeft + dx;
-        let newTop = startTop + dy;
+    document.addEventListener('mousemove', function(event) {
+        if (isDragging && !isResizing) {
+            const dx = event.clientX - startX;
+            const dy = event.clientY - startY;
+            let newLeft = startLeft + dx;
+            let newTop = startTop + dy;
 
-        const canvasRect = canvas.getBoundingClientRect();
-        const textRect = textContainer.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
 
-        // Calculate offsets based on object dimensions
-        const leftOffset = -0.5 * textRect.width;
-        const topOffset = -0.5 * textRect.height;
-        const rightOffset = 0.5 * textRect.width - 4;
-        const bottomOffset = 0.5 * textRect.height - 4;
+            // Calculate offsets based on object dimensions
+            const leftOffset = -0.5 * textRect.width;
+            const topOffset = -0.5 * textRect.height;
+            const rightOffset = 0.5 * textRect.width - 4;
+            const bottomOffset = 0.5 * textRect.height - 4;
 
-        // Adjust boundaries to keep the text object within the canvas
-        const minLeft = -leftOffset;
-        const maxLeft = canvasRect.width - textRect.width + rightOffset;
-        const minTop = -topOffset;
-        const maxTop = canvasRect.height - textRect.height + bottomOffset;
+            // Adjust boundaries to keep the text object within the canvas
+            const minLeft = -leftOffset;
+            const maxLeft = canvasRect.width - textRect.width + rightOffset;
+            const minTop = -topOffset;
+            const maxTop = canvasRect.height - textRect.height + bottomOffset;
 
-        // Constrain the position
-        newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
-        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+            // Constrain the position
+            newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+            newTop = Math.max(minTop, Math.min(newTop, maxTop));
 
-        textContainer.style.left = newLeft + 'px';
-        textContainer.style.top = newTop + 'px';
-    } else if (isResizing && !isDragging) {
-                  const dx = event.clientX - startX;
-                  let newFontSize = Math.max(10, startFontSize + dx / 2);
+            textContainer.style.left = newLeft + 'px';
+            textContainer.style.top = newTop + 'px';
+        } else if (isResizing && !isDragging) {
+            const dx = event.clientX - startX;
+            let newFontSize = Math.max(10, startFontSize + dx / 2);
 
-                  // Store the original font size
-                  const originalFontSize = textElement.style.fontSize;
+            // Apply the new font size temporarily
+            textElement.style.fontSize = newFontSize + 'px';
 
-                  // Apply the new font size temporarily
-                  textElement.style.fontSize = newFontSize + 'px';
+            // Get the updated rectangles
+            const canvasRect = canvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
 
-                  // Get the updated rectangles
-                  const canvasRect = canvas.getBoundingClientRect();
-                  const textRect = textContainer.getBoundingClientRect();
-
-                  // Check all boundaries
-                  if (textRect.left < canvasRect.left ||
-                      textRect.right > canvasRect.right ||
-                      textRect.top < canvasRect.top ||
-                      textRect.bottom > canvasRect.bottom) {
-                      // If any boundary is exceeded, revert to the current font size
-                      textElement.style.fontSize = currentFontSize + 'px';
-                  } else {
-                      // If it doesn't exceed any boundary, update the current font size
-                      currentFontSize = newFontSize;
-                  }
-              }
+            // Check all boundaries
+            if (textRect.left < canvasRect.left ||
+                textRect.right > canvasRect.right ||
+                textRect.top < canvasRect.top ||
+                textRect.bottom > canvasRect.bottom) {
+                // If any boundary is exceeded, revert to the current font size
+                textElement.style.fontSize = currentFontSize + 'px';
+            } else {
+                // If it doesn't exceed any boundary, update the current font size
+                currentFontSize = newFontSize;
+                textElement.style.fontSize = currentFontSize + 'px';
+            }
+        }
     });
 
     document.addEventListener('mouseup', function() {
@@ -1130,6 +1141,7 @@ document.addEventListener('mousemove', function(event) {
         event.stopPropagation();
         event.preventDefault();
     });
+
     deleteHandle.addEventListener('click', function() {
         canvas.removeChild(textContainer);
         saveState();
