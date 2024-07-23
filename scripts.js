@@ -974,3 +974,6 @@ addToDesignButton.addEventListener('click', function() {
     console.log('Text to add:', textInput.value);
     // The actual functionality to add the text to the design will be implemented later
 });
+document.getElementById('text-input').addEventListener('focus', function() {
+    this.value = '';
+});

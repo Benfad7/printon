@@ -142,7 +142,6 @@ body, html {
 }
 .screen-content {
   padding: 20px;
-
 }
 .canvas {
   right: 46.5%;
@@ -673,19 +672,32 @@ body, html {
     border-radius: 0 !important;
 }
 .text-input {
-    width: 80%;
-    padding: 10px;
-    margin: 20px auto;
-    display: block;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+     width: 70%;
+     top: 15%;
+     position: absolute;
+     left: 55.2%;
+     transform: translate(-50%, -90%);
+     padding: 10px;
+     margin: 0;
+     font-size: 16px;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     box-sizing: border-box;
+     text-align: center; /* Add this line to center the text */
 }
 
+.text-input:focus {
+    outline: none;
+    border-color: #1a73e8;
+}
 .add-to-design-button {
-    display: block;
-    width: 80%;
-    margin: 20px auto;
+     position: absolute;
+     left: 55.2%;
+          top: 20%;
+
+    transform: translate(-50%, -90%);
+    width: 30%;
+    margin: 20px 0;
     padding: 10px;
     font-size: 16px;
     color: white;
