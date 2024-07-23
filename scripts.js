@@ -356,10 +356,15 @@ uploadBox.addEventListener('click', function() {
 const mainContainer = document.getElementById('main-container');
 
 mainContainer.addEventListener('click', function(event) {
-  // Check if we're in screen2 or screen3
-  if (screen2.classList.contains('active') || screen3.classList.contains('active') || screen4.classList.contains('active')) {
-    // Check if the click is outside the white square
-    if (!event.target.closest('.white-square') && !event.target.closest('.image-container')) {
+  // Check if we're in screen2, screen3, screen4, or screen5
+  if (screen2.classList.contains('active') || screen3.classList.contains('active') ||
+      screen4.classList.contains('active') || screen5.classList.contains('active')) {
+
+    // Check if the click is outside the white square and not on an image or text container
+    if (!event.target.closest('.white-square') &&
+        !event.target.closest('.image-container') &&
+        !event.target.closest('.text-container')) {
+
       showScreen(screen1);
       blackStripOptions.forEach(option => option.classList.remove('clicked'));
     }
@@ -1069,11 +1074,13 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         }
         event.preventDefault();
     });
-        textContainer.addEventListener('click', function(event) {
-            if (event.target === textElement) {
-                showTextEditScreen(textElement);
-            }
-        });
+
+    textContainer.addEventListener('click', function(event) {
+        event.stopPropagation(); // Prevent the click from bubbling up to mainContainer
+        if (event.target === textElement) {
+            showTextEditScreen(textElement);
+        }
+    });
     document.addEventListener('mousemove', function(event) {
         if (isDragging && !isResizing) {
             const dx = event.clientX - startX;
@@ -1178,10 +1185,15 @@ function showTextEditScreen(textElement) {
     editTextInput.value = textElement.textContent;
 
     const updateTextButton = document.getElementById('update-text-button');
-    updateTextButton.onclick = function() {
+    updateTextButton.onclick = function(event) {
+        event.stopPropagation(); // Prevent the click from bubbling up
         textElement.textContent = editTextInput.value;
-        showScreen(screen1);
         saveState();
         updateCanvasState();
     };
+
+    // Prevent clicks within the white square from closing the screen
+    screen5.querySelector('.white-square').addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
 }
