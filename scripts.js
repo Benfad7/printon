@@ -24,7 +24,10 @@ const pasteImage = document.getElementById('paste-image');
 let copiedImageData = null;
 let selectedImageContainer = null;
 let isBackgroundRemoved = false;
-
+const cropButton = document.getElementById('crop-image');
+let isCropping = false;
+let cropHandles = [];
+let cropOverlay, cropButtonBelow, cancelCropButton;
 fileInput.addEventListener('change', handleFileSelection);
 
 function handleFileSelection(event) {
@@ -255,8 +258,11 @@ document.addEventListener('contextmenu', function(event) {
 
 
     imgContainer.addEventListener('mouseup', () => {
+        if(!isCropping)
+        {
         saveState();
         updateCanvasState();
+        }
     });
 
     resizeHandle.addEventListener('mouseup', () => {
@@ -559,10 +565,7 @@ duplicateButton.addEventListener('click', function() {
     }
 });
 
-const cropButton = document.getElementById('crop-image');
-let isCropping = false;
-let cropHandles = [];
-let cropOverlay, cropButtonBelow, cancelCropButton;
+
 
 cropButton.addEventListener('click', function() {
     if (selectedImageContainer) {
