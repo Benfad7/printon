@@ -732,9 +732,7 @@ function finishCropping() {
     selectedImageContainer.style.zIndex = originalZIndex;
 
     cleanupCropping();
-    saveState();
 
-    updateCanvasState();
 }
 function cancelCropping() {
     // Restore original position and z-index
