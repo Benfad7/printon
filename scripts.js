@@ -1041,6 +1041,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let isDragging = false;
     let isResizing = false;
     let startX, startY, startLeft, startTop, startFontSize;
+    let currentFontSize;
 
     textContainer.addEventListener('mousedown', function(event) {
         if (event.target === textElement && !isResizing) {
@@ -1086,23 +1087,31 @@ document.addEventListener('mousemove', function(event) {
         textContainer.style.left = newLeft + 'px';
         textContainer.style.top = newTop + 'px';
     } else if (isResizing && !isDragging) {
-            const dx = event.clientX - startX;
-            let newFontSize = Math.max(10, startFontSize + dx / 2);
-            textElement.style.fontSize = newFontSize + 'px';
+                  const dx = event.clientX - startX;
+                  let newFontSize = Math.max(10, startFontSize + dx / 2);
 
-            // Ensure text doesn't resize beyond canvas boundaries
-            const canvasRect = canvas.getBoundingClientRect();
-            const textRect = textContainer.getBoundingClientRect();
+                  // Store the original font size
+                  const originalFontSize = textElement.style.fontSize;
 
-            if (textRect.right > canvasRect.right) {
-                newFontSize = startFontSize;
-                textElement.style.fontSize = newFontSize + 'px';
-            }
-            if (textRect.bottom > canvasRect.bottom) {
-                newFontSize = startFontSize;
-                textElement.style.fontSize = newFontSize + 'px';
-            }
-        }
+                  // Apply the new font size temporarily
+                  textElement.style.fontSize = newFontSize + 'px';
+
+                  // Get the updated rectangles
+                  const canvasRect = canvas.getBoundingClientRect();
+                  const textRect = textContainer.getBoundingClientRect();
+
+                  // Check all boundaries
+                  if (textRect.left < canvasRect.left ||
+                      textRect.right > canvasRect.right ||
+                      textRect.top < canvasRect.top ||
+                      textRect.bottom > canvasRect.bottom) {
+                      // If any boundary is exceeded, revert to the current font size
+                      textElement.style.fontSize = currentFontSize + 'px';
+                  } else {
+                      // If it doesn't exceed any boundary, update the current font size
+                      currentFontSize = newFontSize;
+                  }
+              }
     });
 
     document.addEventListener('mouseup', function() {
@@ -1116,11 +1125,11 @@ document.addEventListener('mousemove', function(event) {
         isResizing = true;
         isDragging = false;
         startX = event.clientX;
-        startFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+        currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+        startFontSize = currentFontSize;
         event.stopPropagation();
         event.preventDefault();
     });
-
     deleteHandle.addEventListener('click', function() {
         canvas.removeChild(textContainer);
         saveState();
