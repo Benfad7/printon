@@ -1057,22 +1057,35 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         event.preventDefault();
     });
 
-    document.addEventListener('mousemove', function(event) {
-        if (isDragging && !isResizing) {
-            const dx = event.clientX - startX;
-            const dy = event.clientY - startY;
-            const newLeft = startLeft + dx;
-            const newTop = startTop + dy;
+document.addEventListener('mousemove', function(event) {
+    if (isDragging && !isResizing) {
+        const dx = event.clientX - startX;
+        const dy = event.clientY - startY;
+        let newLeft = startLeft + dx;
+        let newTop = startTop + dy;
 
-            const canvasRect = canvas.getBoundingClientRect();
-            const textRect = textContainer.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const textRect = textContainer.getBoundingClientRect();
 
-            const maxX = canvasRect.width - textRect.width;
-            const maxY = canvasRect.height - textRect.height;
+        // Calculate offsets based on object dimensions
+        const leftOffset = -0.5 * textRect.width;
+        const topOffset = -0.5 * textRect.height;
+        const rightOffset = 0.5 * textRect.width - 4;
+        const bottomOffset = 0.5 * textRect.height - 4;
 
-            textContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
-            textContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
-        } else if (isResizing && !isDragging) {
+        // Adjust boundaries to keep the text object within the canvas
+        const minLeft = -leftOffset;
+        const maxLeft = canvasRect.width - textRect.width + rightOffset;
+        const minTop = -topOffset;
+        const maxTop = canvasRect.height - textRect.height + bottomOffset;
+
+        // Constrain the position
+        newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+        newTop = Math.max(minTop, Math.min(newTop, maxTop));
+
+        textContainer.style.left = newLeft + 'px';
+        textContainer.style.top = newTop + 'px';
+    } else if (isResizing && !isDragging) {
             const dx = event.clientX - startX;
             let newFontSize = Math.max(10, startFontSize + dx / 2);
             textElement.style.fontSize = newFontSize + 'px';
