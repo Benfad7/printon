@@ -944,6 +944,14 @@ function reattachEventListeners() {
         const deleteHandle = container.querySelector('.delete-handle');
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
+
+    const textContainers = canvas.querySelectorAll('.text-container');
+    textContainers.forEach(container => {
+        const textElement = container.querySelector('p');
+        const resizeHandle = container.querySelector('.resize-handle');
+        const deleteHandle = container.querySelector('.delete-handle');
+        setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
+    });
 }
 
 const undoButton = document.getElementById('undo-button');
@@ -971,8 +979,11 @@ addTextButton.addEventListener('click', function() {
 
 // For now, we'll just log the entered text when the "Add To Design" button is clicked
 addToDesignButton.addEventListener('click', function() {
-    console.log('Text to add:', textInput.value);
-    // The actual functionality to add the text to the design will be implemented later
+    const textToAdd = textInput.value;
+    if (textToAdd.trim() !== '') {
+        createTextObject(textToAdd);
+        showScreen(screen1); // Return to the main screen after adding text
+    }
 });
 let lastInputValue = '';
 
@@ -990,3 +1001,122 @@ textInput.addEventListener('blur', function() {
     // Restore the last input value when losing focus
     this.value = lastInputValue;
 });
+function createTextObject(text) {
+    const textContainer = document.createElement('div');
+    textContainer.classList.add('text-container');
+    textContainer.style.position = 'absolute';
+    textContainer.style.left = '50%';
+    textContainer.style.top = '50%';
+    textContainer.style.transform = 'translate(-50%, -50%)';
+    textContainer.style.border = '2px dashed transparent'; // Add a transparent dashed border
+    textContainer.style.boxSizing = 'border-box';
+    textContainer.style.padding = '5px'; // Add some padding
+
+    const textElement = document.createElement('p');
+    textElement.textContent = text;
+    textElement.style.fontSize = '20px';
+    textElement.style.color = 'black';
+    textElement.style.margin = '0';
+    textElement.style.padding = '0';
+    textElement.style.cursor = 'move';
+    textElement.style.userSelect = 'none';
+
+    const resizeHandle = document.createElement('div');
+    resizeHandle.classList.add('resize-handle');
+
+    const deleteHandle = document.createElement('div');
+    deleteHandle.classList.add('delete-handle');
+
+    textContainer.appendChild(textElement);
+    textContainer.appendChild(resizeHandle);
+    textContainer.appendChild(deleteHandle);
+
+    canvas.appendChild(textContainer);
+
+    setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
+    saveState();
+    updateCanvasState();
+}
+function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
+    let isDragging = false;
+    let isResizing = false;
+    let startX, startY, startLeft, startTop, startFontSize;
+
+    textContainer.addEventListener('mousedown', function(event) {
+        if (event.target === textElement && !isResizing) {
+            isDragging = true;
+            startX = event.clientX;
+            startY = event.clientY;
+            startLeft = textContainer.offsetLeft;
+            startTop = textContainer.offsetTop;
+            textContainer.classList.add('selected');
+            textContainer.style.border = '2px solid #000'; // Solid border when selected
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+        }
+        event.preventDefault();
+    });
+    document.addEventListener('mousemove', function(event) {
+        if (isDragging && !isResizing) {
+            const dx = event.clientX - startX;
+            const dy = event.clientY - startY;
+            const newLeft = startLeft + dx;
+            const newTop = startTop + dy;
+
+            const maxX = canvas.clientWidth - textContainer.offsetWidth;
+            const maxY = canvas.clientHeight - textContainer.offsetHeight;
+
+            textContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
+            textContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+        } else if (isResizing && !isDragging) {
+            const dx = event.clientX - startX;
+            let newFontSize = Math.max(10, startFontSize + dx / 2);
+            textElement.style.fontSize = newFontSize + 'px';
+        }
+    });
+
+    document.addEventListener('mouseup', function() {
+        isDragging = false;
+        isResizing = false;
+        saveState();
+        updateCanvasState();
+    });
+
+    resizeHandle.addEventListener('mousedown', function(event) {
+        isResizing = true;
+        isDragging = false;
+        startX = event.clientX;
+        startFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+
+    deleteHandle.addEventListener('click', function() {
+        canvas.removeChild(textContainer);
+        saveState();
+        updateCanvasState();
+    });
+
+
+   document.addEventListener('click', function(event) {
+        if (!textContainer.contains(event.target) && !event.target.closest('.white-square')) {
+            textContainer.classList.remove('selected');
+            textContainer.style.border = '2px dashed transparent'; // Revert to dashed transparent when not selected
+            resizeHandle.style.display = 'none';
+            deleteHandle.style.display = 'none';
+        }
+    });
+
+    // Update hover effect
+    textContainer.addEventListener('mouseenter', function() {
+        if (!textContainer.classList.contains('selected')) {
+            textContainer.style.border = '2px dashed #000';
+        }
+    });
+
+    textContainer.addEventListener('mouseleave', function() {
+        if (!textContainer.classList.contains('selected')) {
+            textContainer.style.border = '2px dashed transparent';
+        }
+    });
+}
