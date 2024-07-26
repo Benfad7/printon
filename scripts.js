@@ -955,7 +955,6 @@ function reattachEventListeners() {
         const deleteHandle = container.querySelector('.delete-handle');
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
-
     const textContainers = canvas.querySelectorAll('.text-container');
     textContainers.forEach(container => {
         const textElement = container.querySelector('p');
@@ -967,6 +966,9 @@ function reattachEventListeners() {
         const textContent = container.getAttribute('data-text-content');
         if (fontSize) textElement.style.fontSize = fontSize;
         if (textContent) textElement.textContent = textContent;
+
+        // Apply text outline
+        applyTextOutline(textElement);
 
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
@@ -1037,6 +1039,10 @@ function createTextObject(text) {
     textElement.style.padding = '0';
     textElement.style.cursor = 'move';
     textElement.style.userSelect = 'none';
+    textElement.style.textShadow = 'none'; // Initialize with no outline
+    textElement.dataset.outlineColor = '#000000';
+    textElement.dataset.outlineThickness = '0';
+
 
     const resizeHandle = document.createElement('div');
     resizeHandle.classList.add('resize-handle');
@@ -1059,6 +1065,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let isResizing = false;
     let startX, startY, startLeft, startTop, startFontSize;
     let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+
 
     textContainer.addEventListener('mousedown', function(event) {
         if (event.target === textElement && !isResizing) {
@@ -1180,18 +1187,22 @@ let newFontSize = Math.max(10, startFontSize + dx);
     });
 }
 let currentlyEditedTextElement = null;
-
+let currentOutlineColor = '#000000';
+let currentOutlineThickness = 0;
 function showTextEditScreen(textElement) {
     showScreen(screen5);
     currentlyEditedTextElement = textElement;
     const editTextInput = document.getElementById('edit-text-input');
     const textColorPicker = document.getElementById('text-color-picker');
     const fontSelector = document.getElementById('font-selector');
+    const outlineColorPicker = document.getElementById('outline-color-picker');
+    const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
 
+    // Set text content and color
     editTextInput.value = textElement.textContent;
     textColorPicker.value = textElement.style.color || '#000000';
 
-    // Set the initial selected font
+    // Set font
     const currentFont = textElement.style.fontFamily || 'Arial';
     for (let i = 0; i < fontSelector.options.length; i++) {
         if (fontSelector.options[i].value === currentFont) {
@@ -1200,31 +1211,40 @@ function showTextEditScreen(textElement) {
         }
     }
 
-    // Update text color immediately when color picker changes
+    // Set outline properties
+// Set outline properties
+outlineColorPicker.value = textElement.dataset.outlineColor || '#000000';
+outlineThicknessSelector.value = textElement.dataset.outlineThickness || '0';
+
+    // Remove existing event listeners
+    textColorPicker.removeEventListener('input', updateTextColor);
+    fontSelector.removeEventListener('change', updateTextFont);
+    editTextInput.removeEventListener('blur', updateTextContent);
+    editTextInput.removeEventListener('keypress', handleEnterKey);
+    outlineColorPicker.removeEventListener('input', updateTextOutline);
+    outlineThicknessSelector.removeEventListener('change', updateTextOutline);
+
+    // Add new event listeners
     textColorPicker.addEventListener('input', updateTextColor);
-
-    // Update font immediately when font selector changes
     fontSelector.addEventListener('change', updateTextFont);
-
-    // Update text content when input field loses focus
     editTextInput.addEventListener('blur', updateTextContent);
-
-    // Update text content when Enter key is pressed
     editTextInput.addEventListener('keypress', handleEnterKey);
+    outlineColorPicker.addEventListener('input', updateTextOutline);
+    outlineThicknessSelector.addEventListener('change', updateTextOutline);
+
+    // Set text shape properties
+    currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
+        textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
+    currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
+
+    document.getElementById('text-shape-button').textContent =
+        currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
 
     // Prevent clicks within the white square from closing the screen
     screen5.querySelector('.white-square').addEventListener('click', function(event) {
         event.stopPropagation();
     });
-
-        currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
-            textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
-        currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
-
-        document.getElementById('text-shape-button').textContent =
-            currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
-}
-function updateTextColor() {
+}function updateTextColor() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.color = this.value;
         saveState();
@@ -1311,5 +1331,36 @@ function applyTextShape() {
 
         saveState();
         updateCanvasState();
+    }
+}
+function updateTextOutline() {
+    if (currentlyEditedTextElement) {
+        const outlineColor = document.getElementById('outline-color-picker').value;
+        const outlineThickness = parseInt(document.getElementById('outline-thickness-selector').value);
+
+        currentlyEditedTextElement.dataset.outlineColor = outlineColor;
+        currentlyEditedTextElement.dataset.outlineThickness = outlineThickness;
+
+        applyTextOutline(currentlyEditedTextElement);
+
+        saveState();
+        updateCanvasState();
+    }
+}
+
+function applyTextOutline(textElement) {
+    const outlineColor = textElement.dataset.outlineColor;
+    const outlineThickness = parseInt(textElement.dataset.outlineThickness);
+
+    if (outlineThickness > 0) {
+        const shadows = [];
+        for (let x = -outlineThickness; x <= outlineThickness; x++) {
+            for (let y = -outlineThickness; y <= outlineThickness; y++) {
+                shadows.push(`${x}px ${y}px 0 ${outlineColor}`);
+            }
+        }
+        textElement.style.textShadow = shadows.join(', ');
+    } else {
+        textElement.style.textShadow = 'none';
     }
 }

@@ -887,3 +887,35 @@ body, html {
 .shape-cone {
     transform: perspective(400px) rotate3d(1, 0, 1, calc(var(--shape-intensity) * 0.9deg));
 }
+.image-size-container7 {
+    padding: 0px;
+    margin-right: 25px;
+    text-align: right;
+    font-size: 18px;
+    position: absolute;
+    top: 30.3%;
+    right: 0%;
+}
+
+.outline-controls {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 30.3%;
+    left: 14.5%;
+}
+
+#outline-color-picker {
+    margin-left: 100px;
+}
+
+#outline-thickness-selector {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.separator-line.at-5 {
+    top: 34%; /* Adjust as needed */
+}
