@@ -1041,7 +1041,8 @@ function createTextObject(text) {
     textElement.style.userSelect = 'none';
     textElement.style.textShadow = 'none'; // Initialize with no outline
     textElement.dataset.outlineColor = '#000000';
-    textElement.dataset.outlineThickness = '0';
+    textElement.dataset.outlineStrength = '0';
+
 
 
     const resizeHandle = document.createElement('div');
@@ -1214,8 +1215,7 @@ function showTextEditScreen(textElement) {
     // Set outline properties
 // Set outline properties
 outlineColorPicker.value = textElement.dataset.outlineColor || '#000000';
-outlineThicknessSelector.value = textElement.dataset.outlineThickness || '0';
-
+outlineThicknessSelector.value = textElement.dataset.outlineStrength || '0';
     // Remove existing event listeners
     textColorPicker.removeEventListener('input', updateTextColor);
     fontSelector.removeEventListener('change', updateTextFont);
@@ -1336,10 +1336,10 @@ function applyTextShape() {
 function updateTextOutline() {
     if (currentlyEditedTextElement) {
         const outlineColor = document.getElementById('outline-color-picker').value;
-        const outlineThickness = parseInt(document.getElementById('outline-thickness-selector').value);
+        const outlineStrength = document.getElementById('outline-thickness-selector').value;
 
         currentlyEditedTextElement.dataset.outlineColor = outlineColor;
-        currentlyEditedTextElement.dataset.outlineThickness = outlineThickness;
+        currentlyEditedTextElement.dataset.outlineStrength = outlineStrength;
 
         applyTextOutline(currentlyEditedTextElement);
 
@@ -1347,16 +1347,18 @@ function updateTextOutline() {
         updateCanvasState();
     }
 }
-
 function applyTextOutline(textElement) {
     const outlineColor = textElement.dataset.outlineColor;
-    const outlineThickness = parseInt(textElement.dataset.outlineThickness);
+    const outlineStrength = parseFloat(textElement.dataset.outlineStrength);
 
-    if (outlineThickness > 0) {
+    if (outlineStrength > 0) {
+        const emStrength = outlineStrength / 200; // Convert 0-5 range to 0-0.25em
         const shadows = [];
-        for (let x = -outlineThickness; x <= outlineThickness; x++) {
-            for (let y = -outlineThickness; y <= outlineThickness; y++) {
-                shadows.push(`${x}px ${y}px 0 ${outlineColor}`);
+        for (let x = -3; x <= 3; x++) {
+            for (let y = -3; y <= 3; y++) {
+                if (x !== 0 || y !== 0) {
+                    shadows.push(`${x * emStrength}em ${y * emStrength}em 0 ${outlineColor}`);
+                }
             }
         }
         textElement.style.textShadow = shadows.join(', ');
