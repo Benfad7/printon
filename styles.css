@@ -781,3 +781,109 @@ body, html {
     font-size: 16px;
     direction: ltr;
 }
+.separator-line.at-4 {
+    top: 34%;
+}
+
+.image-size-container6 {
+    padding: 0px;
+    margin-right: 25px;
+    text-align: right;
+    font-size: 18px;
+    position: absolute;
+    top: 37%;
+    right: 0%;
+}
+
+.text-shape-button {
+    position: absolute;
+    top: 37%;
+    left: 14.5%;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#screen6 {
+    display: none;
+}
+#screen6.active {
+    display: block;
+}
+.text-shape-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.shape-option {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.shape-option.selected {
+    background-color: #e0e0e0;
+}
+
+.shape-settings {
+    margin-bottom: 20px;
+}
+
+#shape-slider {
+    width: 100%;
+}
+
+.shape-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+.shape-curve {
+    transform: perspective(400px) rotateX(var(--shape-intensity));
+}
+
+.shape-arch {
+    transform: perspective(400px) rotateX(calc(-1 * var(--shape-intensity)));
+}
+
+.shape-bridge {
+    transform: perspective(400px) rotateY(var(--shape-intensity));
+}
+
+.shape-valley {
+    transform: perspective(400px) rotateY(calc(-1 * var(--shape-intensity)));
+}
+
+.shape-pinch {
+    transform: scale(1, calc(2 - var(--shape-intensity) / 50));
+}
+
+.shape-bulge {
+    transform: scale(1, calc(var(--shape-intensity) / 50));
+}
+
+.shape-perspective {
+    transform: perspective(400px) rotateY(calc(var(--shape-intensity) - 50deg));
+}
+
+.shape-pointed {
+    clip-path: polygon(
+        50% calc(50% - var(--shape-intensity) / 2),
+        100% 100%,
+        0% 100%
+    );
+}
+
+.shape-downward {
+    transform: perspective(400px) rotateX(calc((var(--shape-intensity) - 50) * 0.9deg));
+}
+
+.shape-upward {
+    transform: perspective(400px) rotateX(calc((50 - var(--shape-intensity)) * 0.9deg));
+}
+
+.shape-cone {
+    transform: perspective(400px) rotate3d(1, 0, 1, calc(var(--shape-intensity) * 0.9deg));
+}

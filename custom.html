@@ -169,8 +169,44 @@
                         <option value="Levenim MT" style="font-family: 'Levenim MT';">Levenim MT</option>
                         <option value="Guttman Yad" style="font-family: 'Guttman Yad';">Guttman Yad</option>
                     </select>
+                    <div class="separator-line at-4"></div>
+                    <div class="image-size-container6">
+                        <span>צורת טקסט</span>
+                    </div>
+                    <button id="text-shape-button" class="text-shape-button">רגיל</button>
                 </div>
-            </div>        </div>
+            </div>
+            <div id="screen6" class="screen">
+                <div class="screen-header">
+                    <button class="close-button">&times;</button>
+                    <h2 class="header-title">בחר צורת טקסט</h2>
+                </div>
+                <div class="screen-content">
+                    <div class="text-shape-grid">
+                        <div class="shape-option" data-shape="normal">NORMAL</div>
+                        <div class="shape-option" data-shape="curve">CURVE</div>
+                        <div class="shape-option" data-shape="arch">ARCH</div>
+                        <div class="shape-option" data-shape="bridge">BRIDGE</div>
+                        <div class="shape-option" data-shape="valley">VALLEY</div>
+                        <div class="shape-option" data-shape="pinch">PINCH</div>
+                        <div class="shape-option" data-shape="bulge">BULGE</div>
+                        <div class="shape-option" data-shape="perspective">PERSPECTIVE</div>
+                        <div class="shape-option" data-shape="pointed">POINTED</div>
+                        <div class="shape-option" data-shape="downward">DOWNWARD</div>
+                        <div class="shape-option" data-shape="upward">UPWARD</div>
+                        <div class="shape-option" data-shape="cone">CONE</div>
+                    </div>
+                    <div class="shape-settings">
+                        <span>הגדרות צורה</span>
+                        <input type="range" id="shape-slider" min="0" max="100" value="50">
+                    </div>
+                    <div class="shape-buttons">
+                        <button id="remove-shape-button">הסר צורה</button>
+                        <button id="done-shape-button">סיום</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="right-side-controls">
             <div id="undo-redo-control" class="button-group">
                 <div class="button-container">

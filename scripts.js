@@ -316,7 +316,7 @@ cutImage.addEventListener('click', function() {
 });
 
 function showScreen(screenToShow) {
-    [screen1, screen2, screen3, screen4, screen5].forEach(screen => screen.classList.remove('active'));
+    [screen1, screen2, screen3, screen4, screen5, screen6].forEach(screen => screen.classList.remove('active'));
     screenToShow.classList.add('active');
 
     if (screenToShow === screen3 || screenToShow === screen5) {
@@ -1216,6 +1216,13 @@ function showTextEditScreen(textElement) {
     screen5.querySelector('.white-square').addEventListener('click', function(event) {
         event.stopPropagation();
     });
+
+        currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
+            textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
+        currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
+
+        document.getElementById('text-shape-button').textContent =
+            currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
 }
 function updateTextColor() {
     if (currentlyEditedTextElement) {
@@ -1247,5 +1254,62 @@ function handleEnterKey(event) {
         saveState();
         updateCanvasState();
         showScreen(screen1); // Return to main screen
+    }
+}
+let currentTextShape = 'normal';
+let currentShapeIntensity = 50;
+
+document.getElementById('text-shape-button').addEventListener('click', showTextShapeScreen);
+
+
+function showTextShapeScreen() {
+    showScreen(document.getElementById('screen6'));
+    document.querySelector(`.shape-option[data-shape="${currentTextShape}"]`).classList.add('selected');
+    document.getElementById('shape-slider').value = currentShapeIntensity;
+}
+
+document.querySelectorAll('.shape-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.shape-option').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        currentTextShape = this.dataset.shape;
+        applyTextShape();
+    });
+});
+
+document.getElementById('shape-slider').addEventListener('input', function() {
+    currentShapeIntensity = this.value;
+    applyTextShape();
+});
+
+document.getElementById('remove-shape-button').addEventListener('click', function() {
+    currentTextShape = 'normal';
+    currentShapeIntensity = 50;
+    applyTextShape();
+    showScreen(document.getElementById('screen5'));
+});
+
+document.getElementById('done-shape-button').addEventListener('click', function() {
+    applyTextShape();
+    showScreen(document.getElementById('screen5'));
+});
+
+function applyTextShape() {
+    if (currentlyEditedTextElement) {
+        // Remove any existing shape classes
+        currentlyEditedTextElement.className = currentlyEditedTextElement.className.replace(/\bshape-\S+/g, '');
+
+        if (currentTextShape !== 'normal') {
+            currentlyEditedTextElement.classList.add(`shape-${currentTextShape}`);
+            currentlyEditedTextElement.style.setProperty('--shape-intensity', `${currentShapeIntensity}%`);
+        } else {
+            currentlyEditedTextElement.style.removeProperty('--shape-intensity');
+        }
+
+        document.getElementById('text-shape-button').textContent =
+            currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
+
+        saveState();
+        updateCanvasState();
     }
 }
