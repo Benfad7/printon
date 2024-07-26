@@ -1179,40 +1179,73 @@ let newFontSize = Math.max(10, startFontSize + dx);
         }
     });
 }
+let currentlyEditedTextElement = null;
+
 function showTextEditScreen(textElement) {
     showScreen(screen5);
+    currentlyEditedTextElement = textElement;
     const editTextInput = document.getElementById('edit-text-input');
     const textColorPicker = document.getElementById('text-color-picker');
+    const fontSelector = document.getElementById('font-selector');
 
     editTextInput.value = textElement.textContent;
     textColorPicker.value = textElement.style.color || '#000000';
 
+    // Set the initial selected font
+    const currentFont = textElement.style.fontFamily || 'Arial';
+    for (let i = 0; i < fontSelector.options.length; i++) {
+        if (fontSelector.options[i].value === currentFont) {
+            fontSelector.selectedIndex = i;
+            break;
+        }
+    }
+
     // Update text color immediately when color picker changes
-    textColorPicker.addEventListener('input', function() {
-        textElement.style.color = this.value;
-        saveState();
-        updateCanvasState();
-    });
+    textColorPicker.addEventListener('input', updateTextColor);
+
+    // Update font immediately when font selector changes
+    fontSelector.addEventListener('change', updateTextFont);
 
     // Update text content when input field loses focus
-    editTextInput.addEventListener('blur', function() {
-        textElement.textContent = this.value;
-        saveState();
-        updateCanvasState();
-    });
+    editTextInput.addEventListener('blur', updateTextContent);
 
     // Update text content when Enter key is pressed
-    editTextInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            textElement.textContent = this.value;
-            saveState();
-            updateCanvasState();
-            showScreen(screen1); // Return to main screen
-        }
-    });
+    editTextInput.addEventListener('keypress', handleEnterKey);
 
     // Prevent clicks within the white square from closing the screen
     screen5.querySelector('.white-square').addEventListener('click', function(event) {
         event.stopPropagation();
     });
+}
+function updateTextColor() {
+    if (currentlyEditedTextElement) {
+        currentlyEditedTextElement.style.color = this.value;
+        saveState();
+        updateCanvasState();
+    }
+}
+
+function updateTextFont() {
+    if (currentlyEditedTextElement) {
+        currentlyEditedTextElement.style.fontFamily = this.value;
+        saveState();
+        updateCanvasState();
+    }
+}
+
+function updateTextContent() {
+    if (currentlyEditedTextElement) {
+        currentlyEditedTextElement.textContent = this.value;
+        saveState();
+        updateCanvasState();
+    }
+}
+
+function handleEnterKey(event) {
+    if (event.key === 'Enter' && currentlyEditedTextElement) {
+        currentlyEditedTextElement.textContent = this.value;
+        saveState();
+        updateCanvasState();
+        showScreen(screen1); // Return to main screen
+    }
 }
