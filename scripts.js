@@ -1076,7 +1076,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     });
 
     textContainer.addEventListener('click', function(event) {
-        event.stopPropagation(); // Prevent the click from bubbling up to mainContainer
+        event.stopPropagation();
         if (event.target === textElement) {
             showTextEditScreen(textElement);
         }
@@ -1182,15 +1182,34 @@ let newFontSize = Math.max(10, startFontSize + dx);
 function showTextEditScreen(textElement) {
     showScreen(screen5);
     const editTextInput = document.getElementById('edit-text-input');
-    editTextInput.value = textElement.textContent;
+    const textColorPicker = document.getElementById('text-color-picker');
 
-    const updateTextButton = document.getElementById('update-text-button');
-    updateTextButton.onclick = function(event) {
-        event.stopPropagation(); // Prevent the click from bubbling up
-        textElement.textContent = editTextInput.value;
+    editTextInput.value = textElement.textContent;
+    textColorPicker.value = textElement.style.color || '#000000';
+
+    // Update text color immediately when color picker changes
+    textColorPicker.addEventListener('input', function() {
+        textElement.style.color = this.value;
         saveState();
         updateCanvasState();
-    };
+    });
+
+    // Update text content when input field loses focus
+    editTextInput.addEventListener('blur', function() {
+        textElement.textContent = this.value;
+        saveState();
+        updateCanvasState();
+    });
+
+    // Update text content when Enter key is pressed
+    editTextInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            textElement.textContent = this.value;
+            saveState();
+            updateCanvasState();
+            showScreen(screen1); // Return to main screen
+        }
+    });
 
     // Prevent clicks within the white square from closing the screen
     screen5.querySelector('.white-square').addEventListener('click', function(event) {
