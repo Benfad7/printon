@@ -672,8 +672,8 @@ body, html {
     border-radius: 0 !important;
 }
 .text-input {
-     width: 70%;
-     top: 15%;
+     width: 80%;
+     top: 12%;
      position: absolute;
      left: 55.2%;
      transform: translate(-50%, -90%);
@@ -695,7 +695,7 @@ body, html {
 .add-to-design-button {
      position: absolute;
      left: 55.2%;
-          top: 20%;
+          top: 17%;
 
     transform: translate(-50%, -90%);
     width: 30%;
@@ -714,8 +714,12 @@ body, html {
 }
 
 .color-picker {
-    width: 50px;
-    height: 50px;
+    margin-left: 25px;
+    position: absolute;
+    top: 16.5%;
+    left: 14.5%;
+    width: 35px;
+    height: 35px;
     padding: 0;
     border: none;
     border-radius: 50%;
@@ -723,7 +727,7 @@ body, html {
     -moz-appearance: none;
     appearance: none;
     cursor: pointer;
-    margin: 10px 0;
+    margin: -7px 0;
 }
 
 .color-picker::-webkit-color-swatch-wrapper {
@@ -733,4 +737,31 @@ body, html {
 .color-picker::-webkit-color-swatch {
     border: none;
     border-radius: 50%;
+}
+.separator-line.at-1 {
+    top: 13%; /* Position at 40% */
+}
+.image-size-container4 {
+    padding: 0px;
+    margin-right: 25px;
+    text-align: right;
+    font-size: 18px;
+    position: absolute;
+    top: 16.3%;
+    right: 0%;
+}
+.separator-line.at-2 {
+    top: 20%; /* Position at 40% */
+}
+.image-size-container5 {
+    padding: 0px;
+    margin-right: 25px;
+    text-align: right;
+    font-size: 18px;
+    position: absolute;
+    top: 23.3%;
+    right: 0%;
+}
+.separator-line.at-3 {
+    top: 27%; /* Position at 40% */
 }
