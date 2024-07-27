@@ -1069,7 +1069,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
 
     textContainer.addEventListener('mousedown', function(event) {
-        if (event.target === textElement && !isResizing) {
+        if ((event.target === textElement || event.target.parentNode === textElement) && !isResizing) {
             isDragging = true;
             startX = event.clientX;
             startY = event.clientY;
@@ -1083,12 +1083,13 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         event.preventDefault();
     });
 
-    textContainer.addEventListener('click', function(event) {
+   textContainer.addEventListener('click', function(event) {
         event.stopPropagation();
-        if (event.target === textElement) {
+        if (event.target === textElement || event.target.parentNode === textElement) {
             showTextEditScreen(textElement);
         }
     });
+
     document.addEventListener('mousemove', function(event) {
         if (isDragging && !isResizing) {
             const dx = event.clientX - startX;
@@ -1326,9 +1327,10 @@ document.querySelectorAll('.shape-option').forEach(option => {
 
 document.getElementById('shape-slider').addEventListener('input', function() {
     currentShapeIntensity = this.value;
-    applyTextShape();
+    if (currentTextShape === 'curve') {
+        applyCurveShape(currentlyEditedTextElement, currentShapeIntensity);
+    }
 });
-
 document.getElementById('remove-shape-button').addEventListener('click', function() {
     currentTextShape = 'normal';
     currentShapeIntensity = 50;
@@ -1346,16 +1348,24 @@ function applyTextShape() {
         // Remove any existing shape classes
         currentlyEditedTextElement.className = currentlyEditedTextElement.className.replace(/\bshape-\S+/g, '');
 
-        if (currentTextShape !== 'normal') {
-            currentlyEditedTextElement.classList.add(`shape-${currentTextShape}`);
-            currentlyEditedTextElement.style.setProperty('--shape-intensity', `${currentShapeIntensity}%`);
+        if (currentTextShape === 'curve') {
+            currentlyEditedTextElement.classList.add(`shape-curve`);
+            applyCurveShape(currentlyEditedTextElement, currentShapeIntensity);
         } else {
-            currentlyEditedTextElement.style.removeProperty('--shape-intensity');
+            // Reset to normal text
+            currentlyEditedTextElement.innerHTML = currentlyEditedTextElement.textContent;
+            currentlyEditedTextElement.style.transform = 'none';
         }
 
         document.getElementById('text-shape-button').textContent =
             currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
 
+    setupTextInteractions(
+        currentlyEditedTextElement.parentNode,
+        currentlyEditedTextElement,
+        currentlyEditedTextElement.parentNode.querySelector('.resize-handle'),
+        currentlyEditedTextElement.parentNode.querySelector('.delete-handle')
+    );
         saveState();
         updateCanvasState();
     }
@@ -1392,4 +1402,23 @@ function applyTextOutline(textElement) {
     } else {
         textElement.style.textShadow = 'none';
     }
+}
+function applyCurveShape(element, intensity) {
+    const text = element.textContent;
+    const chars = text.split('');
+
+    element.style.display = 'inline-block';
+    element.style.whiteSpace = 'nowrap';
+
+    // Create spans for each character if they don't exist
+    if (element.children.length !== chars.length) {
+        element.innerHTML = chars.map(char => `<span style="display: inline-block; position: relative;">${char}</span>`).join('');
+    }
+
+    // Apply transformation to each span
+    Array.from(element.children).forEach((span, index) => {
+        const offsetPercentage = (index / (chars.length - 1) - 0.5) * 2; // Range from -1 to 1
+        const y = Math.sin(offsetPercentage * Math.PI) * intensity * 0.01;
+        span.style.transform = `translateY(${y}em)`;
+    });
 }
