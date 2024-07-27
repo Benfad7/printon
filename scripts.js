@@ -1199,6 +1199,96 @@ function showTextEditScreen(textElement) {
     const outlineColorPicker = document.getElementById('outline-color-picker');
     const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
 
+    // Set text content
+    editTextInput.value = textElement.textContent;
+
+    // Set text color
+    const computedStyle = window.getComputedStyle(textElement);
+    const currentColor = computedStyle.color;
+    textColorPicker.value = rgbToHex(currentColor);
+
+    // Set font
+    const currentFont = computedStyle.fontFamily.split(',')[0].replace(/['"]/g, '');
+    for (let i = 0; i < fontSelector.options.length; i++) {
+        if (fontSelector.options[i].value === currentFont) {
+            fontSelector.selectedIndex = i;
+            break;
+        }
+    }
+
+    // Set outline properties
+    outlineColorPicker.value = textElement.dataset.outlineColor || '#000000';
+    outlineThicknessSelector.value = textElement.dataset.outlineStrength || '0';
+
+    // Remove existing event listeners
+    textColorPicker.removeEventListener('input', updateTextColor);
+    fontSelector.removeEventListener('change', updateTextFont);
+    editTextInput.removeEventListener('blur', updateTextContent);
+    editTextInput.removeEventListener('keypress', handleEnterKey);
+    outlineColorPicker.removeEventListener('input', updateTextOutline);
+    outlineThicknessSelector.removeEventListener('change', updateTextOutline);
+
+    // Add new event listeners
+    textColorPicker.addEventListener('input', updateTextColor);
+    fontSelector.addEventListener('change', updateTextFont);
+    editTextInput.addEventListener('blur', updateTextContent);
+    editTextInput.addEventListener('keypress', handleEnterKey);
+    outlineColorPicker.addEventListener('input', updateTextOutline);
+    outlineThicknessSelector.addEventListener('change', updateTextOutline);
+
+    // Set text shape properties
+    currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
+        textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
+    currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
+
+    document.getElementById('text-shape-button').textContent =
+        currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
+
+    // Prevent clicks within the white square from closing the screen
+    screen5.querySelector('.white-square').addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
+}
+
+// Helper function to convert RGB to HEX
+function rgbToHex(rgb) {
+    // Choose correct separator
+    let sep = rgb.indexOf(",") > -1 ? "," : " ";
+    // Turn "rgb(r,g,b)" into [r,g,b]
+    rgb = rgb.substr(4).split(")")[0].split(sep);
+
+    let r = (+rgb[0]).toString(16),
+        g = (+rgb[1]).toString(16),
+        b = (+rgb[2]).toString(16);
+
+    if (r.length == 1)
+        r = "0" + r;
+    if (g.length == 1)
+        g = "0" + g;
+    if (b.length == 1)
+        b = "0" + b;
+
+    return "#" + r + g + b;
+}
+
+
+
+
+
+
+
+
+
+
+{
+    showScreen(screen5);
+    currentlyEditedTextElement = textElement;
+    const editTextInput = document.getElementById('edit-text-input');
+    const textColorPicker = document.getElementById('text-color-picker');
+    const fontSelector = document.getElementById('font-selector');
+    const outlineColorPicker = document.getElementById('outline-color-picker');
+    const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
+
     // Set text content and color
     editTextInput.value = textElement.textContent;
     textColorPicker.value = textElement.style.color || '#000000';
