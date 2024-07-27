@@ -1271,70 +1271,7 @@ function rgbToHex(rgb) {
     return "#" + r + g + b;
 }
 
-
-
-
-
-
-
-
-
-
-{
-    showScreen(screen5);
-    currentlyEditedTextElement = textElement;
-    const editTextInput = document.getElementById('edit-text-input');
-    const textColorPicker = document.getElementById('text-color-picker');
-    const fontSelector = document.getElementById('font-selector');
-    const outlineColorPicker = document.getElementById('outline-color-picker');
-    const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
-
-    // Set text content and color
-    editTextInput.value = textElement.textContent;
-    textColorPicker.value = textElement.style.color || '#000000';
-
-    // Set font
-    const currentFont = textElement.style.fontFamily || 'Arial';
-    for (let i = 0; i < fontSelector.options.length; i++) {
-        if (fontSelector.options[i].value === currentFont) {
-            fontSelector.selectedIndex = i;
-            break;
-        }
-    }
-
-    // Set outline properties
-// Set outline properties
-outlineColorPicker.value = textElement.dataset.outlineColor || '#000000';
-outlineThicknessSelector.value = textElement.dataset.outlineStrength || '0';
-    // Remove existing event listeners
-    textColorPicker.removeEventListener('input', updateTextColor);
-    fontSelector.removeEventListener('change', updateTextFont);
-    editTextInput.removeEventListener('blur', updateTextContent);
-    editTextInput.removeEventListener('keypress', handleEnterKey);
-    outlineColorPicker.removeEventListener('input', updateTextOutline);
-    outlineThicknessSelector.removeEventListener('change', updateTextOutline);
-
-    // Add new event listeners
-    textColorPicker.addEventListener('input', updateTextColor);
-    fontSelector.addEventListener('change', updateTextFont);
-    editTextInput.addEventListener('blur', updateTextContent);
-    editTextInput.addEventListener('keypress', handleEnterKey);
-    outlineColorPicker.addEventListener('input', updateTextOutline);
-    outlineThicknessSelector.addEventListener('change', updateTextOutline);
-
-    // Set text shape properties
-    currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
-        textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
-    currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
-
-    document.getElementById('text-shape-button').textContent =
-        currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
-
-    // Prevent clicks within the white square from closing the screen
-    screen5.querySelector('.white-square').addEventListener('click', function(event) {
-        event.stopPropagation();
-    });
-}function updateTextColor() {
+function updateTextColor() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.color = this.value;
         saveState();
