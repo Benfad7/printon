@@ -1144,7 +1144,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
          const direction = dx + dy > 0 ? 1 : -1;
 
          // Calculate new font size based on diagonal movement
-         let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.5);
+         let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.6);
 
          // Store the original width and height
          const originalWidth = textContainer.offsetWidth;
