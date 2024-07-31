@@ -217,7 +217,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
     const clickedOnImage = event.target.closest('.image-container');
-    const hasImagesOnCanvas = canvas.querySelector('.image-container') !== null;
+    const clickedOnText = event.target.closest('.text-container');
+    const hasObjectsOnCanvas = canvas.querySelector('.image-container, .text-container') !== null;
 
     contextMenu.style.display = 'block';
 
@@ -228,7 +229,7 @@ document.addEventListener('contextmenu', function(event) {
             // Always enable paste if there's copied data
             item.classList.toggle('disabled', !copiedImageData);
         } else {
-            item.classList.toggle('disabled', !clickedOnImage || !hasImagesOnCanvas);
+            item.classList.toggle('disabled', !(clickedOnImage || clickedOnText) || !hasObjectsOnCanvas);
         }
     });
 
@@ -252,10 +253,9 @@ document.addEventListener('contextmenu', function(event) {
     contextMenu.style.left = left + 'px';
     contextMenu.style.top = top + 'px';
 
-    // Set the selected image container
-    selectedImageContainer = clickedOnImage;
+    // Set the selected container
+    selectedImageContainer = clickedOnImage || clickedOnText;
 });
-
 
 
     imgContainer.addEventListener('mouseup', () => {
@@ -300,20 +300,22 @@ document.addEventListener('click', function(event) {
   }
 });
 
-
 centerImage.addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled')) {
-        const containerRect = canvas.getBoundingClientRect();
-        const imgRect = selectedImageContainer.getBoundingClientRect();
-        selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
+        centerObject(selectedImageContainer);
         contextMenu.style.display = 'none';
     }
 });
+
 cutImage.addEventListener('click', function() {
-  if (selectedImageContainer) {
-    startCropping();
-    contextMenu.style.display = 'none';
-  }
+    if (selectedImageContainer) {
+        if (selectedImageContainer.classList.contains('image-container')) {
+            startCropping();
+        } else if (selectedImageContainer.classList.contains('text-container')) {
+            // Handle text cutting (if needed)
+        }
+        contextMenu.style.display = 'none';
+    }
 });
 
 function showScreen(screenToShow) {
@@ -783,11 +785,13 @@ deleteImage.addEventListener('click', function() {
         selectedImageContainer = null;
         contextMenu.style.display = 'none';
 
-        // Clear copied data if the deleted image was the copied one
-        if (copiedImageData && copiedImageData.src === selectedImageContainer.querySelector('img').src) {
+        // Clear copied data if the deleted object was the copied one
+        if (copiedImageData && copiedImageData.src === selectedImageContainer.querySelector('img, p').src) {
             copiedImageData = null;
             updatePasteButtonState();
         }
+        saveState();
+        updateCanvasState();
     }
 });
 
@@ -816,71 +820,78 @@ updatePasteButtonState();
 
 copyImage.addEventListener('click', function() {
     if (selectedImageContainer) {
-        const img = selectedImageContainer.querySelector('img');
-        copiedImageData = {
-            src: img.src,
-            originalSrc: img.getAttribute('data-original-src') || img.src,
-            croppedSrc: img.getAttribute('data-cropped-src') || img.src,
-            width: img.style.width,
-            height: img.style.height,
-            transform: img.style.transform
-        };
+        if (selectedImageContainer.classList.contains('image-container')) {
+            const img = selectedImageContainer.querySelector('img');
+            copiedImageData = {
+                type: 'image',
+                src: img.src,
+                originalSrc: img.getAttribute('data-original-src') || img.src,
+                croppedSrc: img.getAttribute('data-cropped-src') || img.src,
+                width: img.style.width,
+                height: img.style.height,
+                transform: img.style.transform
+            };
+        } else if (selectedImageContainer.classList.contains('text-container')) {
+            const textElement = selectedImageContainer.querySelector('p');
+            copiedImageData = {
+                type: 'text',
+                content: textElement.textContent,
+                style: {
+                    color: textElement.style.color,
+                    fontFamily: textElement.style.fontFamily,
+                    fontSize: textElement.style.fontSize,
+                    transform: textElement.style.transform,
+                    textShadow: textElement.style.textShadow
+                },
+                dataset: {
+                    outlineColor: textElement.dataset.outlineColor,
+                    outlineStrength: textElement.dataset.outlineStrength
+                }
+            };
+        }
         contextMenu.style.display = 'none';
         updatePasteButtonState();
-                updateCanvasState();
-
+        updateCanvasState();
     }
 });
 pasteImage.addEventListener('click', function() {
     if (copiedImageData) {
-        const newContainer = document.createElement('div');
-        newContainer.classList.add('image-container');
-        newContainer.style.position = 'absolute';
+        if (copiedImageData.type === 'image') {
+            // Existing image paste logic
+            // ...
+        } else if (copiedImageData.type === 'text') {
+            const newContainer = document.createElement('div');
+            newContainer.classList.add('text-container');
+            newContainer.style.position = 'absolute';
 
-        // Set position in the center of the canvas if no image is selected
-        if (!selectedImageContainer) {
+            // Set position
             const canvasRect = canvas.getBoundingClientRect();
-            newContainer.style.left = (canvasRect.width / 2 - parseInt(copiedImageData.width) / 2) + 'px';
-            newContainer.style.top = (canvasRect.height / 2 - parseInt(copiedImageData.height) / 2) + 'px';
-        } else {
-            // Set position near the original image if one is selected
-            const originalLeft = parseFloat(selectedImageContainer.style.left) || 0;
-            const originalTop = parseFloat(selectedImageContainer.style.top) || 0;
-            newContainer.style.left = (originalLeft + 20) + 'px';
-            newContainer.style.top = (originalTop + 20) + 'px';
+            newContainer.style.left = (canvasRect.width / 2) + 'px';
+            newContainer.style.top = (canvasRect.height / 2) + 'px';
+
+            const newTextElement = document.createElement('p');
+            newTextElement.textContent = copiedImageData.content;
+            Object.assign(newTextElement.style, copiedImageData.style);
+            Object.assign(newTextElement.dataset, copiedImageData.dataset);
+
+            newContainer.appendChild(newTextElement);
+
+            canvas.appendChild(newContainer);
+
+            setupTextInteractions(newContainer, newTextElement,
+                document.createElement('div'), // resize handle
+                document.createElement('div')  // delete handle
+            );
+
+            selectedImageContainer = newContainer;
         }
-
-        const newImg = document.createElement('img');
-        newImg.src = copiedImageData.src;
-        newImg.setAttribute('data-original-src', copiedImageData.originalSrc);
-        newImg.setAttribute('data-cropped-src', copiedImageData.croppedSrc);
-        newImg.style.width = copiedImageData.width;
-        newImg.style.height = copiedImageData.height;
-        newImg.style.transform = copiedImageData.transform;
-
-        const resizeHandle = document.createElement('div');
-        resizeHandle.classList.add('resize-handle');
-
-        const deleteHandle = document.createElement('div');
-        deleteHandle.classList.add('delete-handle');
-
-        newContainer.appendChild(newImg);
-        newContainer.appendChild(resizeHandle);
-        newContainer.appendChild(deleteHandle);
-
-        canvas.appendChild(newContainer);
-
-        setupImageInteractions(newContainer, newImg, resizeHandle, deleteHandle, 'Pasted Image');
-        selectedImageContainer = newContainer;
-        updateLayerButtons(newContainer);
 
         contextMenu.style.display = 'none';
         updatePasteButtonState();
-                saveState();
-                updateCanvasState();
+        saveState();
+        updateCanvasState();
     }
-});
-function isImageCentered(imgContainer) {
+});function isImageCentered(imgContainer) {
     const containerRect = canvas.getBoundingClientRect();
     const imgRect = imgContainer.getBoundingClientRect();
     const centerX = containerRect.width / 2;
@@ -900,7 +911,7 @@ function updateCenterButtonState(imgContainer) {
     }
 }
 function hasImagesOnCanvas() {
-    return canvas.querySelector('.image-container') !== null;
+    return canvas.querySelector('.image-container, .text-container') !== null;
 }
 
 function updateCanvasState() {
@@ -909,10 +920,10 @@ function updateCanvasState() {
     redoButton.classList.toggle('disabled', redoStack.length === 0);
 
     // Update other button states as needed
-    const hasImages = canvas.querySelector('.image-container') !== null;
+    const hasObjects = canvas.querySelector('.image-container, .text-container') !== null;
     const otherButtons = document.querySelectorAll('.custom-button:not(#undo-button):not(#redo-button)');
     otherButtons.forEach(button => {
-        button.classList.toggle('disabled', !hasImages);
+        button.classList.toggle('disabled', !hasObjects);
     });
 }
 function saveState() {
@@ -1060,7 +1071,7 @@ function createTextObject(text) {
     textContainer.appendChild(resizeHandle);
     textContainer.appendChild(deleteHandle);
 
-    canvas.appendChild(textContainer);
+   canvas.appendChild(textContainer);
 
     setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
     saveState();
@@ -1661,4 +1672,11 @@ function applyTextRotation() {
         currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/, '');
         currentlyEditedTextElement.style.transform = `${currentTransform} rotate(${currentRotation}deg)`.trim();
     }
+}
+function centerObject(container) {
+    const containerRect = canvas.getBoundingClientRect();
+    const objRect = container.getBoundingClientRect();
+    container.style.left = (containerRect.width / 2 - objRect.width / 2) + 'px';
+    saveState();
+    updateCanvasState();
 }
