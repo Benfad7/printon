@@ -692,6 +692,15 @@ body, html {
            caret-color: blue;
 
 }
+#screen5 .text-input {
+     border: 1px solid #000; /* Black border */
+}
+
+#screen5 .text-input:focus {
+    outline: none;
+    border-color: #000; /* Black border on focus */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Optional: adds a subtle shadow on focus */
+}
 .add-to-design-button {
      position: absolute;
      left: 55.2%;

@@ -1025,15 +1025,16 @@ textInput.addEventListener('blur', function() {
     this.value = lastInputValue;
 });
 function createTextObject(text) {
-    const textContainer = document.createElement('div');
+   const textContainer = document.createElement('div');
     textContainer.classList.add('text-container');
     textContainer.style.position = 'absolute';
     textContainer.style.left = '50%';
     textContainer.style.top = '50%';
     textContainer.style.transform = 'translate(-50%, -50%)';
-    textContainer.style.border = '2px dashed transparent'; // Add a transparent dashed border
+    textContainer.style.border = '2px dashed transparent';
     textContainer.style.boxSizing = 'border-box';
-    textContainer.style.padding = '5px'; // Add some padding
+    textContainer.style.padding = '5px'; // Increased padding
+    textContainer.style.cursor = 'pointer'; // Add this line to change cursor on hove
 
     const textElement = document.createElement('p');
     textElement.textContent = text;
@@ -1071,9 +1072,8 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let startX, startY, startLeft, startTop, startFontSize;
     let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
 
-
     textContainer.addEventListener('mousedown', function(event) {
-        if ((event.target === textElement || event.target.parentNode === textElement) && !isResizing) {
+        if (!isResizing) {
             isDragging = true;
             startX = event.clientX;
             startY = event.clientY;
@@ -1087,11 +1087,9 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         event.preventDefault();
     });
 
-   textContainer.addEventListener('click', function(event) {
+    textContainer.addEventListener('click', function(event) {
         event.stopPropagation();
-        if (event.target === textElement || event.target.parentNode === textElement) {
-            showTextEditScreen(textElement);
-        }
+        showTextEditScreen(textElement);
     });
 
     document.addEventListener('mousemove', function(event) {
@@ -1148,7 +1146,7 @@ let newFontSize = Math.max(10, startFontSize + dx);
 }
     });
 
-    document.addEventListener('mouseup', function() {
+   document.addEventListener('mouseup', function() {
         isDragging = false;
         isResizing = false;
         saveState();
