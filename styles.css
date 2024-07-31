@@ -1033,4 +1033,33 @@ body, html {
     transform: perspective(100px) rotate3d(1, 0, 1, 30deg);
 }
 
-/* Other styles remain the same */
+.separator-line.at-6 {
+    top: 41%; /* Adjust as needed */
+}
+
+.image-size-container8 {
+    padding: 0px;
+    margin-right: 25px;
+    text-align: right;
+    font-size: 18px;
+    position: absolute;
+    top: 44.3%;
+    right: 0%;
+}
+
+.rotation-control {
+    position: absolute;
+    top: 44%;
+    left: 14.5%;
+    display: flex;
+    align-items: center;
+}
+
+#rotation-slider {
+    width: 150px;
+    margin-right: 10px;
+}
+
+#rotation-value {
+    font-size: 14px;
+}

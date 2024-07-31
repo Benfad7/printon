@@ -973,6 +973,9 @@ function reattachEventListeners() {
 
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
+        const rotationSlider = document.getElementById('rotation-slider');
+        rotationSlider.removeEventListener('input', updateTextRotation);
+        rotationSlider.addEventListener('input', updateTextRotation);
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
@@ -1192,6 +1195,8 @@ let newFontSize = Math.max(10, startFontSize + dx);
 let currentlyEditedTextElement = null;
 let currentOutlineColor = '#000000';
 let currentOutlineThickness = 0;
+let currentRotation = 0;
+
 function showTextEditScreen(textElement) {
     showScreen(screen5);
     currentlyEditedTextElement = textElement;
@@ -1242,6 +1247,13 @@ function showTextEditScreen(textElement) {
     currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
         textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
     currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 75;
+
+        currentRotation = textElement.style.transform ?
+            parseInt(textElement.style.transform.match(/rotate\(([-\d]+)deg\)/)[1]) || 0 : 0;
+        document.getElementById('rotation-slider').value = currentRotation;
+        document.getElementById('rotation-value').textContent = currentRotation + '°';
+            document.getElementById('rotation-slider').addEventListener('input', updateTextRotation);
+
 
     document.getElementById('text-shape-button').textContent =
         currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
@@ -1407,6 +1419,8 @@ function applyTextShape() {
         saveState();
         updateCanvasState();
     }
+        applyTextRotation();
+
 }
 function updateTextOutline() {
     if (currentlyEditedTextElement) {
@@ -1620,3 +1634,20 @@ function applyConeShape(element, intensity) {
 
  // Call this function after the DOM is loaded
  document.addEventListener('DOMContentLoaded', applyPreviewShapes);
+function updateTextRotation() {
+    if (currentlyEditedTextElement) {
+        currentRotation = this.value;
+        document.getElementById('rotation-value').textContent = currentRotation + '°';
+        applyTextRotation();
+        saveState();
+        updateCanvasState();
+    }
+}
+
+function applyTextRotation() {
+    if (currentlyEditedTextElement) {
+        let currentTransform = currentlyEditedTextElement.style.transform || '';
+        currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/, '');
+        currentlyEditedTextElement.style.transform = `${currentTransform} rotate(${currentRotation}deg)`.trim();
+    }
+}
