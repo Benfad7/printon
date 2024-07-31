@@ -1309,11 +1309,12 @@ let currentShapeIntensity = 50;
 
 document.getElementById('text-shape-button').addEventListener('click', showTextShapeScreen);
 
-
 function showTextShapeScreen() {
     showScreen(document.getElementById('screen6'));
     document.querySelector(`.shape-option[data-shape="${currentTextShape}"]`).classList.add('selected');
-    document.getElementById('shape-slider').value = currentShapeIntensity;
+    const shapeSlider = document.getElementById('shape-slider');
+    shapeSlider.value = currentShapeIntensity;
+    shapeSlider.disabled = (currentTextShape === 'normal');
 }
 
 document.querySelectorAll('.shape-option').forEach(option => {
@@ -1321,14 +1322,16 @@ document.querySelectorAll('.shape-option').forEach(option => {
         document.querySelectorAll('.shape-option').forEach(opt => opt.classList.remove('selected'));
         this.classList.add('selected');
         currentTextShape = this.dataset.shape;
+        const shapeSlider = document.getElementById('shape-slider');
+        shapeSlider.disabled = (currentTextShape === 'normal');
         applyTextShape();
     });
 });
 
 document.getElementById('shape-slider').addEventListener('input', function() {
     currentShapeIntensity = this.value;
-    if (currentTextShape === 'curve') {
-        applyCurveShape(currentlyEditedTextElement, currentShapeIntensity);
+    if (currentTextShape !== 'normal') {
+        applyTextShape();
     }
 });
 document.getElementById('remove-shape-button').addEventListener('click', function() {
@@ -1342,30 +1345,63 @@ document.getElementById('done-shape-button').addEventListener('click', function(
     applyTextShape();
     showScreen(document.getElementById('screen5'));
 });
-
 function applyTextShape() {
     if (currentlyEditedTextElement) {
         // Remove any existing shape classes
         currentlyEditedTextElement.className = currentlyEditedTextElement.className.replace(/\bshape-\S+/g, '');
 
-        if (currentTextShape === 'curve') {
-            currentlyEditedTextElement.classList.add(`shape-curve`);
-            applyCurveShape(currentlyEditedTextElement, currentShapeIntensity);
-        } else {
-            // Reset to normal text
-            currentlyEditedTextElement.innerHTML = currentlyEditedTextElement.textContent;
-            currentlyEditedTextElement.style.transform = 'none';
+        currentlyEditedTextElement.classList.add(`shape-${currentTextShape}`);
+
+        const intensity = currentTextShape === 'normal' ? 50 : currentShapeIntensity;
+
+        switch(currentTextShape) {
+            case 'normal':
+                applyNormalShape(currentlyEditedTextElement);
+                break;
+            case 'curve':
+                applyCurveShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'arch':
+                applyArchShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'bridge':
+                applyBridgeShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'valley':
+                applyValleyShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'pinch':
+                applyPinchShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'bulge':
+                applyBulgeShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'perspective':
+                applyPerspectiveShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'pointed':
+                applyPointedShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'downward':
+                applyDownwardShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'upward':
+                applyUpwardShape(currentlyEditedTextElement, intensity);
+                break;
+            case 'cone':
+                applyConeShape(currentlyEditedTextElement, intensity);
+                break;
         }
 
         document.getElementById('text-shape-button').textContent =
             currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
 
-    setupTextInteractions(
-        currentlyEditedTextElement.parentNode,
-        currentlyEditedTextElement,
-        currentlyEditedTextElement.parentNode.querySelector('.resize-handle'),
-        currentlyEditedTextElement.parentNode.querySelector('.delete-handle')
-    );
+        setupTextInteractions(
+            currentlyEditedTextElement.parentNode,
+            currentlyEditedTextElement,
+            currentlyEditedTextElement.parentNode.querySelector('.resize-handle'),
+            currentlyEditedTextElement.parentNode.querySelector('.delete-handle')
+        );
         saveState();
         updateCanvasState();
     }
@@ -1403,6 +1439,13 @@ function applyTextOutline(textElement) {
         textElement.style.textShadow = 'none';
     }
 }
+function applyNormalShape(element) {
+    element.style.transform = 'none';
+    Array.from(element.children).forEach(span => {
+        span.style.transform = 'none';
+    });
+}
+
 function applyCurveShape(element, intensity, widthFactor = 1) {
     const text = element.textContent;
     const chars = text.split('');
@@ -1432,5 +1475,126 @@ function applyCurveShape(element, intensity, widthFactor = 1) {
         const x = (index - (chars.length - 1) / 2) * charWidth * compressionFactor / 7;
 
         span.style.transform = `translate(${x}px, ${y}em) rotate(${rotation}deg)`;
+    });
+}
+
+function applyArchShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = Math.sin(progress * Math.PI) * normalizedIntensity * -50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyBridgeShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = Math.sin(progress * Math.PI) * normalizedIntensity * 50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyValleyShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = Math.abs(progress - 0.5) * 2 * normalizedIntensity * 50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyPinchShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const scale = 1 - Math.abs(progress - 0.5) * normalizedIntensity;
+        span.style.transform = `scale(${scale})`;
+    });
+}
+
+function applyBulgeShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const scale = 1 + Math.sin(progress * Math.PI) * normalizedIntensity;
+        span.style.transform = `scale(${scale})`;
+    });
+}
+
+function applyPerspectiveShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const scale = 1 + (progress - 0.5) * normalizedIntensity;
+        const y = (progress - 0.5) * normalizedIntensity * 50;
+        span.style.transform = `scale(${scale}) translateY(${y}px)`;
+    });
+}
+
+function applyPointedShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = Math.abs(progress - 0.5) * 2 * normalizedIntensity * -50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyDownwardShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = progress * normalizedIntensity * 50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyUpwardShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const y = (1 - progress) * normalizedIntensity * 50;
+        span.style.transform = `translateY(${y}px)`;
+    });
+}
+
+function applyConeShape(element, intensity) {
+    const chars = element.textContent.split('');
+    element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+    const normalizedIntensity = (intensity - 50) / 50;
+    Array.from(element.children).forEach((span, index) => {
+        const progress = index / (chars.length - 1);
+        const scale = 1 + progress * normalizedIntensity;
+        span.style.transform = `scale(${scale})`;
     });
 }
