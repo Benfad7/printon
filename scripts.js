@@ -1071,6 +1071,8 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let isResizing = false;
     let startX, startY, startLeft, startTop, startFontSize;
     let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+       textContainer.style.cursor = 'grab';
+        textElement.style.cursor = 'grab';
 
     textContainer.addEventListener('mousedown', function(event) {
         if (!isResizing) {
@@ -1083,14 +1085,16 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             textContainer.style.border = '2px solid #000';
             resizeHandle.style.display = 'block';
             deleteHandle.style.display = 'block';
+            textContainer.style.cursor = 'grabbing';
+            textElement.style.cursor = 'grabbing';
         }
         event.preventDefault();
     });
-
     textContainer.addEventListener('click', function(event) {
         event.stopPropagation();
         showTextEditScreen(textElement);
     });
+
 
     document.addEventListener('mousemove', function(event) {
         if (isDragging && !isResizing) {
@@ -1098,7 +1102,6 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             const dy = event.clientY - startY;
             let newLeft = startLeft + dx;
             let newTop = startTop + dy;
-
             const canvasRect = canvas.getBoundingClientRect();
             const textRect = textContainer.getBoundingClientRect();
 
@@ -1117,8 +1120,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             // Constrain the position
             newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
             newTop = Math.max(minTop, Math.min(newTop, maxTop));
-
-            textContainer.style.left = newLeft + 'px';
+      textContainer.style.left = newLeft + 'px';
             textContainer.style.top = newTop + 'px';
 } else if (isResizing && !isDragging) {
     const dx = event.clientX - startX;
@@ -1145,13 +1147,17 @@ let newFontSize = Math.max(10, startFontSize + dx);
     }
 }
     });
-
-   document.addEventListener('mouseup', function() {
+  document.addEventListener('mouseup', function() {
+        if (isDragging) {
+            textContainer.style.cursor = 'grab';
+            textElement.style.cursor = 'grab';
+        }
         isDragging = false;
         isResizing = false;
         saveState();
         updateCanvasState();
     });
+
 
     resizeHandle.addEventListener('mousedown', function(event) {
         isResizing = true;
@@ -1177,17 +1183,24 @@ let newFontSize = Math.max(10, startFontSize + dx);
             deleteHandle.style.display = 'none';
         }
     });
-
-    textContainer.addEventListener('mouseenter', function() {
+  textContainer.addEventListener('mouseenter', function() {
         if (!textContainer.classList.contains('selected')) {
             textContainer.style.border = '2px dashed #000';
+            textContainer.style.cursor = 'grab';
         }
     });
 
     textContainer.addEventListener('mouseleave', function() {
         if (!textContainer.classList.contains('selected')) {
             textContainer.style.border = '2px dashed transparent';
+            textContainer.style.cursor = 'default';
+            textElement.style.cursor = 'default';
         }
+    });
+
+    // Prevent text selection
+    textElement.addEventListener('selectstart', function(e) {
+        e.preventDefault();
     });
 }
 let currentlyEditedTextElement = null;
