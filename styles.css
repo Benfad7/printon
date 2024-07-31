@@ -805,7 +805,12 @@ body, html {
 }
 
 #screen6 {
-    display: none;
+    direction: rtl;
+    text-align: right;
+}
+.screen-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
 }
 #screen6.active {
     display: block;
@@ -822,23 +827,51 @@ body, html {
     padding: 10px;
     text-align: center;
     cursor: pointer;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .shape-option.selected {
-    background-color: #e0e0e0;
+    border: 2px solid #007bff;
 }
 
 .shape-settings {
     margin-bottom: 20px;
 }
-
-#shape-slider {
-    width: 100%;
+.slider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
 }
-
+#shape-slider {
+    flex-grow: 1;
+    margin: 0 10px;
+}
 .shape-buttons {
     display: flex;
     justify-content: space-between;
+}
+
+.primary-button, .secondary-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.primary-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.secondary-button {
+    background-color: white;
+    color: #007bff;
+    border: 1px solid #007bff;
 }
 .shape-curve {
     transform: perspective(400px) rotateX(var(--shape-intensity));

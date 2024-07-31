@@ -192,11 +192,8 @@
                 </div>
             </div>
             <div id="screen6" class="screen">
-                <div class="screen-header">
-                    <button class="close-button">&times;</button>
-                    <h2 class="header-title">בחר צורת טקסט</h2>
-                </div>
                 <div class="screen-content">
+                    <h2 class="screen-title">בחר צורת טקסט</h2>
                     <div class="text-shape-grid">
                         <div class="shape-option" data-shape="normal"><span>NORMAL</span></div>
                         <div class="shape-option" data-shape="curve"><span>CURVE</span></div>
@@ -212,12 +209,16 @@
                         <div class="shape-option" data-shape="cone"><span>CONE</span></div>
                     </div>
                     <div class="shape-settings">
-                        <span>הגדרות צורה</span>
-                        <input type="range" id="shape-slider" min="0" max="100" value="75">
+                        <span>בחר הגדרות צורה</span>
+                        <div class="slider-container">
+                            <span>שמאל</span>
+                            <input type="range" id="shape-slider" min="0" max="100" value="75">
+                            <span>ימין</span>
+                        </div>
                     </div>
                     <div class="shape-buttons">
-                        <button id="remove-shape-button">הסר צורה</button>
-                        <button id="done-shape-button">סיום</button>
+                        <button id="remove-shape-button" class="secondary-button">הסר צורה</button>
+                        <button id="done-shape-button" class="primary-button">סיום</button>
                     </div>
                 </div>
             </div>
