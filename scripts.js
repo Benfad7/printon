@@ -1337,13 +1337,14 @@ document.getElementById('shape-slider').addEventListener('input', function() {
 document.getElementById('remove-shape-button').addEventListener('click', function() {
     currentTextShape = 'normal';
     currentShapeIntensity = 50;
+    document.getElementById('shape-slider').value = 50;
     applyTextShape();
-    showScreen(document.getElementById('screen5'));
+    document.querySelectorAll('.shape-option').forEach(opt => opt.classList.remove('selected'));
+    document.querySelector('.shape-option[data-shape="normal"]').classList.add('selected');
 });
 
 document.getElementById('done-shape-button').addEventListener('click', function() {
-    applyTextShape();
-    showScreen(document.getElementById('screen5'));
+    showScreen(document.getElementById('screen5')); // Go back to the text edit screen
 });
 function applyTextShape() {
     if (currentlyEditedTextElement) {

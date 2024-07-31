@@ -924,4 +924,33 @@ body, html {
 
 .separator-line.at-5 {
     top: 34%; /* Adjust as needed */
-}
+}.text-shape-grid {
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     gap: 10px;
+     margin-bottom: 20px;
+ }
+
+ .shape-option {
+     border: 1px solid #ccc;
+     padding: 10px;
+     text-align: center;
+     cursor: pointer;
+ }
+
+ .shape-option.selected {
+     background-color: #e0e0e0;
+ }
+
+ .shape-settings {
+     margin-bottom: 20px;
+ }
+
+ #shape-slider {
+     width: 100%;
+ }
+
+ .shape-buttons {
+     display: flex;
+     justify-content: space-between;
+ }
