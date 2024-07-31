@@ -1403,7 +1403,7 @@ function applyTextOutline(textElement) {
         textElement.style.textShadow = 'none';
     }
 }
-function applyCurveShape(element, intensity) {
+function applyCurveShape(element, intensity, widthFactor = 1) {
     const text = element.textContent;
     const chars = text.split('');
 
@@ -1415,10 +1415,22 @@ function applyCurveShape(element, intensity) {
         element.innerHTML = chars.map(char => `<span style="display: inline-block; position: relative;">${char}</span>`).join('');
     }
 
+    const totalWidth = element.offsetWidth;
+    const charWidth = totalWidth / chars.length /7;
+
+    // Normalize intensity to be between -1 and 1
+    const normalizedIntensity = (intensity - 50) / 50;
+
     // Apply transformation to each span
     Array.from(element.children).forEach((span, index) => {
-        const offsetPercentage = (index / (chars.length - 1) - 0.5) * 2; // Range from -1 to 1
-        const y = Math.sin(offsetPercentage * Math.PI) * intensity * 0.01;
-        span.style.transform = `translateY(${y}em)`;
+        const offsetPercentage = ((index / (chars.length - 1) - 0.5) * 2 * widthFactor);
+        const y = (offsetPercentage * offsetPercentage) * normalizedIntensity * 1; // Adjust multiplier for desired curve intensity
+        const rotation = offsetPercentage * normalizedIntensity * 25; // Adjust multiplier for desired rotation
+
+        // Calculate horizontal compression based on vertical position
+        const compressionFactor = 1 - (Math.abs(y)) * 0.5; // Adjust 0.5 to control compression amount
+        const x = (index - (chars.length - 1) / 2) * charWidth * compressionFactor / 7;
+
+        span.style.transform = `translate(${x}px, ${y}em) rotate(${rotation}deg)`;
     });
 }
