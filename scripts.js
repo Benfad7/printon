@@ -16,6 +16,7 @@ const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const screen3 = document.getElementById('screen3');
 const screen4 = document.getElementById('screen4');
+const screen6 = document.getElementById('screen6');
 const blackStripOptions = document.querySelectorAll('.black-strip-option');
 const closeButtons = document.querySelectorAll('.close-button');
 const backgroundRemovalToggle = document.querySelector('.on-off-button input');
@@ -358,7 +359,7 @@ const mainContainer = document.getElementById('main-container');
 mainContainer.addEventListener('click', function(event) {
   // Check if we're in screen2, screen3, screen4, or screen5
   if (screen2.classList.contains('active') || screen3.classList.contains('active') ||
-      screen4.classList.contains('active') || screen5.classList.contains('active')) {
+      screen4.classList.contains('active') || screen5.classList.contains('active')|| screen6.classList.contains('active')) {
 
     // Check if the click is outside the white square and not on an image or text container
     if (!event.target.closest('.white-square') &&
@@ -1240,7 +1241,7 @@ function showTextEditScreen(textElement) {
     // Set text shape properties
     currentTextShape = textElement.className.match(/\bshape-(\S+)/) ?
         textElement.className.match(/\bshape-(\S+)/)[1] : 'normal';
-    currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 50;
+    currentShapeIntensity = textElement.style.getPropertyValue('--shape-intensity') || 75;
 
     document.getElementById('text-shape-button').textContent =
         currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
@@ -1305,7 +1306,7 @@ function handleEnterKey(event) {
     }
 }
 let currentTextShape = 'normal';
-let currentShapeIntensity = 50;
+let currentShapeIntensity = 75;
 
 document.getElementById('text-shape-button').addEventListener('click', showTextShapeScreen);
 
