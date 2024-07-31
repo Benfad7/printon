@@ -805,16 +805,18 @@ body, html {
 }
 
 #screen6 {
+    position: absolute;
+    top: 0%;
+    left: 17.5%;
     direction: rtl;
     text-align: right;
 }
+
 .screen-title {
     font-size: 1.5em;
     margin-bottom: 20px;
 }
-#screen6.active {
-    display: block;
-}
+
 .text-shape-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -841,19 +843,19 @@ body, html {
 .shape-settings {
     margin-bottom: 20px;
 }
+
 .slider-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     margin-top: 10px;
 }
+
 #shape-slider {
-    flex-grow: 1;
-    margin: 0 10px;
+    width: 100%;
 }
+
 .shape-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 10px;
 }
 
 .primary-button, .secondary-button {
