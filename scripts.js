@@ -1598,4 +1598,24 @@ function applyConeShape(element, intensity) {
         const scale = 1 + progress * normalizedIntensity;
         span.style.transform = `scale(${scale})`;
     });
-}
+}function applyPreviewShapes() {
+     const curveOption = document.querySelector('.shape-option[data-shape="curve"] span');
+     const archOption = document.querySelector('.shape-option[data-shape="arch"] span');
+
+     if (curveOption) {
+         const text = curveOption.textContent;
+         curveOption.innerHTML = text.split('').map((char, i) =>
+             `<span style="display:inline-block; transform: translateY(${Math.sin((i / (text.length - 1)) * Math.PI) * -10}px);">${char}</span>`
+         ).join('');
+     }
+
+     if (archOption) {
+         const text = archOption.textContent;
+         archOption.innerHTML = text.split('').map((char, i) =>
+             `<span style="display:inline-block; transform: translateY(${Math.sin((i / (text.length - 1)) * Math.PI) * 10}px);">${char}</span>`
+         ).join('');
+     }
+ }
+
+ // Call this function after the DOM is loaded
+ document.addEventListener('DOMContentLoaded', applyPreviewShapes);
