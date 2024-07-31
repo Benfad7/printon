@@ -1133,40 +1133,52 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             newTop = Math.max(minTop, Math.min(newTop, maxTop));
       textContainer.style.left = newLeft + 'px';
             textContainer.style.top = newTop + 'px';
- } else if (isResizing && !isDragging) {
-        const dx = event.clientX - startX;
-        const dy = event.clientY - startY;
+   } else if (isResizing && !isDragging) {
+         const dx = event.clientX - startX;
+         const dy = event.clientY - startY;
 
-        // Calculate diagonal distance
-        const diagonalDistance = Math.sqrt(dx * dx + dy * dy);
+         // Calculate diagonal distance
+         const diagonalDistance = Math.sqrt(dx * dx + dy * dy);
 
-        // Determine direction (growing or shrinking)
-        const direction = dx + dy > 0 ? 1 : -1;
+         // Determine direction (growing or shrinking)
+         const direction = dx + dy > 0 ? 1 : -1;
 
-        // Calculate new font size based on diagonal movement
-        let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.5);
+         // Calculate new font size based on diagonal movement
+         let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.5);
 
-        // Apply the new font size temporarily
-        textElement.style.fontSize = newFontSize + 'px';
+         // Store the original width and height
+         const originalWidth = textContainer.offsetWidth;
+         const originalHeight = textContainer.offsetHeight;
 
-        // Get the updated rectangles
-        const canvasRect = canvas.getBoundingClientRect();
-        const textRect = textContainer.getBoundingClientRect();
+         // Apply the new font size temporarily
+         textElement.style.fontSize = newFontSize + 'px';
 
-        // Check all boundaries
-        if (textRect.left < canvasRect.left ||
-            textRect.right > canvasRect.right ||
-            textRect.top < canvasRect.top ||
-            textRect.bottom > canvasRect.bottom) {
-            // If any boundary is exceeded, revert to the current font size
-            textElement.style.fontSize = currentFontSize + 'px';
-        } else {
-            // If it doesn't exceed any boundary, update the current font size
-            currentFontSize = newFontSize;
-            textElement.style.fontSize = currentFontSize + 'px';
-        }
-    }
-});
+         // Get the updated rectangles
+         const canvasRect = canvas.getBoundingClientRect();
+         const textRect = textContainer.getBoundingClientRect();
+
+         // Check all boundaries
+         if (textRect.left < canvasRect.left ||
+             textRect.right > canvasRect.right ||
+             textRect.top < canvasRect.top ||
+             textRect.bottom > canvasRect.bottom) {
+             // If any boundary is exceeded, revert to the current font size
+             textElement.style.fontSize = currentFontSize + 'px';
+         } else {
+             // If it doesn't exceed any boundary, update the current font size
+             currentFontSize = newFontSize;
+             textElement.style.fontSize = currentFontSize + 'px';
+
+             // Calculate the change in size
+             const deltaWidth = textContainer.offsetWidth - originalWidth;
+             const deltaHeight = textContainer.offsetHeight - originalHeight;
+
+             // Adjust the position to keep the top-left corner fixed
+             textContainer.style.left = (startLeft) + 'px';
+             textContainer.style.top = (startTop) + 'px';
+         }
+     }
+ });
   document.addEventListener('mouseup', function() {
         if (isDragging) {
             textContainer.style.cursor = 'grab';
@@ -1186,10 +1198,11 @@ resizeHandle.addEventListener('mousedown', function(event) {
     startY = event.clientY;
     currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
     startFontSize = currentFontSize;
+    startLeft = textContainer.offsetLeft;
+    startTop = textContainer.offsetTop;
     event.stopPropagation();
     event.preventDefault();
 });
-
     deleteHandle.addEventListener('click', function() {
         canvas.removeChild(textContainer);
         saveState();
