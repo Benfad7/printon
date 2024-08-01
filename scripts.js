@@ -1412,43 +1412,14 @@ function applyTextShape() {
         const intensity = currentTextShape === 'normal' ? 50 : currentShapeIntensity;
         const isRtl = isRTL(currentlyEditedTextElement.textContent);
 
-        switch(currentTextShape) {
-            case 'normal':
-                applyNormalShape(currentlyEditedTextElement);
-                break;
-            case 'curve':
-                applyCurveShape(currentlyEditedTextElement, intensity, 1, isRtl);
-                break;
-            case 'arch':
-                applyArchShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'bridge':
-                applyBridgeShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'valley':
-                applyValleyShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'pinch':
-                applyPinchShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'bulge':
-                applyBulgeShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'perspective':
-                applyPerspectiveShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'pointed':
-                applyPointedShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'downward':
-                applyDownwardShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'upward':
-                applyUpwardShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
-            case 'cone':
-                applyConeShape(currentlyEditedTextElement, intensity, isRtl);
-                break;
+        // Clear any existing spans
+        currentlyEditedTextElement.innerHTML = currentlyEditedTextElement.textContent;
+
+        if (currentTextShape !== 'normal') {
+            const chars = currentlyEditedTextElement.textContent.split('');
+            currentlyEditedTextElement.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
+
+            applyShapeToSpans(currentlyEditedTextElement, currentTextShape, intensity, isRtl);
         }
 
         document.getElementById('text-shape-button').textContent =
@@ -1464,6 +1435,58 @@ function applyTextShape() {
         updateCanvasState();
     }
     applyTextRotation();
+}
+function applyShapeToSpans(element, shape, intensity, isRtl) {
+    const spans = Array.from(element.children);
+    const totalSpans = spans.length;
+    const normalizedIntensity = (intensity - 50) / 50;
+
+    element.style.display = 'flex';
+    element.style.flexDirection = isRtl ? 'row-reverse' : 'row';
+    element.style.justifyContent = 'center';
+
+    spans.forEach((span, index) => {
+        const progress = index / (totalSpans - 1);
+        let transform = '';
+
+        switch(shape) {
+            case 'curve':
+            case 'arch':
+                transform = `translateY(${Math.sin(progress * Math.PI) * normalizedIntensity * -50}px)`;
+                break;
+            case 'bridge':
+                transform = `translateY(${Math.sin(progress * Math.PI) * normalizedIntensity * 50}px)`;
+                break;
+            case 'valley':
+                transform = `translateY(${Math.abs(progress - 0.5) * 2 * normalizedIntensity * 50}px)`;
+                break;
+            case 'pinch':
+                transform = `scale(${1 - Math.abs(progress - 0.5) * normalizedIntensity})`;
+                break;
+            case 'bulge':
+                transform = `scale(${1 + Math.sin(progress * Math.PI) * normalizedIntensity})`;
+                break;
+            case 'perspective':
+                const scale = 1 + (progress - 0.5) * normalizedIntensity;
+                const y = (progress - 0.5) * normalizedIntensity * 50;
+                transform = `scale(${scale}) translateY(${y}px)`;
+                break;
+            case 'pointed':
+                transform = `translateY(${Math.abs(progress - 0.5) * 2 * normalizedIntensity * -50}px)`;
+                break;
+            case 'downward':
+                transform = `translateY(${progress * normalizedIntensity * 50}px)`;
+                break;
+            case 'upward':
+                transform = `translateY(${(1 - progress) * normalizedIntensity * 50}px)`;
+                break;
+            case 'cone':
+                transform = `scale(${1 + progress * normalizedIntensity})`;
+                break;
+        }
+
+        span.style.transform = transform;
+    });
 }
 function updateTextOutline() {
     if (currentlyEditedTextElement) {
@@ -1537,11 +1560,12 @@ function applyArchShape(element, intensity, isRtl) {
 
     const normalizedIntensity = (intensity - 50) / 50;
     Array.from(element.children).forEach((span, index) => {
-        const progress = isRtl ? 1 - (index / (chars.length - 1)) : index / (chars.length - 1);
+        const progress = isRtl ? (chars.length - 1 - index) / (chars.length - 1) : index / (chars.length - 1);
         const y = Math.sin(progress * Math.PI) * normalizedIntensity * -50;
         span.style.transform = `translateY(${y}px)`;
     });
 }
+
 function applyBridgeShape(element, intensity, isRtl) {
     const chars = element.textContent.split('');
     element.innerHTML = chars.map(char => `<span style="display: inline-block;">${char}</span>`).join('');
@@ -1721,5 +1745,5 @@ function centerObject(container) {
 }
 function isRTL(text) {
     const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-    return rtlChars.test(text);
+    return rtlChars.test(text.trim()[0]);
 }
