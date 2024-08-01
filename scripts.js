@@ -1501,12 +1501,11 @@ function applyTextOutline(textElement) {
     }
 }
 function applyNormalShape(element) {
-    element.style.transform = 'none';
+    element.style.transform = `rotate(${currentRotation}deg)`;
     Array.from(element.children).forEach(span => {
         span.style.transform = 'none';
     });
 }
-
 function applyCurveShape(element, intensity, widthFactor = 1) {
     const text = element.textContent;
     const chars = text.split('');
@@ -1714,6 +1713,16 @@ function applyTextRotation() {
         let currentTransform = currentlyEditedTextElement.style.transform || '';
         currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/, '');
         currentlyEditedTextElement.style.transform = `${currentTransform} rotate(${currentRotation}deg)`.trim();
+
+        // If the shape is normal, apply rotation directly to the element
+        if (currentTextShape === 'normal') {
+            currentlyEditedTextElement.style.transform = `rotate(${currentRotation}deg)`;
+        } else {
+            // For other shapes, maintain the existing transform and add rotation
+            let shapeTransform = currentlyEditedTextElement.style.transform || '';
+            shapeTransform = shapeTransform.replace(/\s*rotate\([^)]*\)/, '');
+            currentlyEditedTextElement.style.transform = `${shapeTransform} rotate(${currentRotation}deg)`.trim();
+        }
     }
 }
 function centerObject(container) {
