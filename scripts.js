@@ -216,7 +216,16 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
       deleteHandle.style.display = 'none';
     }
   });
-
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('.image-container') &&
+        !event.target.closest('.text-container') &&
+        !event.target.closest('.white-square')) {
+        if (deselectAllObjects()) {
+            saveState();
+            updateCanvasState();
+        }
+    }
+});
 document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
     const clickedOnImage = event.target.closest('.image-container');
@@ -292,30 +301,34 @@ document.addEventListener('contextmenu', function(event) {
     }
   });
 
-  imgContainer.addEventListener('click', function(event) {
-    event.stopPropagation();
-    if (!imgContainer.classList.contains('selected')) {
-      deselectAllObjects();
-      imgContainer.classList.add('selected');
-      imgContainer.style.border = '2px solid #000';
-      resizeHandle.style.display = 'block';
-      deleteHandle.style.display = 'block';
-    }
+    imgContainer.addEventListener('click', function(event) {
+        event.stopPropagation();
+        if (!imgContainer.classList.contains('selected')) {
+            deselectAllObjects();
+            imgContainer.classList.add('selected');
+            imgContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+        }
 
-    const imgWidth = img.offsetWidth;
-    const imgHeight = img.offsetHeight;
+        const imgWidth = img.offsetWidth;
+        const imgHeight = img.offsetHeight;
 
-    const sizeDisplay = document.getElementById('image-size');
-    sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
+        const sizeDisplay = document.getElementById('image-size');
+        sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
 
-    showScreen(screen4);
-    selectedImageContainer = imgContainer;
-    updateLayerButtons(selectedImageContainer);
+        showScreen(screen4);
+        selectedImageContainer = imgContainer;
+        updateLayerButtons(selectedImageContainer);
 
-    // Set background removal toggle based on stored state
-    const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
-    backgroundRemovalToggle.checked = isBackgroundRemoved;
-  });}
+        // Set background removal toggle based on stored state
+        const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
+        backgroundRemovalToggle.checked = isBackgroundRemoved;
+
+        saveState();
+        updateCanvasState();
+    });
+}
 
 document.addEventListener('click', function(event) {
   if (contextMenu.style.display === 'block') {
@@ -1125,17 +1138,19 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         }
         event.preventDefault();
     });
-textContainer.addEventListener('click', function(event) {
-    event.stopPropagation();
-    if (!textContainer.classList.contains('selected')) {
-        deselectAllObjects();
-        textContainer.classList.add('selected');
-        textContainer.style.border = '2px solid #000';
-        resizeHandle.style.display = 'block';
-        deleteHandle.style.display = 'block';
-    }
-    showTextEditScreen(textElement);
-});
+  textContainer.addEventListener('click', function(event) {
+        event.stopPropagation();
+        if (!textContainer.classList.contains('selected')) {
+            deselectAllObjects();
+            textContainer.classList.add('selected');
+            textContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+        }
+        showTextEditScreen(textElement);
+        saveState();
+        updateCanvasState();
+    });
 
 
     document.addEventListener('mousemove', function(event) {
@@ -1779,17 +1794,40 @@ function isRTL(text) {
     return rtlChars.test(text.trim()[0]);
 }
 function deselectAllObjects() {
+    let wasAnythingDeselected = false;
     const allObjects = canvas.querySelectorAll('.image-container, .text-container');
     allObjects.forEach(obj => {
-        obj.classList.remove('selected');
-        if (obj.classList.contains('image-container')) {
-            obj.style.border = '2px dashed transparent';
-        } else {
-            obj.style.border = '2px dashed transparent';
+        if (obj.classList.contains('selected')) {
+            wasAnythingDeselected = true;
         }
+        obj.classList.remove('selected');
+        obj.style.border = '2px dashed transparent';
         const resizeHandle = obj.querySelector('.resize-handle');
         const deleteHandle = obj.querySelector('.delete-handle');
         if (resizeHandle) resizeHandle.style.display = 'none';
         if (deleteHandle) deleteHandle.style.display = 'none';
     });
-}
+    return wasAnythingDeselected;
+}function deselectAllObjects() {
+     let wasAnythingDeselected = false;
+     const allObjects = canvas.querySelectorAll('.image-container, .text-container');
+     allObjects.forEach(obj => {
+         if (obj.classList.contains('selected')) {
+             wasAnythingDeselected = true;
+         }
+         obj.classList.remove('selected');
+         obj.style.border = '2px dashed transparent';
+         const resizeHandle = obj.querySelector('.resize-handle');
+         const deleteHandle = obj.querySelector('.delete-handle');
+         if (resizeHandle) resizeHandle.style.display = 'none';
+         if (deleteHandle) deleteHandle.style.display = 'none';
+     });
+     return wasAnythingDeselected;
+ }
+canvas.addEventListener('click', function(event) {
+    // Check if the click is directly on the canvas and not on any object
+    if (event.target === canvas) {
+        deselectAllObjects();
+        showScreen(screen1); // Return to the main screen
+    }
+});
