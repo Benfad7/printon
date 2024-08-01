@@ -111,6 +111,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
   imgContainer.addEventListener('mousedown', function(event) {
     if (event.target === img && !isResizing) {
+      deselectAllObjects();
       isDragging = true;
       startX = event.clientX;
       startY = event.clientY;
@@ -118,6 +119,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
       startTop = imgContainer.offsetTop;
       img.style.cursor = 'grabbing';
       imgContainer.classList.add('selected');
+      imgContainer.style.border = '2px solid #000';
       resizeHandle.style.display = 'block';
       deleteHandle.style.display = 'block';
     }
@@ -177,20 +179,19 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
   });
 
-   document.addEventListener('mouseup', function() {
+  document.addEventListener('mouseup', function() {
+    isDragging = false;
+    isResizing = false;
+    img.style.cursor = 'grab';
 
-        isDragging = false;
-        isResizing = false;
-        img.style.cursor = 'grab';
-
-        // Recalculate center option state
-        const centerOption = document.getElementById('center-image');
-        if (isImageCentered(imgContainer)) {
-            centerOption.classList.add('disabled');
-        } else {
-            centerOption.classList.remove('disabled');
-        }
-    });
+    // Recalculate center option state
+    const centerOption = document.getElementById('center-image');
+    if (isImageCentered(imgContainer)) {
+      centerOption.classList.add('disabled');
+    } else {
+      centerOption.classList.remove('disabled');
+    }
+  });
   resizeHandle.addEventListener('mousedown', function(event) {
     isResizing = true;
     isDragging = false;
@@ -204,6 +205,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
   deleteHandle.addEventListener('click', function(event) {
     canvas.removeChild(imgContainer);
+    saveState();
+    updateCanvasState();
   });
 
   document.addEventListener('click', function(event) {
@@ -276,7 +279,29 @@ document.addEventListener('contextmenu', function(event) {
         saveState();
         updateCanvasState();
     });
-imgContainer.addEventListener('click', function() {
+
+  imgContainer.addEventListener('mouseenter', function() {
+    if (!imgContainer.classList.contains('selected')) {
+      imgContainer.style.border = '2px dashed #000';
+    }
+  });
+
+  imgContainer.addEventListener('mouseleave', function() {
+    if (!imgContainer.classList.contains('selected')) {
+      imgContainer.style.border = '2px dashed transparent';
+    }
+  });
+
+  imgContainer.addEventListener('click', function(event) {
+    event.stopPropagation();
+    if (!imgContainer.classList.contains('selected')) {
+      deselectAllObjects();
+      imgContainer.classList.add('selected');
+      imgContainer.style.border = '2px solid #000';
+      resizeHandle.style.display = 'block';
+      deleteHandle.style.display = 'block';
+    }
+
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
 
@@ -285,14 +310,12 @@ imgContainer.addEventListener('click', function() {
 
     showScreen(screen4);
     selectedImageContainer = imgContainer;
-        updateLayerButtons(selectedImageContainer);
-
-
+    updateLayerButtons(selectedImageContainer);
 
     // Set background removal toggle based on stored state
     const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
     backgroundRemovalToggle.checked = isBackgroundRemoved;
-});}
+  });}
 
 document.addEventListener('click', function(event) {
   if (contextMenu.style.display === 'block') {
@@ -1085,8 +1108,9 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
        textContainer.style.cursor = 'grab';
         textElement.style.cursor = 'grab';
 
-    textContainer.addEventListener('mousedown', function(event) {
+ textContainer.addEventListener('mousedown', function(event) {
         if (!isResizing) {
+            deselectAllObjects(); // Deselect all objects before selecting this one
             isDragging = true;
             startX = event.clientX;
             startY = event.clientY;
@@ -1101,10 +1125,17 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         }
         event.preventDefault();
     });
-    textContainer.addEventListener('click', function(event) {
-        event.stopPropagation();
-        showTextEditScreen(textElement);
-    });
+textContainer.addEventListener('click', function(event) {
+    event.stopPropagation();
+    if (!textContainer.classList.contains('selected')) {
+        deselectAllObjects();
+        textContainer.classList.add('selected');
+        textContainer.style.border = '2px solid #000';
+        resizeHandle.style.display = 'block';
+        deleteHandle.style.display = 'block';
+    }
+    showTextEditScreen(textElement);
+});
 
 
     document.addEventListener('mousemove', function(event) {
@@ -1746,4 +1777,15 @@ function centerObject(container) {
 function isRTL(text) {
     const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
     return rtlChars.test(text.trim()[0]);
+}
+function deselectAllObjects() {
+    const allObjects = canvas.querySelectorAll('.image-container, .text-container');
+    allObjects.forEach(obj => {
+        obj.classList.remove('selected');
+        obj.style.border = '2px dashed transparent';
+        const resizeHandle = obj.querySelector('.resize-handle');
+        const deleteHandle = obj.querySelector('.delete-handle');
+        if (resizeHandle) resizeHandle.style.display = 'none';
+        if (deleteHandle) deleteHandle.style.display = 'none';
+    });
 }
