@@ -1782,7 +1782,11 @@ function deselectAllObjects() {
     const allObjects = canvas.querySelectorAll('.image-container, .text-container');
     allObjects.forEach(obj => {
         obj.classList.remove('selected');
-        obj.style.border = '2px dashed transparent';
+        if (obj.classList.contains('image-container')) {
+            obj.style.border = '2px dashed transparent';
+        } else {
+            obj.style.border = '2px dashed transparent';
+        }
         const resizeHandle = obj.querySelector('.resize-handle');
         const deleteHandle = obj.querySelector('.delete-handle');
         if (resizeHandle) resizeHandle.style.display = 'none';
