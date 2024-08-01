@@ -1681,13 +1681,33 @@ function applyConeShape(element, intensity) {
  document.addEventListener('DOMContentLoaded', applyPreviewShapes);
 function updateTextRotation() {
     if (currentlyEditedTextElement) {
-        currentRotation = this.value;
+        let rotation = parseInt(this.value);
+
+        // Snap to zero if within 5 degrees
+
+
+        currentRotation = rotation;
         document.getElementById('rotation-value').textContent = currentRotation + '°';
         applyTextRotation();
         saveState();
         updateCanvasState();
     }
 }
+
+function resetRotation() {
+    if (currentlyEditedTextElement) {
+        currentRotation = 0;
+        document.getElementById('rotation-slider').value = 0;
+        document.getElementById('rotation-value').textContent = '0°';
+        applyTextRotation();
+        saveState();
+        updateCanvasState();
+    }
+}
+
+// Add these event listeners
+document.getElementById('rotation-slider').addEventListener('input', updateTextRotation);
+document.getElementById('reset-rotation').addEventListener('click', resetRotation);
 
 function applyTextRotation() {
     if (currentlyEditedTextElement) {
