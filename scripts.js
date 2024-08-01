@@ -1290,6 +1290,7 @@ let currentRotation = 0;
 
 function showTextEditScreen(textElement) {
     showScreen(screen5);
+
     currentlyEditedTextElement = textElement;
     const editTextInput = document.getElementById('edit-text-input');
     const textColorPicker = document.getElementById('text-color-picker');
@@ -1353,6 +1354,14 @@ function showTextEditScreen(textElement) {
     screen5.querySelector('.white-square').addEventListener('click', function(event) {
         event.stopPropagation();
     });
+    // Update layer buttons
+    updateLayerButtons(currentlyEditedTextElement.parentNode);
+
+    // Update center button state
+    updateCenterButtonState(currentlyEditedTextElement.parentNode);
+
+    // Update flip buttons state
+    updateFlipButtonsState(currentlyEditedTextElement);
 }
 
 // Helper function to convert RGB to HEX
@@ -1831,3 +1840,91 @@ canvas.addEventListener('click', function(event) {
         showScreen(screen1); // Return to the main screen
     }
 });
+// Center text
+document.getElementById('center-text-button').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        centerObject(currentlyEditedTextElement.parentNode);
+    }
+});
+
+// Layer control for text
+document.getElementById('move-text-forward').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        moveLayerForward(currentlyEditedTextElement.parentNode);
+    }
+});
+
+document.getElementById('move-text-backward').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        moveLayerBackward(currentlyEditedTextElement.parentNode);
+    }
+});
+
+// Flip text
+document.getElementById('flip-text-horizontal').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        toggleTransform(currentlyEditedTextElement, 'scaleX(-1)');
+    }
+});
+
+document.getElementById('flip-text-vertical').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        toggleTransform(currentlyEditedTextElement, 'scaleY(-1)');
+    }
+});
+
+// Duplicate text
+document.getElementById('duplicate-text').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        const originalContainer = currentlyEditedTextElement.parentNode;
+        const clonedContainer = originalContainer.cloneNode(true);
+        const clonedTextElement = clonedContainer.querySelector('p');
+
+        // Reset the position of the cloned container
+        clonedContainer.style.left = (parseFloat(originalContainer.style.left) + 20) + 'px';
+        clonedContainer.style.top = (parseFloat(originalContainer.style.top) + 20) + 'px';
+
+        // Ensure unique ids for the cloned elements if needed
+        clonedContainer.id = '';
+        clonedTextElement.id = '';
+
+        // Add the cloned container to the canvas
+        canvas.appendChild(clonedContainer);
+
+        // Setup interactions for the cloned text
+        setupTextInteractions(clonedContainer, clonedTextElement,
+            clonedContainer.querySelector('.resize-handle'),
+            clonedContainer.querySelector('.delete-handle'));
+
+        // Update layer buttons
+        updateLayerButtons(clonedContainer);
+
+        // Set the cloned container as the selected container
+        selectedImageContainer = clonedContainer;
+        currentlyEditedTextElement = clonedTextElement;
+
+        saveState();
+        updateCanvasState();
+    }
+});
+function updateFlipButtonsState(element) {
+    const transform = element.style.transform || '';
+    const horizontalFlipButton = document.getElementById('flip-text-horizontal');
+    const verticalFlipButton = document.getElementById('flip-text-vertical');
+
+    horizontalFlipButton.classList.toggle('active', transform.includes('scaleX(-1)'));
+    verticalFlipButton.classList.toggle('active', transform.includes('scaleY(-1)'));
+}
+
+function toggleTransform(element, transform) {
+    let currentTransform = element.style.transform || '';
+    if (currentTransform.includes(transform)) {
+        currentTransform = currentTransform.replace(transform, '');
+    } else {
+        currentTransform += ` ${transform}`;
+    }
+    element.style.transform = currentTransform.trim();
+    updateFlipButtonsState(element);
+    saveState();
+    updateCanvasState();
+}

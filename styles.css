@@ -1090,3 +1090,36 @@ body, html {
 .reset-button:hover {
     background-color: #e0e0e0;
 }
+.separator-line.at-7 {
+    top: 55%; /* Adjust this value as needed to position the line correctly */
+}
+
+.additional-text-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: absolute;
+    top: 58%; /* Adjust this value to position the controls below the line */
+    left: 14.5%;
+    right: 14.5%;
+}
+
+.additional-text-controls .button-group {
+    position: static;
+    margin: 0;
+}
+
+.additional-text-controls .button-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.additional-text-controls .custom-button {
+    width: 40px;
+    height: 40px;
+}
+
+.additional-text-controls .button-text {
+    font-size: 14px;
+    margin-top: 5px;
+}
