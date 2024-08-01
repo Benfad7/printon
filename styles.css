@@ -1091,35 +1091,68 @@ body, html {
     background-color: #e0e0e0;
 }
 .separator-line.at-7 {
-    top: 55%; /* Adjust this value as needed to position the line correctly */
+    top: 48%; /* Adjust as needed */
 }
 
 .additional-text-controls {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
     position: absolute;
-    top: 58%; /* Adjust this value to position the controls below the line */
+    top: 51%; /* Adjust as needed */
     left: 14.5%;
     right: 14.5%;
+    direction: rtl; /* For right-to-left layout */
 }
 
 .additional-text-controls .button-group {
-    position: static;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .additional-text-controls .button-container {
     display: flex;
-    flex-direction: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .additional-text-controls .custom-button {
-    width: 40px;
-    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: none;
+    padding: 0;
+    font-size: 20px;
+    color: #333;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.additional-text-controls .custom-button:hover {
+    background-color: #f0f0f0;
+}
+
+.additional-text-controls .custom-button:not(:last-child) {
+    border-right: 1px solid #ccc;
 }
 
 .additional-text-controls .button-text {
-    font-size: 14px;
     margin-top: 5px;
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+}
+
+/* Specific adjustments for buttons with single/multiple options */
+#center-text-button-group .button-container,
+#duplicate-text-control .button-container {
+    width: 50px;
+}
+
+#text-layer-control .button-container,
+#flip-text-control .button-container {
+    width: 100px;
 }
