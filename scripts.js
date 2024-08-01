@@ -216,8 +216,6 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
 document.addEventListener('contextmenu', function(event) {
     event.preventDefault();
-        deselectAllObjects(); // Add this line
-
     const clickedOnImage = event.target.closest('.image-container');
     const clickedOnText = event.target.closest('.text-container');
     const hasObjectsOnCanvas = canvas.querySelector('.image-container, .text-container') !== null;
@@ -1086,23 +1084,23 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
        textContainer.style.cursor = 'grab';
         textElement.style.cursor = 'grab';
-textContainer.addEventListener('mousedown', function(event) {
-    if (!isResizing) {
-        deselectAllObjects(); // Add this line
-        isDragging = true;
-        startX = event.clientX;
-        startY = event.clientY;
-        startLeft = textContainer.offsetLeft;
-        startTop = textContainer.offsetTop;
-        textContainer.classList.add('selected');
-        textContainer.style.border = '2px solid #000';
-        resizeHandle.style.display = 'block';
-        deleteHandle.style.display = 'block';
-        textContainer.style.cursor = 'grabbing';
-        textElement.style.cursor = 'grabbing';
-    }
-    event.preventDefault();
-});
+
+    textContainer.addEventListener('mousedown', function(event) {
+        if (!isResizing) {
+            isDragging = true;
+            startX = event.clientX;
+            startY = event.clientY;
+            startLeft = textContainer.offsetLeft;
+            startTop = textContainer.offsetTop;
+            textContainer.classList.add('selected');
+            textContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+            textContainer.style.cursor = 'grabbing';
+            textElement.style.cursor = 'grabbing';
+        }
+        event.preventDefault();
+    });
     textContainer.addEventListener('click', function(event) {
         event.stopPropagation();
         showTextEditScreen(textElement);
@@ -1724,15 +1722,4 @@ function centerObject(container) {
 function isRTL(text) {
     const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
     return rtlChars.test(text);
-}
-function deselectAllObjects() {
-    const allObjects = canvas.querySelectorAll('.image-container, .text-container');
-    allObjects.forEach(obj => {
-        obj.classList.remove('selected');
-        obj.style.border = '2px dashed transparent';
-        const resizeHandle = obj.querySelector('.resize-handle');
-        const deleteHandle = obj.querySelector('.delete-handle');
-        if (resizeHandle) resizeHandle.style.display = 'none';
-        if (deleteHandle) deleteHandle.style.display = 'none';
-    });
 }
