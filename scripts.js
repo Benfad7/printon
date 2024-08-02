@@ -1875,11 +1875,15 @@ canvas.addEventListener('click', function(event) {
     }
 });
 // Center text
+// Center text
 document.getElementById('center-text-button').addEventListener('click', function() {
     if (currentlyEditedTextElement) {
         centerObject(currentlyEditedTextElement.parentNode);
+        updateCenterButtonState(currentlyEditedTextElement.parentNode);
     }
 });
+
+
 
 // Layer control for text
 document.getElementById('move-text-forward').addEventListener('click', function() {
@@ -1962,37 +1966,3 @@ function toggleTransform(element, transform) {
     saveState();
     updateCanvasState();
 }
-// Center text
-document.getElementById('center-text-button').addEventListener('click', function() {
-    if (currentlyEditedTextElement) {
-        centerObject(currentlyEditedTextElement.parentNode);
-        updateCenterButtonState(currentlyEditedTextElement.parentNode);
-    }
-});
-
-// Layer control for text
-document.getElementById('move-text-forward').addEventListener('click', function() {
-    if (currentlyEditedTextElement) {
-        moveLayerForward(currentlyEditedTextElement.parentNode);
-    }
-});
-
-document.getElementById('move-text-backward').addEventListener('click', function() {
-    if (currentlyEditedTextElement) {
-        moveLayerBackward(currentlyEditedTextElement.parentNode);
-    }
-});
-
-// Flip text
-document.getElementById('flip-text-horizontal').addEventListener('click', function() {
-    if (currentlyEditedTextElement) {
-        toggleTransform(currentlyEditedTextElement, 'scaleX(-1)');
-    }
-});
-
-document.getElementById('flip-text-vertical').addEventListener('click', function() {
-    if (currentlyEditedTextElement) {
-        toggleTransform(currentlyEditedTextElement, 'scaleY(-1)');
-    }
-});
-
