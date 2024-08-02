@@ -946,25 +946,10 @@ pasteImage.addEventListener('click', function() {
 }
 function updateCenterButtonState(container) {
     const centerButton = document.getElementById('center-text-button') || document.getElementById('center-image-button');
-    if (isObjectCentered(container)) {
-        centerButton.classList.add('disabled');
         centerButton.querySelector('.button-text').classList.add('disabled');
-    } else {
-        centerButton.classList.remove('disabled');
-        centerButton.querySelector('.button-text').classList.remove('disabled');
-    }
+
 }
 
-function isObjectCentered(container) {
-    const canvasRect = canvas.getBoundingClientRect();
-    const objRect = container.getBoundingClientRect();
-
-    const canvasCenterX = canvasRect.width / 2;
-    const objectCenterX = objRect.left + objRect.width / 2 - canvasRect.left;
-
-    // Allow for a small margin of error (e.g., 1 pixel)
-    return Math.abs(canvasCenterX - objectCenterX) < 3;
-}
 function hasImagesOnCanvas() {
     return canvas.querySelector('.image-container, .text-container') !== null;
 }
