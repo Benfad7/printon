@@ -1255,14 +1255,15 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
      }
  });
   document.addEventListener('mouseup', function() {
-        if (isDragging) {
-            textContainer.style.cursor = 'grab';
-            textElement.style.cursor = 'grab';
+        if (isDragging || isResizing) {
+            captureCanvasState();  // Capture state after moving or resizing
         }
         isDragging = false;
         isResizing = false;
-
+        textContainer.style.cursor = 'grab';
+        textElement.style.cursor = 'grab';
     });
+
 
 
 resizeHandle.addEventListener('mousedown', function(event) {
