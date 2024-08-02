@@ -800,7 +800,7 @@ body, html {
     text-align: right;
     font-size: 18px;
     position: absolute;
-    top: 37%;
+    top: 37.3%;
     right: 0%;
 }
 
@@ -1092,63 +1092,4 @@ body, html {
 }
 .separator-line.at-7 {
     top: 48%; /* Adjust as needed */
-}
-
-.additional-text-controls {
-    display: flex;
-    justify-content: space-between; /* This will push items to the edges */
-    position: absolute;
-    top: 51%;
-    left: 5%;
-    right: 5%;
-    width: 90%;
-    direction: rtl;
-}
-
-.additional-text-controls .button-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.additional-text-controls .button-container {
-    display: flex;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
-    background-color: white;
-}
-
-.additional-text-controls .custom-button {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: transparent;
-    border: none;
-    font-size: 20px;
-    color: #333;
-    cursor: pointer;
-}
-
-.additional-text-controls .button-text {
-    margin-top: 5px;
-    font-size: 16px;
-    color: #333;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* Specific styling for the middle button group */
-.additional-text-controls .button-group:nth-child(2) .button-container {
-    width: 100px; /* Double width for the middle button */
-}
-
-.additional-text-controls .button-group:nth-child(2) .custom-button {
-    width: 50px; /* Keep individual button width the same */
-}
-
-.additional-text-controls .button-group:nth-child(2) .custom-button:first-child {
-    border-left: 1px solid #ccc; /* Add a separator between the two buttons */
 }
