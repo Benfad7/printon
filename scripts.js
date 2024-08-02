@@ -242,6 +242,9 @@ document.addEventListener('contextmenu', function(event) {
         if (item.id === 'paste-image') {
             // Always enable paste if there's copied data
             item.classList.toggle('disabled', !copiedImageData);
+        } else if (item.id === 'cut-image') {
+            // Disable cut option for text elements
+            item.classList.toggle('disabled', clickedOnText || !hasObjectsOnCanvas);
         } else {
             item.classList.toggle('disabled', !(clickedOnImage || clickedOnText) || !hasObjectsOnCanvas);
         }
@@ -857,9 +860,9 @@ deleteImage.addEventListener('click', function() {
 
 
 function updatePasteButtonState() {
- const pasteButton = document.getElementById('paste-image');
+    const pasteButton = document.getElementById('paste-image');
     pasteButton.classList.toggle('disabled', !copiedImageData);
-        const contextPasteItem = contextMenu.querySelector('#paste-image');
+    const contextPasteItem = contextMenu.querySelector('#paste-image');
 
     if (copiedImageData) {
         pasteButton.classList.remove('disabled');
@@ -916,38 +919,68 @@ copyImage.addEventListener('click', function() {
 pasteImage.addEventListener('click', function() {
     if (copiedImageData) {
         if (copiedImageData.type === 'image') {
-            // Existing image paste logic
-            // ...
+            const imgContainer = document.createElement('div');
+            imgContainer.classList.add('image-container');
+            imgContainer.style.position = 'absolute';
+
+            const img = document.createElement('img');
+            img.src = copiedImageData.src;
+            img.setAttribute('data-original-src', copiedImageData.originalSrc);
+            img.setAttribute('data-cropped-src', copiedImageData.croppedSrc);
+            img.style.width = copiedImageData.width;
+            img.style.height = copiedImageData.height;
+            img.style.transform = copiedImageData.transform;
+
+            const resizeHandle = document.createElement('div');
+            resizeHandle.classList.add('resize-handle');
+
+            const deleteHandle = document.createElement('div');
+            deleteHandle.classList.add('delete-handle');
+
+            imgContainer.appendChild(img);
+            imgContainer.appendChild(resizeHandle);
+            imgContainer.appendChild(deleteHandle);
+
+            // Set position (you might want to offset it slightly from the original)
+            imgContainer.style.left = (parseFloat(selectedImageContainer.style.left) + 20) + 'px';
+            imgContainer.style.top = (parseFloat(selectedImageContainer.style.top) + 20) + 'px';
+
+            canvas.appendChild(imgContainer);
+
+            setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, copiedImageData.originalSrc);
+
         } else if (copiedImageData.type === 'text') {
-            const newContainer = document.createElement('div');
-            newContainer.classList.add('text-container');
-            newContainer.style.position = 'absolute';
+            const textContainer = document.createElement('div');
+            textContainer.classList.add('text-container');
+            textContainer.style.position = 'absolute';
 
-            // Set position
-            const canvasRect = canvas.getBoundingClientRect();
-            newContainer.style.left = (canvasRect.width / 2) + 'px';
-            newContainer.style.top = (canvasRect.height / 2) + 'px';
+            const textElement = document.createElement('p');
+            textElement.textContent = copiedImageData.content;
+            Object.assign(textElement.style, copiedImageData.style);
+            Object.assign(textElement.dataset, copiedImageData.dataset);
 
-            const newTextElement = document.createElement('p');
-            newTextElement.textContent = copiedImageData.content;
-            Object.assign(newTextElement.style, copiedImageData.style);
-            Object.assign(newTextElement.dataset, copiedImageData.dataset);
+            const resizeHandle = document.createElement('div');
+            resizeHandle.classList.add('resize-handle');
 
-            newContainer.appendChild(newTextElement);
+            const deleteHandle = document.createElement('div');
+            deleteHandle.classList.add('delete-handle');
 
-            canvas.appendChild(newContainer);
+            textContainer.appendChild(textElement);
+            textContainer.appendChild(resizeHandle);
+            textContainer.appendChild(deleteHandle);
 
-            setupTextInteractions(newContainer, newTextElement,
-                document.createElement('div'), // resize handle
-                document.createElement('div')  // delete handle
-            );
+            // Set position (you might want to offset it slightly from the original)
+            textContainer.style.left = (parseFloat(selectedImageContainer.style.left) + 20) + 'px';
+            textContainer.style.top = (parseFloat(selectedImageContainer.style.top) + 20) + 'px';
 
-            selectedImageContainer = newContainer;
+            canvas.appendChild(textContainer);
+
+            setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
         }
 
         contextMenu.style.display = 'none';
         updatePasteButtonState();
-
+        captureCanvasState();
     }
 });function isImageCentered(imgContainer) {
     const containerRect = canvas.getBoundingClientRect();
@@ -963,11 +996,9 @@ function updateCenterButtonState(container) {
         centerButton.querySelector('.button-text').classList.add('disabled');
 
 }
-
 function hasImagesOnCanvas() {
     return canvas.querySelector('.image-container, .text-container') !== null;
 }
-
 function updateCanvasState() {
     updatePasteButtonState();
     updateUndoRedoButtons();
