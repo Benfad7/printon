@@ -1776,12 +1776,19 @@ document.getElementById('reset-rotation').addEventListener('click', resetRotatio
 
 function applyTextRotation() {
     if (currentlyEditedTextElement) {
-        const computedStyle = window.getComputedStyle(currentlyEditedTextElement);
-        const matrix = new DOMMatrix(computedStyle.transform);
-        const scaleX = matrix.a;
-        const scaleY = matrix.d;
+        let currentTransform = currentlyEditedTextElement.style.transform || '';
+        currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/, '');
+        currentlyEditedTextElement.style.transform = `${currentTransform} rotate(${currentRotation}deg)`.trim();
 
-        currentlyEditedTextElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${currentRotation}deg)`;
+        // If the shape is normal, apply rotation directly to the element
+        if (currentTextShape === 'normal') {
+            currentlyEditedTextElement.style.transform = `rotate(${currentRotation}deg)`;
+        } else {
+            // For other shapes, maintain the existing transform and add rotation
+            let shapeTransform = currentlyEditedTextElement.style.transform || '';
+            shapeTransform = shapeTransform.replace(/\s*rotate\([^)]*\)/, '');
+            currentlyEditedTextElement.style.transform = `${shapeTransform} rotate(${currentRotation}deg)`.trim();
+        }
     }
 }
 function centerObject(container) {
@@ -1901,36 +1908,26 @@ document.getElementById('duplicate-text').addEventListener('click', function() {
     }
 });
 function updateFlipButtonsState(element) {
-    const currentTransform = element.style.transform || '';
-
+    const transform = element.style.transform || '';
     const horizontalFlipButton = document.getElementById('flip-text-horizontal');
     const verticalFlipButton = document.getElementById('flip-text-vertical');
 
-    horizontalFlipButton.classList.toggle('active', /scaleX\(-1\)/.test(currentTransform));
-    verticalFlipButton.classList.toggle('active', /scaleY\(-1\)/.test(currentTransform));
+    horizontalFlipButton.classList.toggle('active', transform.includes('scaleX(-1)'));
+    verticalFlipButton.classList.toggle('active', transform.includes('scaleY(-1)'));
 }
 
-function toggleTextTransform(element, direction) {
-    const currentTransform = element.style.transform || '';
-    const scaleRegex = direction === 'horizontal' ? /scaleX\(-?1\)/ : /scaleY\(-?1\)/;
-    const scaleProperty = direction === 'horizontal' ? 'scaleX' : 'scaleY';
-
-    let newTransform;
-    if (scaleRegex.test(currentTransform)) {
-        // Remove the scale if it exists
-        newTransform = currentTransform.replace(scaleRegex, '');
+function toggleTransform(element, transform) {
+    let currentTransform = element.style.transform || '';
+    if (currentTransform.includes(transform)) {
+        currentTransform = currentTransform.replace(transform, '');
     } else {
-        // Add the scale if it doesn't exist
-        newTransform = `${currentTransform} ${scaleProperty}(-1)`.trim();
+        currentTransform += ` ${transform}`;
     }
-
-    element.style.transform = newTransform;
+    element.style.transform = currentTransform.trim();
     updateFlipButtonsState(element);
     saveState();
     updateCanvasState();
 }
-
-
 // Center text
 document.getElementById('center-text-button').addEventListener('click', function() {
     if (currentlyEditedTextElement) {
@@ -1951,14 +1948,16 @@ document.getElementById('move-text-backward').addEventListener('click', function
     }
 });
 
+// Flip text
 document.getElementById('flip-text-horizontal').addEventListener('click', function() {
     if (currentlyEditedTextElement) {
-        toggleTextTransform(currentlyEditedTextElement, 'horizontal');
+        toggleTransform(currentlyEditedTextElement, 'scaleX(-1)');
     }
 });
 
 document.getElementById('flip-text-vertical').addEventListener('click', function() {
     if (currentlyEditedTextElement) {
-        toggleTextTransform(currentlyEditedTextElement, 'vertical');
+        toggleTransform(currentlyEditedTextElement, 'scaleY(-1)');
     }
 });
+
