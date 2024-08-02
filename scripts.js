@@ -32,6 +32,52 @@ let canvasStates = [];
 let currentStateIndex = -1;
 const MAX_STATES = 50;
 let copiedObjectData = null;
+document.addEventListener('contextmenu', function(event) {
+    console.log("h");
+    event.preventDefault();
+    const clickedOnImage = event.target.closest('.image-container');
+    const clickedOnText = event.target.closest('.text-container');
+    const hasObjectsOnCanvas = canvas.querySelector('.image-container, .text-container') !== null;
+
+    contextMenu.style.display = 'block';
+
+    // Disable or enable menu items based on context
+    const menuItems = contextMenu.querySelectorAll('.context-menu-item');
+    menuItems.forEach(item => {
+        if (item.id === 'paste-image') {
+            // Always enable paste if there's copied data
+    item.classList.toggle('disabled', !copiedObjectData);
+        } else if (item.id === 'cut-image') {
+            // Disable cut option for text elements
+    item.classList.toggle('disabled', !clickedOnImage);
+        } else {
+            item.classList.toggle('disabled', !(clickedOnImage || clickedOnText) || !hasObjectsOnCanvas);
+        }
+    });
+
+    // Position the menu
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    let left = event.pageX;
+    let top = event.pageY;
+
+    if (left + menuWidth > windowWidth) {
+        left = windowWidth - menuWidth;
+    }
+
+    if (top + menuHeight > windowHeight) {
+        top = windowHeight - menuHeight;
+    }
+
+    contextMenu.style.left = left + 'px';
+    contextMenu.style.top = top + 'px';
+
+    // Set the selected container
+    selectedImageContainer = clickedOnImage || clickedOnText;
+});
 
 function handleFileSelection(event) {
     const files = event.target.files;
@@ -228,51 +274,6 @@ document.addEventListener('click', function(event) {
 
         }
     }
-});
-document.addEventListener('contextmenu', function(event) {
-    event.preventDefault();
-    const clickedOnImage = event.target.closest('.image-container');
-    const clickedOnText = event.target.closest('.text-container');
-    const hasObjectsOnCanvas = canvas.querySelector('.image-container, .text-container') !== null;
-
-    contextMenu.style.display = 'block';
-
-    // Disable or enable menu items based on context
-    const menuItems = contextMenu.querySelectorAll('.context-menu-item');
-    menuItems.forEach(item => {
-        if (item.id === 'paste-image') {
-            // Always enable paste if there's copied data
-    item.classList.toggle('disabled', !copiedObjectData);
-        } else if (item.id === 'cut-image') {
-            // Disable cut option for text elements
-    item.classList.toggle('disabled', !clickedOnImage);
-        } else {
-            item.classList.toggle('disabled', !(clickedOnImage || clickedOnText) || !hasObjectsOnCanvas);
-        }
-    });
-
-    // Position the menu
-    const menuWidth = contextMenu.offsetWidth;
-    const menuHeight = contextMenu.offsetHeight;
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    let left = event.pageX;
-    let top = event.pageY;
-
-    if (left + menuWidth > windowWidth) {
-        left = windowWidth - menuWidth;
-    }
-
-    if (top + menuHeight > windowHeight) {
-        top = windowHeight - menuHeight;
-    }
-
-    contextMenu.style.left = left + 'px';
-    contextMenu.style.top = top + 'px';
-
-    // Set the selected container
-    selectedImageContainer = clickedOnImage || clickedOnText;
 });
 
 
