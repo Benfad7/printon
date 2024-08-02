@@ -936,15 +936,26 @@ pasteImage.addEventListener('click', function() {
     // Allow for a small margin of error (e.g., 1 pixel)
     return Math.abs(centerX - imageCenterX) < 5;
 }
-function updateCenterButtonState(imgContainer) {
-    const centerButton = document.getElementById('center-image-button');
-    if (isImageCentered(imgContainer)) {
+function updateCenterButtonState(container) {
+    const centerButton = document.getElementById('center-text-button') || document.getElementById('center-image-button');
+    if (isObjectCentered(container)) {
         centerButton.classList.add('disabled');
         centerButton.querySelector('.button-text').classList.add('disabled');
     } else {
         centerButton.classList.remove('disabled');
         centerButton.querySelector('.button-text').classList.remove('disabled');
     }
+}
+
+function isObjectCentered(container) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const objRect = container.getBoundingClientRect();
+
+    const canvasCenterX = canvasRect.width / 2;
+    const objectCenterX = objRect.left + objRect.width / 2 - canvasRect.left;
+
+    // Allow for a small margin of error (e.g., 1 pixel)
+    return Math.abs(canvasCenterX - objectCenterX) < 3;
 }
 function hasImagesOnCanvas() {
     return canvas.querySelector('.image-container, .text-container') !== null;
@@ -1792,9 +1803,32 @@ function applyTextRotation() {
     }
 }
 function centerObject(container) {
-    const containerRect = canvas.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
     const objRect = container.getBoundingClientRect();
-    container.style.left = (containerRect.width / 2 - objRect.width / 2) + 'px';
+
+    // Calculate the horizontal center of the canvas
+    const canvasCenterX = canvasRect.width / 2;
+
+    // Calculate the offset to center the object horizontally
+    const offsetX = objRect.width / 2;
+
+    // Set the new horizontal position
+    const newLeft = canvasCenterX - offsetX;
+    container.style.left = `${newLeft}px`;
+
+    // If it's a text container, we need to adjust for any transform
+    if (container.classList.contains('text-container')) {
+        const textElement = container.querySelector('p');
+        const computedStyle = window.getComputedStyle(textElement);
+        const transform = computedStyle.transform;
+
+        if (transform && transform !== 'none') {
+            const matrix = new DOMMatrix(transform);
+            const additionalOffsetX = matrix.m41 / 2;
+            container.style.left = `${newLeft - additionalOffsetX}px`;
+        }
+    }
+
     saveState();
     updateCanvasState();
 }
@@ -1932,6 +1966,7 @@ function toggleTransform(element, transform) {
 document.getElementById('center-text-button').addEventListener('click', function() {
     if (currentlyEditedTextElement) {
         centerObject(currentlyEditedTextElement.parentNode);
+        updateCenterButtonState(currentlyEditedTextElement.parentNode);
     }
 });
 
