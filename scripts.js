@@ -1983,20 +1983,8 @@ function applyCanvasState(state) {
     state.objects.forEach((obj, index) => {
         const child = canvas.children[index];
         child.setAttribute('style', obj.style);
-
-        // Reattach event listeners and interactions
-        if (child.classList.contains('image-container')) {
-            const img = child.querySelector('img');
-            const resizeHandle = child.querySelector('.resize-handle');
-            const deleteHandle = child.querySelector('.delete-handle');
-            setupImageInteractions(child, img, resizeHandle, deleteHandle);
-        } else if (child.classList.contains('text-container')) {
-            const textElement = child.querySelector('p');
-            const resizeHandle = child.querySelector('.resize-handle');
-            const deleteHandle = child.querySelector('.delete-handle');
-            setupTextInteractions(child, textElement, resizeHandle, deleteHandle);
-        }
     });
+    reattachEventListeners();
 }
 
 // Undo function
