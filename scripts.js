@@ -977,6 +977,7 @@ function reattachEventListeners() {
         const deleteHandle = container.querySelector('.delete-handle');
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
+
     const textContainers = canvas.querySelectorAll('.text-container');
     textContainers.forEach(container => {
         const textElement = container.querySelector('p');
@@ -994,8 +995,49 @@ function reattachEventListeners() {
 
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
-  const rotationSlider = document.getElementById('rotation-slider');
+
+    // Reattach event listeners for text editing screen
+    const textColorPicker = document.getElementById('text-color-picker');
+    const fontSelector = document.getElementById('font-selector');
+    const editTextInput = document.getElementById('edit-text-input');
+    const outlineColorPicker = document.getElementById('outline-color-picker');
+    const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
+    const rotationSlider = document.getElementById('rotation-slider');
+
+    textColorPicker.addEventListener('input', updateTextColor);
+    fontSelector.addEventListener('change', updateTextFont);
+    editTextInput.addEventListener('blur', updateTextContent);
+    editTextInput.addEventListener('keypress', handleEnterKey);
+    outlineColorPicker.addEventListener('input', updateTextOutline);
+    outlineThicknessSelector.addEventListener('change', updateTextOutline);
     rotationSlider.addEventListener('input', updateTextRotation);
+
+    // Reattach event listeners for shape options
+    document.querySelectorAll('.shape-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.shape-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            currentTextShape = this.dataset.shape;
+            const shapeSlider = document.getElementById('shape-slider');
+            shapeSlider.disabled = (currentTextShape === 'normal');
+            applyTextShape();
+            captureCanvasState();
+        });
+    });
+
+    document.getElementById('shape-slider').addEventListener('input', function() {
+        currentShapeIntensity = this.value;
+        if (currentTextShape !== 'normal') {
+            applyTextShape();
+            captureCanvasState();
+        }
+    });
+
+    // Reattach other necessary event listeners
+    // ...
+
+    // Update undo/redo buttons
+    updateUndoRedoButtons();
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
