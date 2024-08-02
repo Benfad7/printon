@@ -477,6 +477,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
 
 
     }
+        captureCanvasState();
+
 });document.getElementById('center-image-button').addEventListener('click', function() {
        if (selectedImageContainer && !this.classList.contains('disabled')) {
            const containerRect = canvas.getBoundingClientRect();
@@ -511,6 +513,8 @@ function moveLayerForward(imgContainer) {
         updateLayerButtons(imgContainer);
 
     }
+        captureCanvasState();
+
 }
 
 function moveLayerBackward(imgContainer) {
@@ -519,6 +523,8 @@ function moveLayerBackward(imgContainer) {
         updateLayerButtons(imgContainer);
 
     }
+        captureCanvasState();
+
 }
 
 contextMoveForward.addEventListener('click', function() {
@@ -604,6 +610,8 @@ duplicateButton.addEventListener('click', function() {
         selectedImageContainer = clonedContainer;
 
     }
+        captureCanvasState();
+
 });
 
 
@@ -775,8 +783,8 @@ function finishCropping() {
     // Restore original z-index
     selectedImageContainer.style.zIndex = originalZIndex;
 
-    cleanupCropping();
-
+ cleanupCropping();
+    captureCanvasState();
 }
 function cancelCropping() {
     // Restore original position and z-index
@@ -811,6 +819,15 @@ const deleteImage = document.getElementById('delete-image');
 deleteImage.addEventListener('click', function() {
     if (selectedImageContainer) {
         canvas.removeChild(selectedImageContainer);
+        captureCanvasState(); // Capture the new state after deletion
+
+        if (selectedImageContainer.classList.contains('text-container')) {
+            const textElement = selectedImageContainer.querySelector('p');
+            if (currentlyEditedTextElement === textElement) {
+                currentlyEditedTextElement = null;
+            }
+        }
+
         selectedImageContainer = null;
         contextMenu.style.display = 'none';
 
@@ -820,6 +837,7 @@ deleteImage.addEventListener('click', function() {
             updatePasteButtonState();
         }
 
+        updateCanvasState(); // Update UI elements
     }
 });
 
@@ -953,10 +971,7 @@ function hasImagesOnCanvas() {
 
 function updateCanvasState() {
     updatePasteButtonState();
-    const undoButton = document.getElementById('undo-button');
-    const redoButton = document.getElementById('redo-button');
-    undoButton.classList.toggle('disabled', currentStateIndex <= 0);
-    redoButton.classList.toggle('disabled', currentStateIndex >= canvasStates.length - 1);
+    updateUndoRedoButtons();
 
     // Update other button states as needed
     const hasObjects = canvas.querySelector('.image-container, .text-container') !== null;
@@ -964,6 +979,11 @@ function updateCanvasState() {
     otherButtons.forEach(button => {
         button.classList.toggle('disabled', !hasObjects);
     });
+
+    // If there are no objects left, return to the main screen
+    if (!hasObjects && !screen1.classList.contains('active')) {
+        showScreen(screen1);
+    }
 }
 window.addEventListener('load', () => {
     captureCanvasState(); // Capture initial empty state
@@ -1257,11 +1277,27 @@ resizeHandle.addEventListener('mousedown', function(event) {
     event.stopPropagation();
     event.preventDefault();
 });
-    deleteHandle.addEventListener('click', function() {
- canvas.removeChild(imgContainer);
-    captureCanvasState();
-    });
+   deleteHandle.addEventListener('click', function() {
+        canvas.removeChild(textContainer);
+        captureCanvasState(); // Capture the new state after deletion
 
+        // If this was the currently edited text element, reset it
+        if (currentlyEditedTextElement === textElement) {
+            currentlyEditedTextElement = null;
+        }
+
+        // If this was the selected container, reset it
+        if (selectedImageContainer === textContainer) {
+            selectedImageContainer = null;
+        }
+
+        // Return to the main screen if we're in the text editing screen
+        if (screen5.classList.contains('active')) {
+            showScreen(screen1);
+        }
+
+        updateCanvasState(); // Update UI elements
+    });
     document.addEventListener('click', function(event) {
         if (!textContainer.contains(event.target) && !event.target.closest('.white-square')) {
             textContainer.classList.remove('selected');
@@ -1395,22 +1431,21 @@ function rgbToHex(rgb) {
 function updateTextColor() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.color = this.value;
-
+        captureCanvasState();
     }
 }
 
 function updateTextFont() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.fontFamily = this.value;
-
-
+        captureCanvasState();
     }
 }
 
 function updateTextContent() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.textContent = this.value;
-
+        captureCanvasState();
     }
 }
 
@@ -1493,6 +1528,8 @@ function applyTextShape() {
 
     }
     applyTextRotation();
+        captureCanvasState();
+
 }
 function applyShapeToSpans(element, shape, intensity, isRtl) {
     const spans = Array.from(element.children);
@@ -1554,8 +1591,8 @@ function updateTextOutline() {
         currentlyEditedTextElement.dataset.outlineColor = outlineColor;
         currentlyEditedTextElement.dataset.outlineStrength = outlineStrength;
 
-        applyTextOutline(currentlyEditedTextElement);
-
+   applyTextOutline(currentlyEditedTextElement);
+        captureCanvasState();
     }
 }
 function applyTextOutline(textElement) {
@@ -1757,6 +1794,9 @@ function updateTextRotation() {
         applyTextRotation();
 
     }
+     applyTextRotation();
+        captureCanvasState();
+
 }
 
 function resetRotation() {
@@ -1816,6 +1856,7 @@ function centerObject(container) {
             container.style.left = `${newLeft - additionalOffsetX}px`;
         }
     }
+    captureCanvasState();
 
 
 }
@@ -1949,6 +1990,7 @@ function toggleTransform(element, transform) {
     }
     element.style.transform = currentTransform.trim();
     updateFlipButtonsState(element);
+        captureCanvasState();
 
 }
 // Function to capture the current state of the canvas
