@@ -242,7 +242,7 @@ document.addEventListener('contextmenu', function(event) {
     menuItems.forEach(item => {
         if (item.id === 'paste-image') {
             // Always enable paste if there's copied data
-            item.classList.toggle('disabled', !copiedImageData);
+    item.classList.toggle('disabled', !copiedObjectData);
         } else if (item.id === 'cut-image') {
             // Disable cut option for text elements
             item.classList.toggle('disabled', clickedOnText || !hasObjectsOnCanvas);
@@ -899,6 +899,7 @@ function updatePasteButtonState() {
         item.classList.toggle('disabled', !hasObjects);
     });
 }
+
 updatePasteButtonState();
 
 
@@ -950,7 +951,7 @@ pasteImage.addEventListener('click', function() {
         // Set the cloned container as the selected container
         selectedImageContainer = clonedContainer;
 
-        contextMenu.style.display = 'none';
+       contextMenu.style.display = 'none';
         updatePasteButtonState();
         captureCanvasState();
     }
