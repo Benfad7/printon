@@ -1813,7 +1813,7 @@ function centerObject(container) {
     const offsetX = objRect.width / 2;
 
     // Set the new horizontal position
-    const newLeft = canvasCenterX - offsetX;
+    const newLeft = canvasCenterX;
     container.style.left = `${newLeft}px`;
 
     // If it's a text container, we need to adjust for any transform
