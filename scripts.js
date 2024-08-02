@@ -181,13 +181,13 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
   });
 
   document.addEventListener('mouseup', function() {
-
-    isDragging = false;
-    isResizing = false;
-    img.style.cursor = 'grab';
     if (isDragging || isResizing) {
         captureCanvasState();
     }
+    isDragging = false;
+    isResizing = false;
+    img.style.cursor = 'grab';
+
     // Recalculate center option state
     const centerOption = document.getElementById('center-image');
     if (isImageCentered(imgContainer)) {
@@ -1258,8 +1258,8 @@ resizeHandle.addEventListener('mousedown', function(event) {
     event.preventDefault();
 });
     deleteHandle.addEventListener('click', function() {
-        canvas.removeChild(textContainer);
-
+ canvas.removeChild(imgContainer);
+    captureCanvasState();
     });
 
     document.addEventListener('click', function(event) {
