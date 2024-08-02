@@ -1776,19 +1776,12 @@ document.getElementById('reset-rotation').addEventListener('click', resetRotatio
 
 function applyTextRotation() {
     if (currentlyEditedTextElement) {
-        let currentTransform = currentlyEditedTextElement.style.transform || '';
-        currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/, '');
-        currentlyEditedTextElement.style.transform = `${currentTransform} rotate(${currentRotation}deg)`.trim();
+        const computedStyle = window.getComputedStyle(currentlyEditedTextElement);
+        const matrix = new DOMMatrix(computedStyle.transform);
+        const scaleX = matrix.a;
+        const scaleY = matrix.d;
 
-        // If the shape is normal, apply rotation directly to the element
-        if (currentTextShape === 'normal') {
-            currentlyEditedTextElement.style.transform = `rotate(${currentRotation}deg)`;
-        } else {
-            // For other shapes, maintain the existing transform and add rotation
-            let shapeTransform = currentlyEditedTextElement.style.transform || '';
-            shapeTransform = shapeTransform.replace(/\s*rotate\([^)]*\)/, '');
-            currentlyEditedTextElement.style.transform = `${shapeTransform} rotate(${currentRotation}deg)`.trim();
-        }
+        currentlyEditedTextElement.style.transform = `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${currentRotation}deg)`;
     }
 }
 function centerObject(container) {
@@ -1908,23 +1901,64 @@ document.getElementById('duplicate-text').addEventListener('click', function() {
     }
 });
 function updateFlipButtonsState(element) {
-    const transform = element.style.transform || '';
+    const currentTransform = element.style.transform || '';
+
     const horizontalFlipButton = document.getElementById('flip-text-horizontal');
     const verticalFlipButton = document.getElementById('flip-text-vertical');
 
-    horizontalFlipButton.classList.toggle('active', transform.includes('scaleX(-1)'));
-    verticalFlipButton.classList.toggle('active', transform.includes('scaleY(-1)'));
+    horizontalFlipButton.classList.toggle('active', /scaleX\(-1\)/.test(currentTransform));
+    verticalFlipButton.classList.toggle('active', /scaleY\(-1\)/.test(currentTransform));
 }
 
-function toggleTransform(element, transform) {
-    let currentTransform = element.style.transform || '';
-    if (currentTransform.includes(transform)) {
-        currentTransform = currentTransform.replace(transform, '');
+function toggleTextTransform(element, direction) {
+    const currentTransform = element.style.transform || '';
+    const scaleRegex = direction === 'horizontal' ? /scaleX\(-?1\)/ : /scaleY\(-?1\)/;
+    const scaleProperty = direction === 'horizontal' ? 'scaleX' : 'scaleY';
+
+    let newTransform;
+    if (scaleRegex.test(currentTransform)) {
+        // Remove the scale if it exists
+        newTransform = currentTransform.replace(scaleRegex, '');
     } else {
-        currentTransform += ` ${transform}`;
+        // Add the scale if it doesn't exist
+        newTransform = `${currentTransform} ${scaleProperty}(-1)`.trim();
     }
-    element.style.transform = currentTransform.trim();
+
+    element.style.transform = newTransform;
     updateFlipButtonsState(element);
     saveState();
     updateCanvasState();
 }
+
+
+// Center text
+document.getElementById('center-text-button').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        centerObject(currentlyEditedTextElement.parentNode);
+    }
+});
+
+// Layer control for text
+document.getElementById('move-text-forward').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        moveLayerForward(currentlyEditedTextElement.parentNode);
+    }
+});
+
+document.getElementById('move-text-backward').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        moveLayerBackward(currentlyEditedTextElement.parentNode);
+    }
+});
+
+document.getElementById('flip-text-horizontal').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        toggleTextTransform(currentlyEditedTextElement, 'horizontal');
+    }
+});
+
+document.getElementById('flip-text-vertical').addEventListener('click', function() {
+    if (currentlyEditedTextElement) {
+        toggleTextTransform(currentlyEditedTextElement, 'vertical');
+    }
+});

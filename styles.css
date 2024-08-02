@@ -1093,3 +1093,24 @@ body, html {
 .separator-line.at-7 {
     top: 48%; /* Adjust as needed */
 }
+#screen5 .button-group {
+    position: absolute;
+    top: 52%; /* Adjust this value to position the buttons correctly */
+    margin: 0 25px;
+}
+
+#screen5 #text-center-button-group {
+    right: 0%;
+}
+
+#screen5 #text-layer-control {
+    right: 13%;
+}
+
+#screen5 #text-flip-control {
+    right: 34%;
+}
+
+#screen5 #text-duplicate-control {
+    right: 55%;
+}
