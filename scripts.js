@@ -245,7 +245,7 @@ document.addEventListener('contextmenu', function(event) {
     item.classList.toggle('disabled', !copiedObjectData);
         } else if (item.id === 'cut-image') {
             // Disable cut option for text elements
-            item.classList.toggle('disabled', clickedOnText || !hasObjectsOnCanvas);
+    item.classList.toggle('disabled', !clickedOnImage);
         } else {
             item.classList.toggle('disabled', !(clickedOnImage || clickedOnText) || !hasObjectsOnCanvas);
         }
