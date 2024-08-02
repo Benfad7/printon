@@ -336,11 +336,25 @@ document.addEventListener('click', function(event) {
 
 centerImage.addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled')) {
-        centerObject(selectedImageContainer);
+        const canvasRect = canvas.getBoundingClientRect();
+        const imgRect = selectedImageContainer.getBoundingClientRect();
+
+        // Calculate the new left position to center the image
+        const newLeft = (canvasRect.width / 2) - (imgRect.width / 2);
+
+        // Set the new position
+        selectedImageContainer.style.left = `${newLeft}px`;
+
+        // Update the center button state
+        updateCenterButtonState(selectedImageContainer);
+
+        // Hide the context menu
         contextMenu.style.display = 'none';
+
+        // Capture the new state
+        captureCanvasState();
     }
 });
-
 cutImage.addEventListener('click', function() {
     if (selectedImageContainer) {
         if (selectedImageContainer.classList.contains('image-container')) {
