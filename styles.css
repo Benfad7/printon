@@ -1114,3 +1114,12 @@ body, html {
 #screen5 #text-duplicate-control {
     right: 55%;
 }
+.text-container {
+    position: absolute;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+.text-content {
+    display: inline-block;
+}
