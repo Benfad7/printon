@@ -5,8 +5,6 @@ const contextMoveForward = document.getElementById('context-move-forward');
 const contextMoveBackward = document.getElementById('context-move-backward');
 const layerMoveForward = document.getElementById('move-forward');
 const layerMoveBackward = document.getElementById('move-backward');
-let undoStack = [];
-let redoStack = [];
 const centerImage = document.getElementById('center-image');
 const cutImage = document.getElementById('cut-image');
 const uploadBox = document.getElementById('upload-box');
@@ -30,6 +28,9 @@ let isCropping = false;
 let cropHandles = [];
 let cropOverlay, cropButtonBelow, cancelCropButton;
 fileInput.addEventListener('change', handleFileSelection);
+let canvasStates = [];
+let currentStateIndex = -1;
+const MAX_STATES = 50;
 
 function handleFileSelection(event) {
     const files = event.target.files;
@@ -50,8 +51,8 @@ function handleFileSelection(event) {
 function createImageContainer(src, fileName) {
   const imgContainer = document.createElement('div');
      canvas.appendChild(imgContainer);
-      saveState();
-      updateCanvasState();
+    captureCanvasState();
+
 
   imgContainer.classList.add('image-container');
   imgContainer.setAttribute('data-background-removed', 'false');  imgContainer.classList.add('image-container');
@@ -180,10 +181,13 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
   });
 
   document.addEventListener('mouseup', function() {
+
     isDragging = false;
     isResizing = false;
     img.style.cursor = 'grab';
-
+    if (isDragging || isResizing) {
+        captureCanvasState();
+    }
     // Recalculate center option state
     const centerOption = document.getElementById('center-image');
     if (isImageCentered(imgContainer)) {
@@ -205,8 +209,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
   deleteHandle.addEventListener('click', function(event) {
     canvas.removeChild(imgContainer);
-    saveState();
-    updateCanvasState();
+
   });
 
   document.addEventListener('click', function(event) {
@@ -221,8 +224,7 @@ document.addEventListener('click', function(event) {
         !event.target.closest('.text-container') &&
         !event.target.closest('.white-square')) {
         if (deselectAllObjects()) {
-            saveState();
-            updateCanvasState();
+
         }
     }
 });
@@ -273,20 +275,17 @@ document.addEventListener('contextmenu', function(event) {
     imgContainer.addEventListener('mouseup', () => {
         if(!isCropping)
         {
-        saveState();
-        updateCanvasState();
+
         }
     });
 
     resizeHandle.addEventListener('mouseup', () => {
-        saveState();
-        updateCanvasState();
+
     });
 
     deleteHandle.addEventListener('click', () => {
         canvas.removeChild(imgContainer);
-        saveState();
-        updateCanvasState();
+
     });
 
   imgContainer.addEventListener('mouseenter', function() {
@@ -325,8 +324,7 @@ document.addEventListener('contextmenu', function(event) {
         const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
         backgroundRemovalToggle.checked = isBackgroundRemoved;
 
-        saveState();
-        updateCanvasState();
+
     });
 }
 
@@ -476,8 +474,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
             // Restore the onload event handler
             img.onload = originalOnload;
         }, 50);
-         saveState();
-                updateCanvasState();
+
+
     }
 });document.getElementById('center-image-button').addEventListener('click', function() {
        if (selectedImageContainer && !this.classList.contains('disabled')) {
@@ -485,8 +483,7 @@ backgroundRemovalToggle.addEventListener('change', function() {
            const imgRect = selectedImageContainer.getBoundingClientRect();
            selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
            updateCenterButtonState(selectedImageContainer);
-                saveState();
-                   updateCanvasState();
+
        }
    });
 const layerControl = document.getElementById('layer-control');
@@ -512,8 +509,7 @@ function moveLayerForward(imgContainer) {
     if (imgContainer.nextElementSibling) {
         canvas.insertBefore(imgContainer.nextElementSibling, imgContainer);
         updateLayerButtons(imgContainer);
-        saveState();
-        updateCanvasState();
+
     }
 }
 
@@ -521,8 +517,7 @@ function moveLayerBackward(imgContainer) {
     if (imgContainer.previousElementSibling) {
         canvas.insertBefore(imgContainer, imgContainer.previousElementSibling);
         updateLayerButtons(imgContainer);
-        saveState();
-        updateCanvasState();
+
     }
 }
 
@@ -560,8 +555,7 @@ function toggleTransform(img, transform) {
     } else {
         img.style.transform = currentTransform + ' ' + transform;
     }
-    saveState();
-    updateCanvasState();
+
 }
 
 flipHorizontal.addEventListener('click', function() {
@@ -608,8 +602,7 @@ duplicateButton.addEventListener('click', function() {
 
         // Set the cloned container as the selected container
         selectedImageContainer = clonedContainer;
-                saveState();
-                updateCanvasState();
+
     }
 });
 
@@ -826,8 +819,7 @@ deleteImage.addEventListener('click', function() {
             copiedImageData = null;
             updatePasteButtonState();
         }
-        saveState();
-        updateCanvasState();
+
     }
 });
 
@@ -887,7 +879,6 @@ copyImage.addEventListener('click', function() {
         }
         contextMenu.style.display = 'none';
         updatePasteButtonState();
-        updateCanvasState();
     }
 });
 pasteImage.addEventListener('click', function() {
@@ -924,8 +915,7 @@ pasteImage.addEventListener('click', function() {
 
         contextMenu.style.display = 'none';
         updatePasteButtonState();
-        saveState();
-        updateCanvasState();
+
     }
 });function isImageCentered(imgContainer) {
     const containerRect = canvas.getBoundingClientRect();
@@ -963,8 +953,10 @@ function hasImagesOnCanvas() {
 
 function updateCanvasState() {
     updatePasteButtonState();
-    undoButton.classList.toggle('disabled', undoStack.length <= 1);
-    redoButton.classList.toggle('disabled', redoStack.length === 0);
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+    undoButton.classList.toggle('disabled', currentStateIndex <= 0);
+    redoButton.classList.toggle('disabled', currentStateIndex >= canvasStates.length - 1);
 
     // Update other button states as needed
     const hasObjects = canvas.querySelector('.image-container, .text-container') !== null;
@@ -973,38 +965,9 @@ function updateCanvasState() {
         button.classList.toggle('disabled', !hasObjects);
     });
 }
-function saveState() {
-    const textContainers = canvas.querySelectorAll('.text-container');
-    textContainers.forEach(container => {
-        const textElement = container.querySelector('p');
-        container.setAttribute('data-font-size', textElement.style.fontSize);
-        container.setAttribute('data-text-content', textElement.textContent);
-    });
-
-    const state = canvas.innerHTML;
-    undoStack.push(state);
-    redoStack = [];
-    updateCanvasState();
-}
-function undo() {
-    if (undoStack.length > 1) { // Keep at least one state in the stack
-        const currentState = undoStack.pop();
-        redoStack.push(currentState);
-        canvas.innerHTML = undoStack[undoStack.length - 1];
-        reattachEventListeners();
-        updateCanvasState();
-    }
-}
-
-function redo() {
-    if (redoStack.length > 0) {
-        const nextState = redoStack.pop();
-        undoStack.push(nextState);
-        canvas.innerHTML = nextState;
-        reattachEventListeners();
-        updateCanvasState();
-    }
-}
+window.addEventListener('load', () => {
+    captureCanvasState(); // Capture initial empty state
+});
 
 function reattachEventListeners() {
     const imageContainers = canvas.querySelectorAll('.image-container');
@@ -1031,19 +994,13 @@ function reattachEventListeners() {
 
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
-        const rotationSlider = document.getElementById('rotation-slider');
-        rotationSlider.removeEventListener('input', updateTextRotation);
-        rotationSlider.addEventListener('input', updateTextRotation);
+  const rotationSlider = document.getElementById('rotation-slider');
+    rotationSlider.addEventListener('input', updateTextRotation);
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
 
-undoButton.addEventListener('click', undo);
-redoButton.addEventListener('click', redo);
-window.addEventListener('load', () => {
-    saveState(); // Save initial empty state
-    updateCanvasState();
-});
+
 
 // Get references to the elements
 const addTextButton = document.querySelector('.add-text');
@@ -1119,10 +1076,10 @@ function createTextObject(text) {
     textContainer.appendChild(deleteHandle);
 
    canvas.appendChild(textContainer);
+    captureCanvasState();
 
     setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
-    saveState();
-    updateCanvasState();
+
 }
 function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
     let isDragging = false;
@@ -1159,8 +1116,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             deleteHandle.style.display = 'block';
         }
         showTextEditScreen(textElement);
-        saveState();
-        updateCanvasState();
+
     });
 
 
@@ -1243,8 +1199,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         }
         isDragging = false;
         isResizing = false;
-        saveState();
-        updateCanvasState();
+
     });
 
 
@@ -1262,8 +1217,7 @@ resizeHandle.addEventListener('mousedown', function(event) {
 });
     deleteHandle.addEventListener('click', function() {
         canvas.removeChild(textContainer);
-        saveState();
-        updateCanvasState();
+
     });
 
     document.addEventListener('click', function(event) {
@@ -1399,32 +1353,29 @@ function rgbToHex(rgb) {
 function updateTextColor() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.color = this.value;
-        saveState();
-        updateCanvasState();
+
     }
 }
 
 function updateTextFont() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.style.fontFamily = this.value;
-        saveState();
-        updateCanvasState();
+
+
     }
 }
 
 function updateTextContent() {
     if (currentlyEditedTextElement) {
         currentlyEditedTextElement.textContent = this.value;
-        saveState();
-        updateCanvasState();
+
     }
 }
 
 function handleEnterKey(event) {
     if (event.key === 'Enter' && currentlyEditedTextElement) {
         currentlyEditedTextElement.textContent = this.value;
-        saveState();
-        updateCanvasState();
+
         showScreen(screen1); // Return to main screen
     }
 }
@@ -1497,8 +1448,7 @@ function applyTextShape() {
             currentlyEditedTextElement.parentNode.querySelector('.resize-handle'),
             currentlyEditedTextElement.parentNode.querySelector('.delete-handle')
         );
-        saveState();
-        updateCanvasState();
+
     }
     applyTextRotation();
 }
@@ -1564,8 +1514,6 @@ function updateTextOutline() {
 
         applyTextOutline(currentlyEditedTextElement);
 
-        saveState();
-        updateCanvasState();
     }
 }
 function applyTextOutline(textElement) {
@@ -1765,8 +1713,7 @@ function updateTextRotation() {
         currentRotation = rotation;
         document.getElementById('rotation-value').textContent = currentRotation + '°';
         applyTextRotation();
-        saveState();
-        updateCanvasState();
+
     }
 }
 
@@ -1776,8 +1723,7 @@ function resetRotation() {
         document.getElementById('rotation-slider').value = 0;
         document.getElementById('rotation-value').textContent = '0°';
         applyTextRotation();
-        saveState();
-        updateCanvasState();
+
     }
 }
 
@@ -1829,8 +1775,7 @@ function centerObject(container) {
         }
     }
 
-    saveState();
-    updateCanvasState();
+
 }
 function isRTL(text) {
     const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
@@ -1941,8 +1886,7 @@ document.getElementById('duplicate-text').addEventListener('click', function() {
         selectedImageContainer = clonedContainer;
         currentlyEditedTextElement = clonedTextElement;
 
-        saveState();
-        updateCanvasState();
+
     }
 });
 function updateFlipButtonsState(element) {
@@ -1963,6 +1907,83 @@ function toggleTransform(element, transform) {
     }
     element.style.transform = currentTransform.trim();
     updateFlipButtonsState(element);
-    saveState();
-    updateCanvasState();
+
 }
+// Function to capture the current state of the canvas
+function captureCanvasState() {
+    const state = {
+        html: canvas.innerHTML,
+        objects: Array.from(canvas.children).map(child => ({
+            rect: child.getBoundingClientRect(),
+            style: child.getAttribute('style'),
+            innerHTML: child.innerHTML
+        }))
+    };
+
+    if (currentStateIndex < canvasStates.length - 1) {
+        canvasStates = canvasStates.slice(0, currentStateIndex + 1);
+    }
+
+    canvasStates.push(state);
+    currentStateIndex++;
+
+    if (canvasStates.length > MAX_STATES) {
+        canvasStates.shift();
+        currentStateIndex--;
+    }
+
+    updateUndoRedoButtons();
+}
+
+// Function to apply a captured state to the canvas
+function applyCanvasState(state) {
+    canvas.innerHTML = state.html;
+    state.objects.forEach((obj, index) => {
+        const child = canvas.children[index];
+        child.setAttribute('style', obj.style);
+
+        // Reattach event listeners and interactions
+        if (child.classList.contains('image-container')) {
+            const img = child.querySelector('img');
+            const resizeHandle = child.querySelector('.resize-handle');
+            const deleteHandle = child.querySelector('.delete-handle');
+            setupImageInteractions(child, img, resizeHandle, deleteHandle);
+        } else if (child.classList.contains('text-container')) {
+            const textElement = child.querySelector('p');
+            const resizeHandle = child.querySelector('.resize-handle');
+            const deleteHandle = child.querySelector('.delete-handle');
+            setupTextInteractions(child, textElement, resizeHandle, deleteHandle);
+        }
+    });
+}
+
+// Undo function
+function undo() {
+    if (currentStateIndex > 0) {
+        currentStateIndex--;
+        applyCanvasState(canvasStates[currentStateIndex]);
+        updateUndoRedoButtons();
+    }
+}
+
+// Redo function
+function redo() {
+    if (currentStateIndex < canvasStates.length - 1) {
+        currentStateIndex++;
+        applyCanvasState(canvasStates[currentStateIndex]);
+        updateUndoRedoButtons();
+    }
+}
+
+// Update undo/redo buttons
+function updateUndoRedoButtons() {
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+
+    undoButton.classList.toggle('disabled', currentStateIndex <= 0);
+    redoButton.classList.toggle('disabled', currentStateIndex >= canvasStates.length - 1);
+}
+
+// Event listeners for undo and redo buttons
+document.getElementById('undo-button').addEventListener('click', undo);
+document.getElementById('redo-button').addEventListener('click', redo);
