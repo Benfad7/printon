@@ -32,12 +32,21 @@ let canvasStates = [];
 let currentStateIndex = -1;
 const MAX_STATES = 50;
 let copiedObjectData = null;
+let currentCanvas = document.getElementById('front-canvas');
+const frontCanvas = document.getElementById('front-canvas');
+const backCanvas = document.getElementById('back-canvas');
+const frontButton = document.getElementById('front-button');
+const backButton = document.getElementById('back-button');
+let frontCanvasStates = [];
+let backCanvasStates = [];
+let frontCurrentStateIndex = -1;
+let backCurrentStateIndex = -1;
 document.addEventListener('contextmenu', function(event) {
     console.log("h");
     event.preventDefault();
     const clickedOnImage = event.target.closest('.image-container');
     const clickedOnText = event.target.closest('.text-container');
-    const hasObjectsOnCanvas = canvas.querySelector('.image-container, .text-container') !== null;
+    const hasObjectsOnCanvas = currentCanvas.querySelector('.image-container, .text-container') !== null;
 
     contextMenu.style.display = 'block';
 
@@ -96,8 +105,8 @@ function handleFileSelection(event) {
 
 
 function createImageContainer(src, fileName) {
-  const imgContainer = document.createElement('div');
-     canvas.appendChild(imgContainer);
+   const imgContainer = document.createElement('div');
+    currentCanvas.appendChild(imgContainer);
     captureCanvasState();
 
 
@@ -121,7 +130,7 @@ function createImageContainer(src, fileName) {
 
   imgContainer.style.position = 'absolute';
   imgContainer.style.visibility = 'hidden';
-  canvas.appendChild(imgContainer);
+  currentCanvas.appendChild(imgContainer);
 
   img.onload = function() {
     const aspectRatio = img.naturalWidth / img.naturalHeight;
@@ -135,7 +144,7 @@ function createImageContainer(src, fileName) {
       img.style.width = (startSize * aspectRatio) + 'px';
     }
 
-    const containerRect = canvas.getBoundingClientRect();
+    const containerRect = currentCanvas.getBoundingClientRect();
     const imgRect = imgContainer.getBoundingClientRect();
 
     imgContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
@@ -181,8 +190,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
       const newLeft = startLeft + dx;
       const newTop = startTop + dy;
 
-      const maxX = canvas.clientWidth - imgContainer.offsetWidth;
-      const maxY = canvas.clientHeight - imgContainer.offsetHeight;
+      const maxX = currentCanvas.clientWidth - imgContainer.offsetWidth;
+      const maxY = currentCanvas.clientHeight - imgContainer.offsetHeight;
 
       imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
       imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
@@ -201,8 +210,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
         newHeight = newWidth / aspectRatio;
       }
 
-      const maxWidth = canvas.clientWidth - imgContainer.offsetLeft;
-      const maxHeight = canvas.clientHeight - imgContainer.offsetTop;
+      const maxWidth = currentCanvas.clientWidth - imgContainer.offsetLeft;
+      const maxHeight = currentCanvas.clientHeight - imgContainer.offsetTop;
 
       if (newWidth > maxWidth) {
         newWidth = maxWidth;
@@ -255,7 +264,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
   });
 
   deleteHandle.addEventListener('click', function(event) {
-    canvas.removeChild(imgContainer);
+    currentCanvas.removeChild(imgContainer);
 
   });
 
@@ -289,7 +298,7 @@ document.addEventListener('click', function(event) {
     });
 
     deleteHandle.addEventListener('click', () => {
-        canvas.removeChild(imgContainer);
+        currentCanvas.removeChild(imgContainer);
 
     });
 
@@ -341,7 +350,7 @@ document.addEventListener('click', function(event) {
 
 centerImage.addEventListener('click', function() {
     if (selectedImageContainer && !this.classList.contains('disabled') && selectedImageContainer.classList.contains('image-container')) {
-        const canvasRect = canvas.getBoundingClientRect();
+        const canvasRect = currentCanvas.getBoundingClientRect();
         const imgRect = selectedImageContainer.getBoundingClientRect();
 
         // Calculate the new left position to center the image
@@ -361,7 +370,7 @@ centerImage.addEventListener('click', function() {
     }
     if(selectedImageContainer && !this.classList.contains('disabled') && selectedImageContainer.classList.contains('text-container'))
     {
-        const canvasRect = canvas.getBoundingClientRect();
+        const canvasRect = currentCanvas.getBoundingClientRect();
         const imgRect = selectedImageContainer.getBoundingClientRect();
 
         // Calculate the new left position to center the image
@@ -451,12 +460,12 @@ mainContainer.addEventListener('click', function(event) {
 // Background removal functionality
 function removeBackground(imgElement) {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = imgElement.naturalWidth;
-    canvas.height = imgElement.naturalHeight;
+    const ctx = currentCanvas.getContext('2d');
+    currentCanvas.width = imgElement.naturalWidth;
+    currentCanvas.height = imgElement.naturalHeight;
     ctx.drawImage(imgElement, 0, 0);
 
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
     const data = imageData.data;
 
     // This is a simple background removal. In a real scenario, you'd use a more sophisticated AI service.
@@ -472,7 +481,7 @@ function removeBackground(imgElement) {
     }
 
     ctx.putImageData(imageData, 0, 0);
-    return canvas.toDataURL();
+    return currentCanvas.toDataURL();
 }
 
 backgroundRemovalToggle.addEventListener('change', function() {
@@ -521,7 +530,7 @@ backgroundRemovalToggle.addEventListener('change', function() {
 
 });document.getElementById('center-image-button').addEventListener('click', function() {
        if (selectedImageContainer && !this.classList.contains('disabled')) {
-           const containerRect = canvas.getBoundingClientRect();
+           const containerRect = currentCanvas.getBoundingClientRect();
            const imgRect = selectedImageContainer.getBoundingClientRect();
            selectedImageContainer.style.left = (containerRect.width / 2 - imgRect.width / 2) + 'px';
            updateCenterButtonState(selectedImageContainer);
@@ -531,8 +540,8 @@ backgroundRemovalToggle.addEventListener('change', function() {
 const layerControl = document.getElementById('layer-control');
 function updateLayerButtons(imgContainer) {
     const layerState = imgContainer.getAttribute('data-layer-state');
-    const isTopLayer = imgContainer === canvas.lastElementChild;
-    const isBottomLayer = imgContainer === canvas.firstElementChild;
+    const isTopLayer = imgContainer === currentCanvas.lastElementChild;
+    const isBottomLayer = imgContainer === currentCanvas.firstElementChild;
 
     if (isTopLayer) {
         layerMoveForward.classList.remove('active');
@@ -549,7 +558,7 @@ function updateLayerButtons(imgContainer) {
 
 function moveLayerForward(imgContainer) {
     if (imgContainer.nextElementSibling) {
-        canvas.insertBefore(imgContainer.nextElementSibling, imgContainer);
+        currentCanvas.insertBefore(imgContainer.nextElementSibling, imgContainer);
         updateLayerButtons(imgContainer);
 
     }
@@ -559,7 +568,7 @@ function moveLayerForward(imgContainer) {
 
 function moveLayerBackward(imgContainer) {
     if (imgContainer.previousElementSibling) {
-        canvas.insertBefore(imgContainer, imgContainer.previousElementSibling);
+        currentCanvas.insertBefore(imgContainer, imgContainer.previousElementSibling);
         updateLayerButtons(imgContainer);
 
     }
@@ -635,7 +644,7 @@ duplicateButton.addEventListener('click', function() {
         clonedImg.id = '';
 
         // Add the cloned container to the canvas
-        canvas.appendChild(clonedContainer);
+        currentCanvas.appendChild(clonedContainer);
 
         // Setup interactions for the cloned image
         setupImageInteractions(clonedContainer, clonedImg,
@@ -805,20 +814,20 @@ function finishCropping() {
 
     // Create a canvas with the same dimensions as the current image display size
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = img.width;
-    canvas.height = img.height;
+    const ctx = currentCanvas.getContext('2d');
+    currentCanvas.width = img.width;
+    currentCanvas.height = img.height;
 
     // Draw the cropped portion of the image onto the canvas, scaling it to fit
     ctx.drawImage(img,
         cropX, cropY, cropWidth, cropHeight,  // Source rectangle
-        0, 0, canvas.width, canvas.height);   // Destination rectangle (full canvas)
+        0, 0, currentCanvas.width, currentCanvas.height);   // Destination rectangle (full canvas)
 
     // Update the image source with the new canvas content
-    img.src = canvas.toDataURL();
+    img.src = currentCanvas.toDataURL();
 
     // Store the cropped image data
-    img.setAttribute('data-cropped-src', canvas.toDataURL());
+    img.setAttribute('data-cropped-src', currentCanvas.toDataURL());
 
     // Restore original z-index
     selectedImageContainer.style.zIndex = originalZIndex;
@@ -858,7 +867,7 @@ const deleteImage = document.getElementById('delete-image');
 
 deleteImage.addEventListener('click', function() {
     if (selectedImageContainer) {
-        canvas.removeChild(selectedImageContainer);
+        currentCanvas.removeChild(selectedImageContainer);
         captureCanvasState(); // Capture the new state after deletion
 
         if (selectedImageContainer.classList.contains('text-container')) {
@@ -894,7 +903,7 @@ function updatePasteButtonState() {
     }
 
     // Update other context menu items based on whether there are objects on the canvas
-    const hasObjects = canvas.querySelector('.image-container, .text-container') !== null;
+    const hasObjects = currentCanvas.querySelector('.image-container, .text-container') !== null;
     const otherMenuItems = contextMenu.querySelectorAll('.context-menu-item:not(#paste-image)');
     otherMenuItems.forEach(item => {
         item.classList.toggle('disabled', !hasObjects);
@@ -926,7 +935,7 @@ pasteImage.addEventListener('click', function() {
         if (innerElement) innerElement.id = '';
 
         // Add the cloned container to the canvas
-        canvas.appendChild(clonedContainer);
+        currentCanvas.appendChild(clonedContainer);
 
         // Setup interactions for the cloned object
         if (clonedContainer.classList.contains('image-container')) {
@@ -957,7 +966,7 @@ pasteImage.addEventListener('click', function() {
         captureCanvasState();
     }
 });function isImageCentered(imgContainer) {
-    const containerRect = canvas.getBoundingClientRect();
+    const containerRect = currentCanvas.getBoundingClientRect();
     const imgRect = imgContainer.getBoundingClientRect();
     const centerX = containerRect.width / 2;
     const imageCenterX = imgRect.left - containerRect.left + imgRect.width / 2;
@@ -971,14 +980,14 @@ function updateCenterButtonState(container) {
 
 }
 function hasImagesOnCanvas() {
-    return canvas.querySelector('.image-container, .text-container') !== null;
+    return currentCanvas.querySelector('.image-container, .text-container') !== null;
 }
 function updateCanvasState() {
     updatePasteButtonState();
     updateUndoRedoButtons();
 
     // Update other button states as needed
-    const hasObjects = canvas.querySelector('.image-container, .text-container') !== null;
+    const hasObjects = currentCanvas.querySelector('.image-container, .text-container') !== null;
     const otherButtons = document.querySelectorAll('.custom-button:not(#undo-button):not(#redo-button)');
     otherButtons.forEach(button => {
         button.classList.toggle('disabled', !hasObjects);
@@ -990,11 +999,14 @@ function updateCanvasState() {
     }
 }
 window.addEventListener('load', () => {
-    captureCanvasState(); // Capture initial empty state
+    captureCanvasState(); // Capture initial empty state for front canvas
+    switchCanvas(backCanvas);
+    captureCanvasState(); // Capture initial empty state for back canvas
+    switchCanvas(frontCanvas); // Switch back to front canvas as default
 });
 
 function reattachEventListeners() {
-    const imageContainers = canvas.querySelectorAll('.image-container');
+    const imageContainers = currentCanvas.querySelectorAll('.image-container');
     imageContainers.forEach(container => {
         const img = container.querySelector('img');
         const resizeHandle = container.querySelector('.resize-handle');
@@ -1002,7 +1014,7 @@ function reattachEventListeners() {
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
 
-    const textContainers = canvas.querySelectorAll('.text-container');
+    const textContainers = currentCanvas.querySelectorAll('.text-container');
     textContainers.forEach(container => {
         const textElement = container.querySelector('p');
         const resizeHandle = container.querySelector('.resize-handle');
@@ -1141,7 +1153,7 @@ function createTextObject(text) {
     textContainer.appendChild(resizeHandle);
     textContainer.appendChild(deleteHandle);
 
-   canvas.appendChild(textContainer);
+   currentCanvas.appendChild(textContainer);
     captureCanvasState();
 
     setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
@@ -1192,7 +1204,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             const dy = event.clientY - startY;
             let newLeft = startLeft + dx;
             let newTop = startTop + dy;
-            const canvasRect = canvas.getBoundingClientRect();
+            const canvasRect = currentCanvas.getBoundingClientRect();
             const textRect = textContainer.getBoundingClientRect();
 
             // Calculate offsets based on object dimensions
@@ -1233,7 +1245,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
          textElement.style.fontSize = newFontSize + 'px';
 
          // Get the updated rectangles
-         const canvasRect = canvas.getBoundingClientRect();
+         const canvasRect = currentCanvas.getBoundingClientRect();
          const textRect = textContainer.getBoundingClientRect();
 
          // Check all boundaries
@@ -1283,7 +1295,7 @@ resizeHandle.addEventListener('mousedown', function(event) {
     event.preventDefault();
 });
    deleteHandle.addEventListener('click', function() {
-        canvas.removeChild(textContainer);
+        currentCanvas.removeChild(textContainer);
         captureCanvasState(); // Capture the new state after deletion
 
         // If this was the currently edited text element, reset it
@@ -1836,7 +1848,7 @@ function applyTextRotation() {
     }
 }
 function centerObject(container) {
-    const canvasRect = canvas.getBoundingClientRect();
+    const canvasRect = currentCanvas.getBoundingClientRect();
     const objRect = container.getBoundingClientRect();
 
     // Calculate the horizontal center of the canvas
@@ -1871,7 +1883,7 @@ function isRTL(text) {
 }
 function deselectAllObjects() {
     let wasAnythingDeselected = false;
-    const allObjects = canvas.querySelectorAll('.image-container, .text-container');
+    const allObjects = currentCanvas.querySelectorAll('.image-container, .text-container');
     allObjects.forEach(obj => {
         if (obj.classList.contains('selected')) {
             wasAnythingDeselected = true;
@@ -1886,7 +1898,7 @@ function deselectAllObjects() {
     return wasAnythingDeselected;
 }function deselectAllObjects() {
      let wasAnythingDeselected = false;
-     const allObjects = canvas.querySelectorAll('.image-container, .text-container');
+     const allObjects = currentCanvas.querySelectorAll('.image-container, .text-container');
      allObjects.forEach(obj => {
          if (obj.classList.contains('selected')) {
              wasAnythingDeselected = true;
@@ -1900,9 +1912,9 @@ function deselectAllObjects() {
      });
      return wasAnythingDeselected;
  }
-canvas.addEventListener('click', function(event) {
+currentCanvas.addEventListener('click', function(event) {
     // Check if the click is directly on the canvas and not on any object
-    if (event.target === canvas) {
+    if (event.target === currentCanvas) {
         deselectAllObjects();
         showScreen(screen1); // Return to the main screen
     }
@@ -1960,7 +1972,7 @@ document.getElementById('duplicate-text').addEventListener('click', function() {
         clonedTextElement.id = '';
 
         // Add the cloned container to the canvas
-        canvas.appendChild(clonedContainer);
+        currentCanvas.appendChild(clonedContainer);
 
         // Setup interactions for the cloned text
         setupTextInteractions(clonedContainer, clonedTextElement,
@@ -2001,24 +2013,26 @@ function toggleTransform(element, transform) {
 // Function to capture the current state of the canvas
 function captureCanvasState() {
     const state = {
-        html: canvas.innerHTML,
-        objects: Array.from(canvas.children).map(child => ({
+        html: currentCanvas.innerHTML,
+        objects: Array.from(currentCanvas.children).map(child => ({
             rect: child.getBoundingClientRect(),
             style: child.getAttribute('style'),
             innerHTML: child.innerHTML
         }))
     };
 
-    if (currentStateIndex < canvasStates.length - 1) {
-        canvasStates = canvasStates.slice(0, currentStateIndex + 1);
-    }
-
-    canvasStates.push(state);
-    currentStateIndex++;
-
-    if (canvasStates.length > MAX_STATES) {
-        canvasStates.shift();
-        currentStateIndex--;
+    if (currentCanvas === frontCanvas) {
+        if (frontCurrentStateIndex < frontCanvasStates.length - 1) {
+            frontCanvasStates = frontCanvasStates.slice(0, frontCurrentStateIndex + 1);
+        }
+        frontCanvasStates.push(state);
+        frontCurrentStateIndex++;
+    } else {
+        if (backCurrentStateIndex < backCanvasStates.length - 1) {
+            backCanvasStates = backCanvasStates.slice(0, backCurrentStateIndex + 1);
+        }
+        backCanvasStates.push(state);
+        backCurrentStateIndex++;
     }
 
     updateUndoRedoButtons();
@@ -2026,9 +2040,9 @@ function captureCanvasState() {
 
 // Function to apply a captured state to the canvas
 function applyCanvasState(state) {
-    canvas.innerHTML = state.html;
+    currentCanvas.innerHTML = state.html;
     state.objects.forEach((obj, index) => {
-        const child = canvas.children[index];
+        const child = currentCanvas.children[index];
         child.setAttribute('style', obj.style);
     });
     reattachEventListeners();
@@ -2036,29 +2050,38 @@ function applyCanvasState(state) {
 
 // Undo function
 function undo() {
-    if (currentStateIndex > 0) {
-        currentStateIndex--;
-        applyCanvasState(canvasStates[currentStateIndex]);
-        updateUndoRedoButtons();
+    if (currentCanvas === frontCanvas && frontCurrentStateIndex > 0) {
+        frontCurrentStateIndex--;
+        applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
+    } else if (currentCanvas === backCanvas && backCurrentStateIndex > 0) {
+        backCurrentStateIndex--;
+        applyCanvasState(backCanvasStates[backCurrentStateIndex]);
     }
+    updateUndoRedoButtons();
 }
 
-// Redo function
 function redo() {
-    if (currentStateIndex < canvasStates.length - 1) {
-        currentStateIndex++;
-        applyCanvasState(canvasStates[currentStateIndex]);
-        updateUndoRedoButtons();
+    if (currentCanvas === frontCanvas && frontCurrentStateIndex < frontCanvasStates.length - 1) {
+        frontCurrentStateIndex++;
+        applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
+    } else if (currentCanvas === backCanvas && backCurrentStateIndex < backCanvasStates.length - 1) {
+        backCurrentStateIndex++;
+        applyCanvasState(backCanvasStates[backCurrentStateIndex]);
     }
+    updateUndoRedoButtons();
 }
 
-// Update undo/redo buttons
 function updateUndoRedoButtons() {
     const undoButton = document.getElementById('undo-button');
     const redoButton = document.getElementById('redo-button');
 
-    undoButton.classList.toggle('disabled', currentStateIndex <= 0);
-    redoButton.classList.toggle('disabled', currentStateIndex >= canvasStates.length - 1);
+    if (currentCanvas === frontCanvas) {
+        undoButton.classList.toggle('disabled', frontCurrentStateIndex <= 0);
+        redoButton.classList.toggle('disabled', frontCurrentStateIndex >= frontCanvasStates.length - 1);
+    } else {
+        undoButton.classList.toggle('disabled', backCurrentStateIndex <= 0);
+        redoButton.classList.toggle('disabled', backCurrentStateIndex >= backCanvasStates.length - 1);
+    }
 }
 
 // Event listeners for undo and redo buttons
@@ -2076,14 +2099,24 @@ document.addEventListener('DOMContentLoaded', function() {
         backButton.classList.toggle('selected', button === backButton);
     }
 
-    frontButton.addEventListener('click', function() {
-        setBackground(this);
-    });
+frontButton.addEventListener('click', function() {
+    switchCanvas(frontCanvas);
+    this.classList.add('selected');
+    backButton.classList.remove('selected');
+});
 
-    backButton.addEventListener('click', function() {
-        setBackground(this);
-    });
+backButton.addEventListener('click', function() {
+    switchCanvas(backCanvas);
+    this.classList.add('selected');
+    frontButton.classList.remove('selected');
+});
 
     // Set initial background
     setBackground(frontButton);
 });
+function switchCanvas(newCanvas) {
+    currentCanvas.style.display = 'none';
+    newCanvas.style.display = 'block';
+    currentCanvas = newCanvas;
+    updateCanvasState();
+}
