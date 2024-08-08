@@ -42,8 +42,7 @@ let backCanvasStates = [];
 let frontCurrentStateIndex = -1;
 let backCurrentStateIndex = -1;
 document.addEventListener('contextmenu', function(event) {
-    console.log("h");
-    event.preventDefault();
+  event.preventDefault();
     const clickedOnImage = event.target.closest('.image-container');
     const clickedOnText = event.target.closest('.text-container');
     const hasObjectsOnCanvas = currentCanvas.querySelector('.image-container, .text-container') !== null;
@@ -457,15 +456,14 @@ mainContainer.addEventListener('click', function(event) {
   }
 });
 
-// Background removal functionality
 function removeBackground(imgElement) {
-    const canvas = document.createElement('canvas');
-    const ctx = currentCanvas.getContext('2d');
-    currentCanvas.width = imgElement.naturalWidth;
-    currentCanvas.height = imgElement.naturalHeight;
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    tempCanvas.width = imgElement.naturalWidth;
+    tempCanvas.height = imgElement.naturalHeight;
     ctx.drawImage(imgElement, 0, 0);
 
-    const imageData = ctx.getImageData(0, 0, currentCanvas.width, currentCanvas.height);
+    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
     const data = imageData.data;
 
     // This is a simple background removal. In a real scenario, you'd use a more sophisticated AI service.
@@ -481,7 +479,7 @@ function removeBackground(imgElement) {
     }
 
     ctx.putImageData(imageData, 0, 0);
-    return currentCanvas.toDataURL();
+    return tempCanvas.toDataURL();
 }
 
 backgroundRemovalToggle.addEventListener('change', function() {
@@ -813,26 +811,26 @@ function finishCropping() {
     const cropHeight = cropRect.height / imgRect.height * img.naturalHeight;
 
     // Create a canvas with the same dimensions as the current image display size
-    const canvas = document.createElement('canvas');
-    const ctx = currentCanvas.getContext('2d');
-    currentCanvas.width = img.width;
-    currentCanvas.height = img.height;
+    const tempCanvas = document.createElement('canvas');
+    const ctx = tempCanvas.getContext('2d');
+    tempCanvas.width = img.width;
+    tempCanvas.height = img.height;
 
     // Draw the cropped portion of the image onto the canvas, scaling it to fit
     ctx.drawImage(img,
         cropX, cropY, cropWidth, cropHeight,  // Source rectangle
-        0, 0, currentCanvas.width, currentCanvas.height);   // Destination rectangle (full canvas)
+        0, 0, tempCanvas.width, tempCanvas.height);   // Destination rectangle (full canvas)
 
     // Update the image source with the new canvas content
-    img.src = currentCanvas.toDataURL();
+    img.src = tempCanvas.toDataURL();
 
     // Store the cropped image data
-    img.setAttribute('data-cropped-src', currentCanvas.toDataURL());
+    img.setAttribute('data-cropped-src', tempCanvas.toDataURL());
 
     // Restore original z-index
     selectedImageContainer.style.zIndex = originalZIndex;
 
- cleanupCropping();
+    cleanupCropping();
     captureCanvasState();
 }
 function cancelCropping() {
@@ -1874,8 +1872,6 @@ function centerObject(container) {
         }
     }
     captureCanvasState();
-
-
 }
 function isRTL(text) {
     const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
