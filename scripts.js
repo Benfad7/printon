@@ -985,11 +985,6 @@ function updateCanvasState() {
     updateUndoRedoButtons();
 
     // Update other button states as needed
-    const hasObjects = currentCanvas.querySelector('.image-container, .text-container') !== null;
-    const otherButtons = document.querySelectorAll('.custom-button:not(#undo-button):not(#redo-button)');
-    otherButtons.forEach(button => {
-        button.classList.toggle('disabled', !hasObjects);
-    });
 
     // If there are no objects left, return to the main screen
     if (!hasObjects && !screen1.classList.contains('active')) {
