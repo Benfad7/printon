@@ -2091,12 +2091,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 frontButton.addEventListener('click', function() {
+    setBackground(frontButton);
     switchCanvas(frontCanvas);
     this.classList.add('selected');
     backButton.classList.remove('selected');
 });
 
 backButton.addEventListener('click', function() {
+    setBackground(backButton);
     switchCanvas(backCanvas);
     this.classList.add('selected');
     frontButton.classList.remove('selected');
