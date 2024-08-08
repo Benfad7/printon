@@ -1149,3 +1149,7 @@ body, html {
 .text-content {
     display: inline-block;
 }
+.custom-button.selected {
+    background-color: #007bff;
+    color: white;
+}

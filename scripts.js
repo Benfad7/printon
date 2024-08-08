@@ -2064,3 +2064,26 @@ function updateUndoRedoButtons() {
 // Event listeners for undo and redo buttons
 document.getElementById('undo-button').addEventListener('click', undo);
 document.getElementById('redo-button').addEventListener('click', redo);
+document.addEventListener('DOMContentLoaded', function() {
+    const frontButton = document.getElementById('front-button');
+    const backButton = document.getElementById('back-button');
+    const mainContainer = document.getElementById('main-container');
+
+    function setBackground(button) {
+        const backgroundUrl = button.getAttribute('data-background');
+        mainContainer.style.backgroundImage = `url('${backgroundUrl}')`;
+        frontButton.classList.toggle('selected', button === frontButton);
+        backButton.classList.toggle('selected', button === backButton);
+    }
+
+    frontButton.addEventListener('click', function() {
+        setBackground(this);
+    });
+
+    backButton.addEventListener('click', function() {
+        setBackground(this);
+    });
+
+    // Set initial background
+    setBackground(frontButton);
+});
