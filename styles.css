@@ -689,7 +689,7 @@ body, html {
     width: 60px;
     height: 80px;
     background-size: auto 118%; /* Increase size to allow for vertical cropping */
-    background-position: 75% 43%; /* Center vertically and keep your horizontal position */
+    background-position: 76% 43%; /* Center vertically and keep your horizontal position */
     background-repeat: no-repeat;
     margin-bottom: 5px;
     overflow: hidden; /* Ensure the image doesn't spill out of the container */
