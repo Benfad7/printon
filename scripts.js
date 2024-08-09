@@ -1140,9 +1140,9 @@ function createTextObject(text) {
     textElement.style.padding = '0';
     textElement.style.cursor = 'move';
     textElement.style.userSelect = 'none';
-    textElement.style.textShadow = 'none'; // Initialize with no outline
+   textElement.style.textShadow = 'none'; // Initialize with no outline
     textElement.dataset.outlineColor = '#000000';
-    textElement.dataset.outlineStrength = '0';
+    textElement.dataset.outlineStrength = '1'; // Set default to '1' which corresponds to 'דק'
 
 
 
@@ -1160,6 +1160,8 @@ function createTextObject(text) {
     captureCanvasState();
 
     setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
+        applyTextOutline(textElement); // Apply the default outline
+
 
 }
 function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
@@ -1380,8 +1382,7 @@ function showTextEditScreen(textElement) {
 
     // Set outline properties
     outlineColorPicker.value = textElement.dataset.outlineColor || '#000000';
-    outlineThicknessSelector.value = textElement.dataset.outlineStrength || '0';
-
+    outlineThicknessSelector.value = textElement.dataset.outlineStrength || '1';
     // Remove existing event listeners
     textColorPicker.removeEventListener('input', updateTextColor);
     fontSelector.removeEventListener('change', updateTextFont);
