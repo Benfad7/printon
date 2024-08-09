@@ -10,6 +10,7 @@ const cutImage = document.getElementById('cut-image');
 const uploadBox = document.getElementById('upload-box');
 const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
+
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const screen3 = document.getElementById('screen3');
