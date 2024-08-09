@@ -130,7 +130,7 @@ body, html {
 }
 
 .add-text {
-  cursor: default;
+  cursor: pointer;
 }
 
 .right-side {
