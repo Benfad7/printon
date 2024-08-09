@@ -86,6 +86,13 @@ document.addEventListener('contextmenu', function(event) {
     // Set the selected container
     selectedImageContainer = clickedOnImage || clickedOnText;
 });
+document.querySelector('.cloud-upload').addEventListener('click', function(event) {
+   if (screen1.classList.contains('active')) {
+    event.preventDefault(); // Prevent the default file upload behavior
+    }
+    showScreen(screen2); // Show the second screen
+});
+
 
 function handleFileSelection(event) {
     const files = event.target.files;
