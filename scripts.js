@@ -1621,7 +1621,7 @@ function applyTextOutline(textElement) {
     const outlineStrength = parseFloat(textElement.dataset.outlineStrength);
 
     if (outlineStrength > 0) {
-        const emStrength = outlineStrength / 200; // Convert 0-5 range to 0-0.25em
+        const emStrength = outlineStrength / 300; // Convert 0-5 range to 0-0.25em
         const shadows = [];
         for (let x = -3; x <= 3; x++) {
             for (let y = -3; y <= 3; y++) {
