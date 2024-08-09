@@ -130,7 +130,7 @@ body, html {
 }
 
 .add-text {
-  cursor: pointer;
+  cursor: default;
 }
 
 .right-side {
@@ -338,7 +338,7 @@ body, html {
   width: 70%;
   position: absolute;
   left: 55.2%;
-    transform: translate(-50%, -90%);
+    transform: translate(-50%, -130%);
 
 
 
