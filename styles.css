@@ -704,16 +704,17 @@ body, html {
 }
 
 #front-back-control .custom-button span {
-    font-size: 12px;
-}
+    font-size: 14px;
+    color: #000000; /* Black color */
+]}
 
 #front-back-control .custom-button.selected {
-    background-color: #e0e0e0;
-    border-color: #999;
+    background-color: #f0f0f0;
+    border-color: #000000;
 }
 
 #front-back-control .custom-button:hover {
-    background-color: #e0e0e0;
+    background-color: #ffffff;
 }
 #undo-redo-control {
     margin-bottom: 10px; /* Space between button groups if you add more later */
