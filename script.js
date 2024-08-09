@@ -35,6 +35,7 @@ const MAX_STATES = 50;
 let copiedObjectData = null;
 let currentCanvas = document.getElementById('front-canvas');
 const frontCanvas = document.getElementById('front-canvas');
+
 const backCanvas = document.getElementById('back-canvas');
 const frontButton = document.getElementById('front-button');
 const backButton = document.getElementById('back-button');
