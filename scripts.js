@@ -2125,7 +2125,13 @@ function switchCanvas(newCanvas) {
     updateCanvasState();
 }
 document.addEventListener('DOMContentLoaded', function() {
+    const getPriceButton = document.getElementById('get-price-button');
+
     getPriceButton.addEventListener('click', function() {
-    $w("#html1").postMessage("Message from page code!");
-    });
+    console.log("hello");
+      window.parent.postMessage(
+             "addToCart",
+             "*"
+           );      }
+ );
 });
