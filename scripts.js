@@ -2124,3 +2124,11 @@ function switchCanvas(newCanvas) {
     currentCanvas = newCanvas;
     updateCanvasState();
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const getPriceButton = document.getElementById('get-price-button');
+
+    getPriceButton.addEventListener('click', function() {
+        console.log('Hello world');
+        alert('Hello world');
+    });
+});

@@ -1192,3 +1192,33 @@ body, html {
     background-color: #007bff;
     color: white;
 }
+/* Add these styles to your existing CSS file */
+
+#get-price-button-container {
+    position: fixed;
+    bottom: 17px;
+    right: 30px;
+    z-index: 1000;
+}
+
+#get-price-button {
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#get-price-button:hover {
+    background-color: #0052a3;
+    transform: scale(1.05);
+}
+
+#get-price-button:active {
+    transform: scale(0.98);
+}
