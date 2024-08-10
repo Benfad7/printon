@@ -2125,42 +2125,7 @@ function switchCanvas(newCanvas) {
     updateCanvasState();
 }
 document.addEventListener('DOMContentLoaded', function() {
-    const getPriceButton = document.getElementById('get-price-button');
-        const products = [{
-            "productId": thisProduct._id,
-            "quantity": Number($w("#quantity").value),
-            "options": {
-                "choices": choices,
-                "customTextFields": [{
-                        title: "הערה",
-                        value: noteText,
-                    },
-
-                    {
-                        title: "הדפסה_מאחורה",
-                        value: (isBack && isFront) ? secondFile : (isBack && !isFront) ? firstFile : (wixWindowFrontend.formFactor === "Mobile") ? "ללא_הדפסה_מאחורה____________   ." : "ללא הדפסה מאחורה    .",
-                    },
-                    {
-                        title: "הדפסה_מקדימה",
-                        value: (isFront) ? firstFile : ((wixWindowFrontend.formFactor === "Mobile") ? "ללא_הדפסה_מקדימה____________   ." :
-                            "ללא הדפסה מקדימה     ."),
-                    },
-
-                ],
-
-            }
-        }, ];
-
-        console.log(products);
     getPriceButton.addEventListener('click', function() {
-    cart.addProducts(products)
-        .then((updatedCart) => {
-            console.log(updatedCart);
-            cart.showMiniCart();
-        })
-        .catch((error) => {
-            console.error(error);
-
-        })
+    $w("#html1").postMessage("Message from page code!");
     });
 });
