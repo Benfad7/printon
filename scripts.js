@@ -2124,30 +2124,48 @@ function switchCanvas(newCanvas) {
     currentCanvas = newCanvas;
     updateCanvasState();
 }
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const getPriceButton = document.getElementById('get-price-button');
 
     getPriceButton.addEventListener('click', function() {
-        // Capture image URLs for both front and back divs
+        // Capture image URLs for both front and back canvases
         Promise.all([
-            captureDivToImageURL(frontCanvas),
-            captureDivToImageURL(backCanvas)
+            captureDivToImageURL(document.getElementById('front-canvas')),
+            captureDivToImageURL(document.getElementById('back-canvas'))
         ]).then(([frontImageURL, backImageURL]) => {
             // Log the image URLs to the console
-            console.log('Front Canvas URL:', frontImageURL);
-            console.log('Back Canvas URL:', backImageURL);
-        })
+            console.log('Front Image URL:', frontImageURL);
+            console.log('Back Image URL:', backImageURL);
+
+            // Send message to parent window
             window.parent.postMessage({
                 action: "addToCart",
                 frontImage: frontImageURL,
                 backImage: backImageURL
             }, "*");
+        }).catch(error => {
+            console.error('Error capturing canvas images:', error);
+        });
     });
-
 });
 
 function captureDivToImageURL(div) {
+    // Store the original display style
+    const originalDisplay = div.style.display;
+
+    // Make the div visible temporarily if it's hidden
+    if (originalDisplay === 'none') {
+        div.style.display = 'block';
+    }
+
     return html2canvas(div).then(canvas => {
+        // Restore the original display style
+        div.style.display = originalDisplay;
         return canvas.toDataURL('image/png');
     });
 }
