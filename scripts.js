@@ -2169,3 +2169,7 @@ function captureDivToImageURL(div) {
         return canvas.toDataURL('image/png');
     });
 }
+
+
+
+
