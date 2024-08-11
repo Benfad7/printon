@@ -2128,10 +2128,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const getPriceButton = document.getElementById('get-price-button');
 
     getPriceButton.addEventListener('click', function() {
-    console.log("hello");
-      window.parent.postMessage(
-             "addToCart",
-             "*"
-           );      }
- );
+        // Capture image URLs for both front and back divs
+        Promise.all([
+            captureDivToImageURL(frontCanvas),
+            captureDivToImageURL(backCanvas)
+        ]).then(([frontImageURL, backImageURL]) => {
+            // Log the image URLs to the console
+            console.log('Front Canvas URL:', frontImageURL);
+            console.log('Back Canvas URL:', backImageURL);
+        })
+            window.parent.postMessage({
+                action: "addToCart",
+                frontImage: frontImageURL,
+                backImage: backImageURL
+            }, "*");
+    });
+
 });
+
+function captureDivToImageURL(div) {
+    return html2canvas(div).then(canvas => {
+        return canvas.toDataURL('image/png');
+    });
+}
