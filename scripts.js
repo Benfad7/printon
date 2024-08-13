@@ -2163,15 +2163,9 @@ function captureDivToImageURL(div) {
         div.style.display = 'block';
     }
 
-
-
-    return  html2canvas(div).then(canvas => {
+    return html2canvas(div).then(canvas => {
         // Restore the original display style
         div.style.display = originalDisplay;
         return canvas.toDataURL('image/png');
     });
 }
-
-
-
-
