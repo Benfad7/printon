@@ -2131,6 +2131,8 @@ function switchCanvas(newCanvas) {
 
 
 document.addEventListener('DOMContentLoaded', function() {
+    const goBackButton = document.getElementById('go-back-button');
+
     const designMyselfButton = document.getElementById('design-myself');
     designMyselfButton.addEventListener('click', function() {
         showDesignScreen();
@@ -2138,7 +2140,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.main-container').style.display = 'flex';
         document.querySelector('.main-container').style.height = '100vh';
     });
-
+    goBackButton.addEventListener('click', function() {
+        showDefaultScreen();
+    });
     // Show the default screen initially
     showDefaultScreen();
     // Show the default screen initially
@@ -2187,8 +2191,14 @@ function showDefaultScreen() {
     document.getElementById('design-screen').style.display = 'none';
     document.body.style.backgroundImage = 'none';
     document.body.style.backgroundColor = 'white';
-}
 
+    // Reset the main container
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.style.display = 'none';
+        mainContainer.style.height = 'auto';
+    }
+}
 function showDesignScreen() {
     document.getElementById('default-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'flex';
