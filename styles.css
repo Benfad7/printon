@@ -1294,7 +1294,7 @@ body, html {
     cursor: pointer;
     padding: 30px;
     transition: all 0.3s ease;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 10px rgba(0,0,0,0.1);
 }
 
 .option-button:hover {
