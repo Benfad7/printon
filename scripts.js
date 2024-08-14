@@ -10,6 +10,7 @@ const cutImage = document.getElementById('cut-image');
 const uploadBox = document.getElementById('upload-box');
 const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
+let currentScreen = 'default';
 
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -2187,12 +2188,13 @@ function captureDivToImageURL(div) {
     });
 }
 function showDefaultScreen() {
+    currentScreen = 'default';
     document.getElementById('default-screen').style.display = 'flex';
     document.getElementById('design-screen').style.display = 'none';
+    document.getElementById('next-step-screen').style.display = 'none';
     document.body.style.backgroundImage = 'none';
     document.body.style.backgroundColor = 'white';
 
-    // Reset the main container
     const mainContainer = document.querySelector('.main-container');
     if (mainContainer) {
         mainContainer.style.display = 'none';
@@ -2200,11 +2202,12 @@ function showDefaultScreen() {
     }
 }
 function showDesignScreen() {
+    currentScreen = 'design';
     document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('next-step-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'flex';
     document.body.style.backgroundImage = "url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png')";
 
-    // Show the initial screen (screen1) within the white square
     showScreen('screen1');
 }
 // Update the showScreen function
@@ -2239,4 +2242,59 @@ function showScreen(screenToShow) {
             textInput.value = '';
         }
     }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // ... (existing event listeners) ...
+
+    const getPriceButton = document.getElementById('get-price-button');
+    const backToDesignButton = document.getElementById('back-to-design');
+    const proceedToNextButton = document.getElementById('proceed-to-next');
+    const agreeCheckbox = document.getElementById('agree-checkbox');
+
+    getPriceButton.addEventListener('click', function() {
+        Promise.all([
+            captureDivToImageURL(document.getElementById('front-canvas')),
+            captureDivToImageURL(document.getElementById('back-canvas'))
+        ]).then(([frontImageURL, backImageURL]) => {
+            showNextStepScreen(frontImageURL, backImageURL);
+        }).catch(error => {
+            console.error('Error capturing canvas images:', error);
+        });
+    });
+
+    backToDesignButton.addEventListener('click', function() {
+        hideNextStepScreen();
+        showDesignScreen();
+    });
+
+    proceedToNextButton.addEventListener('click', function() {
+        if (agreeCheckbox.checked) {
+            // Here you would implement the logic to move to the next step
+            alert('הזמנה אושרה! ממשיך לשלב הבא...');
+        }
+    });
+
+    agreeCheckbox.addEventListener('change', function() {
+        proceedToNextButton.disabled = !this.checked;
+    });
+});
+
+function showNextStepScreen(frontImageURL, backImageURL) {
+    currentScreen = 'nextStep';
+    document.getElementById('design-screen').style.display = 'none';
+    const nextStepScreen = document.getElementById('next-step-screen');
+    nextStepScreen.style.display = 'flex';
+
+    document.getElementById('front-preview').src = frontImageURL;
+    document.getElementById('back-preview').src = backImageURL;
+
+    // Reset form state
+    document.getElementById('comment').value = '';
+    document.getElementById('agree-checkbox').checked = false;
+    document.getElementById('proceed-to-next').disabled = true;
+}
+
+function hideNextStepScreen() {
+    document.getElementById('next-step-screen').style.display = 'none';
 }
