@@ -12,6 +12,7 @@ const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
 let SfrontImageURL, SbackImageURL;
+let availableSizes = [];
 
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -2295,12 +2296,11 @@ const totalQuantityElement = document.getElementById('total-quantity');
 
 function initializeSizeSelectionScreen() {
     sizeRowsContainer.innerHTML = '';
-    sizes.forEach(size => {
+    availableSizes.forEach(size => {
         sizeRowsContainer.appendChild(createSizeRow(size));
     });
     updateTotal();
 }
-
 function createSizeRow(size) {
     const row = document.createElement('div');
     row.className = 'size-row';
@@ -2336,7 +2336,7 @@ function goBack() {
 
 function addToCart() {
     const selectedSizes = {};
-    sizes.forEach(size => {
+    availableSizes.forEach(size => {
         const quantity = parseInt(document.getElementById(`${size}-quantity`).value);
         if (quantity > 0) {
             selectedSizes[size] = quantity;
@@ -2349,9 +2349,9 @@ function addToCart() {
         sizes: selectedSizes,
         frontImage: SfrontImageURL,
         backImage: SbackImageURL,
-        comment: savedComment,
+        comment: document.getElementById('comment').value,
     }, "*");
-    // Proceed to the next step (e.g., checkout)
+
     alert('הפריטים נוספו לעגלה!');
     // Here you can add logic to move to the next step in your checkout process
 }
@@ -2365,3 +2365,11 @@ function showSizeSelectionScreen() {
 
 // Update your existing code to call showSizeSelectionScreen when the "Continue" button is clicked
 document.getElementById('proceed-to-next').addEventListener('click', showSizeSelectionScreen);
+
+
+window.addEventListener('message', function(event) {
+    if (event.data.action === "setAvailableSizes") {
+        availableSizes = event.data.sizes;
+        initializeSizeSelectionScreen(); // Re-initialize the screen with new sizes
+    }
+});
