@@ -2249,14 +2249,7 @@ document.addEventListener('DOMContentLoaded', function() {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
             showNextStepScreen();
-            window.parent.postMessage({
-                action: "addToCart",
-                frontImage: SfrontImageURL,
-                backImage: SbackImageURL
-            }, "*");
-        }).catch(error => {
-            console.error('Error capturing canvas images:', error);
-        });
+        })
     });
 
     backToDesignButton.addEventListener('click', function() {
@@ -2352,10 +2345,11 @@ function addToCart() {
 
     // Send the selected sizes to the parent window or process them as needed
     window.parent.postMessage({
-        action: "updateSizes",
-        sizes: selectedSizes
+        action: "addToCart",
+        sizes: selectedSizes,
+        frontImage: SfrontImageURL,
+        backImage: SbackImageURL
     }, "*");
-
     // Proceed to the next step (e.g., checkout)
     alert('הפריטים נוספו לעגלה!');
     // Here you can add logic to move to the next step in your checkout process
