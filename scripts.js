@@ -2162,7 +2162,6 @@ function captureDivToImageURL(div) {
     }
 
     return html2canvas(div).then(canvas => {
-        // Restore the original display style
         div.style.display = originalDisplay;
         return canvas.toDataURL('image/png');
     });
