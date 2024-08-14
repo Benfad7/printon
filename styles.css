@@ -13,10 +13,12 @@ body, html {
 
 
 .main-container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
+
 
 .left-side {
   width: 50%;
@@ -1221,4 +1223,75 @@ body, html {
 
 #get-price-button:active {
     transform: scale(0.98);
+}
+
+#default-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.default-title {
+    font-size: 36px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.option-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.option-button {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+.option-button:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+#design-myself {
+    order: -1;
+    background-color: #e6f2ff;
+    border-color: #66b3ff;
+}
+
+#design-screen {
+    display: none;
+    height: 100vh;
+    width: 100vw;
+}
+#design-screen.active {
+    display: flex;
+}
+#design-screen .screen {
+    display: none;
+}
+
+#design-screen .screen.active {
+    display: block;
 }

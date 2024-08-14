@@ -410,14 +410,17 @@ cutImage.addEventListener('click', function() {
 });
 
 function showScreen(screenToShow) {
-    [screen1, screen2, screen3, screen4, screen5, screen6].forEach(screen => screen.classList.remove('active'));
-    screenToShow.classList.add('active');
+    if (screenToShow.id === 'design-screen') {
+        showDesignScreen();
+    } else {
+        [screen1, screen2, screen3, screen4, screen5, screen6].forEach(screen => screen.classList.remove('active'));
+        screenToShow.classList.add('active');
+    }
 
     if (screenToShow === screen3 || screenToShow === screen5) {
         textInput.value = ''; // Clear the input field
     }
 }
-
 
 function setClickedOption(clickedOption) {
   blackStripOptions.forEach(option => option.classList.remove('clicked'));
@@ -450,21 +453,20 @@ uploadBox.addEventListener('click', function() {
 const mainContainer = document.getElementById('main-container');
 
 mainContainer.addEventListener('click', function(event) {
-  // Check if we're in screen2, screen3, screen4, or screen5
-  if (screen2.classList.contains('active') || screen3.classList.contains('active') ||
-      screen4.classList.contains('active') || screen5.classList.contains('active')|| screen6.classList.contains('active')) {
-
-    // Check if the click is outside the white square and not on an image or text container
-    if (!event.target.closest('.white-square') &&
-        !event.target.closest('.image-container') &&
-        !event.target.closest('.text-container')) {
-
-      showScreen(screen1);
-      blackStripOptions.forEach(option => option.classList.remove('clicked'));
+    const activeScreen = document.querySelector('#design-screen .white-square .screen.active');
+    if (activeScreen &&
+        (activeScreen.id === 'screen2' || activeScreen.id === 'screen3' ||
+         activeScreen.id === 'screen4' || activeScreen.id === 'screen5' || activeScreen.id === 'screen6')) {
+        if (!event.target.closest('.white-square') &&
+            !event.target.closest('.image-container') &&
+            !event.target.closest('.text-container')) {
+            showScreen('screen1');
+            document.querySelectorAll('.black-strip-option').forEach(option => {
+                option.classList.remove('clicked');
+            });
+        }
     }
-  }
 });
-
 function removeBackground(imgElement) {
     const tempCanvas = document.createElement('canvas');
     const ctx = tempCanvas.getContext('2d');
@@ -2128,8 +2130,19 @@ function switchCanvas(newCanvas) {
 
 
 
-
 document.addEventListener('DOMContentLoaded', function() {
+    const designMyselfButton = document.getElementById('design-myself');
+    designMyselfButton.addEventListener('click', function() {
+        showDesignScreen();
+        // Ensure the main-container is visible and sized correctly
+        document.querySelector('.main-container').style.display = 'flex';
+        document.querySelector('.main-container').style.height = '100vh';
+    });
+
+    // Show the default screen initially
+    showDefaultScreen();
+    // Show the default screen initially
+    showDefaultScreen();
     const getPriceButton = document.getElementById('get-price-button');
 
     getPriceButton.addEventListener('click', function() {
@@ -2168,4 +2181,52 @@ function captureDivToImageURL(div) {
         div.style.display = originalDisplay;
         return canvas.toDataURL('image/png');
     });
+}
+function showDefaultScreen() {
+    document.getElementById('default-screen').style.display = 'flex';
+    document.getElementById('design-screen').style.display = 'none';
+    document.body.style.backgroundImage = 'none';
+    document.body.style.backgroundColor = 'white';
+}
+
+function showDesignScreen() {
+    document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('design-screen').style.display = 'flex';
+    document.body.style.backgroundImage = "url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png')";
+
+    // Show the initial screen (screen1) within the white square
+    showScreen('screen1');
+}
+// Update the showScreen function
+function showScreen(screenToShow) {
+    // First, make sure we're in the design screen
+    if (document.getElementById('default-screen').style.display !== 'none') {
+        showDesignScreen();
+    }
+
+    // Hide all screens within the white square
+    document.querySelectorAll('#design-screen .white-square .screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+
+    // Show the requested screen
+    if (typeof screenToShow === 'string') {
+        screenToShow = document.getElementById(screenToShow);
+    }
+    screenToShow.classList.add('active');
+
+    // Special handling for screen1
+    if (screenToShow.id === 'screen1') {
+        document.querySelectorAll('.black-strip-option').forEach(option => {
+            option.classList.remove('clicked');
+        });
+    }
+
+    // Clear input fields for specific screens
+    if (screenToShow.id === 'screen3' || screenToShow.id === 'screen5') {
+        const textInput = screenToShow.querySelector('.text-input');
+        if (textInput) {
+            textInput.value = '';
+        }
+    }
 }
