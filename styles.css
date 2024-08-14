@@ -1392,7 +1392,7 @@ body, html {
 }
 
 #go-back-button {
-    background-color: #0066cc;
+    background-color: #6c757d;  /* Changed to gray */
     color: white;
     border: none;
     border-radius: 5px;
@@ -1405,7 +1405,7 @@ body, html {
 }
 
 #go-back-button:hover {
-    background-color: #0052a3;
+    background-color: #5a6268;  /* Darker gray on hover */
     transform: scale(1.05);
 }
 
