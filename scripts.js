@@ -11,6 +11,7 @@ const uploadBox = document.getElementById('upload-box');
 const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
+let SfrontImageURL, SbackImageURL;
 
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -2245,11 +2246,13 @@ document.addEventListener('DOMContentLoaded', function() {
             captureDivToImageURL(document.getElementById('front-canvas')),
             captureDivToImageURL(document.getElementById('back-canvas'))
         ]).then(([frontImageURL, backImageURL]) => {
-            showNextStepScreen(frontImageURL, backImageURL);
+            SfrontImageURL = frontImageURL;
+            SbackImageURL = backImageURL;
+            showNextStepScreen();
             window.parent.postMessage({
                 action: "addToCart",
-                frontImage: frontImageURL,
-                backImage: backImageURL
+                frontImage: SfrontImageURL,
+                backImage: SbackImageURL
             }, "*");
         }).catch(error => {
             console.error('Error capturing canvas images:', error);
@@ -2265,14 +2268,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-function showNextStepScreen(frontImageURL, backImageURL) {
+function showNextStepScreen() {
     currentScreen = 'nextStep';
     document.getElementById('design-screen').style.display = 'none';
     const nextStepScreen = document.getElementById('next-step-screen');
     nextStepScreen.style.display = 'flex';
 
-    document.getElementById('front-preview').src = frontImageURL;
-    document.getElementById('back-preview').src = backImageURL;
+
+
+    document.getElementById('front-preview').src = SfrontImageURL;
+    document.getElementById('back-preview').src = SbackImageURL;
 
     // Load saved comment
     const savedComment = localStorage.getItem('userComment');
