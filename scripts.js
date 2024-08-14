@@ -2150,26 +2150,6 @@ document.addEventListener('DOMContentLoaded', function() {
     showDefaultScreen();
     const getPriceButton = document.getElementById('get-price-button');
 
-    getPriceButton.addEventListener('click', function() {
-        // Capture image URLs for both front and back canvases
-        Promise.all([
-            captureDivToImageURL(document.getElementById('front-canvas')),
-            captureDivToImageURL(document.getElementById('back-canvas'))
-        ]).then(([frontImageURL, backImageURL]) => {
-            // Log the image URLs to the console
-            console.log('Front Image URL:', frontImageURL);
-            console.log('Back Image URL:', backImageURL);
-
-            // Send message to parent window
-            window.parent.postMessage({
-                action: "addToCart",
-                frontImage: frontImageURL,
-                backImage: backImageURL
-            }, "*");
-        }).catch(error => {
-            console.error('Error capturing canvas images:', error);
-        });
-    });
 });
 
 function captureDivToImageURL(div) {
@@ -2258,6 +2238,11 @@ document.addEventListener('DOMContentLoaded', function() {
             captureDivToImageURL(document.getElementById('back-canvas'))
         ]).then(([frontImageURL, backImageURL]) => {
             showNextStepScreen(frontImageURL, backImageURL);
+                        window.parent.postMessage({
+                            action: "addToCart",
+                            frontImage: frontImageURL,
+                            backImage: backImageURL
+                        }, "*");
         }).catch(error => {
             console.error('Error capturing canvas images:', error);
         });
