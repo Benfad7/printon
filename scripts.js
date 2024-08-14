@@ -2262,8 +2262,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     proceedToNextButton.addEventListener('click', function() {
-        // Here you would implement the logic to move to the next step
-        alert('הזמנה אושרה! ממשיך לשלב הבא...');
     });
 });
 
@@ -2292,3 +2290,78 @@ function clearSavedComment() {
     localStorage.removeItem('userComment');
     document.getElementById('comment').value = '';
 }
+
+const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const sizeRowsContainer = document.getElementById('size-rows');
+const totalQuantityElement = document.getElementById('total-quantity');
+
+function initializeSizeSelectionScreen() {
+    sizeRowsContainer.innerHTML = '';
+    sizes.forEach(size => {
+        sizeRowsContainer.appendChild(createSizeRow(size));
+    });
+    updateTotal();
+}
+
+function createSizeRow(size) {
+    const row = document.createElement('div');
+    row.className = 'size-row';
+    row.innerHTML = `
+        <span class="size-label">${size}</span>
+        <div class="quantity-control">
+            <button class="quantity-btn" onclick="changeQuantity('${size}', -1)">-</button>
+            <input type="number" class="quantity-input" id="${size}-quantity" value="0" min="0" onchange="updateTotal()">
+            <button class="quantity-btn" onclick="changeQuantity('${size}', 1)">+</button>
+        </div>
+    `;
+    return row;
+}
+
+function changeQuantity(size, change) {
+    const input = document.getElementById(`${size}-quantity`);
+    input.value = Math.max(0, parseInt(input.value) + change);
+    updateTotal();
+}
+
+function updateTotal() {
+    let total = 0;
+    sizes.forEach(size => {
+        total += parseInt(document.getElementById(`${size}-quantity`).value);
+    });
+    totalQuantityElement.textContent = total;
+}
+
+function goBack() {
+    document.getElementById('size-selection-screen').style.display = 'none';
+    document.getElementById('next-step-screen').style.display = 'flex';
+}
+
+function addToCart() {
+    const selectedSizes = {};
+    sizes.forEach(size => {
+        const quantity = parseInt(document.getElementById(`${size}-quantity`).value);
+        if (quantity > 0) {
+            selectedSizes[size] = quantity;
+        }
+    });
+
+    // Send the selected sizes to the parent window or process them as needed
+    window.parent.postMessage({
+        action: "updateSizes",
+        sizes: selectedSizes
+    }, "*");
+
+    // Proceed to the next step (e.g., checkout)
+    alert('הפריטים נוספו לעגלה!');
+    // Here you can add logic to move to the next step in your checkout process
+}
+
+// Call this function when showing the size selection screen
+function showSizeSelectionScreen() {
+    document.getElementById('next-step-screen').style.display = 'none';
+    document.getElementById('size-selection-screen').style.display = 'flex';
+    initializeSizeSelectionScreen();
+}
+
+// Update your existing code to call showSizeSelectionScreen when the "Continue" button is clicked
+document.getElementById('proceed-to-next').addEventListener('click', showSizeSelectionScreen);
