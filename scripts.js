@@ -2224,12 +2224,21 @@ function showScreen(screenToShow) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // ... (existing event listeners) ...
-
     const getPriceButton = document.getElementById('get-price-button');
     const backToDesignButton = document.getElementById('back-to-design');
     const proceedToNextButton = document.getElementById('proceed-to-next');
-    const agreeCheckbox = document.getElementById('agree-checkbox');
+    const commentTextarea = document.getElementById('comment');
+
+    // Load saved comment when the page loads
+    const savedComment = localStorage.getItem('userComment');
+    if (savedComment) {
+        commentTextarea.value = savedComment;
+    }
+
+    // Save comment whenever it changes
+    commentTextarea.addEventListener('input', function() {
+        localStorage.setItem('userComment', this.value);
+    });
 
     getPriceButton.addEventListener('click', function() {
         Promise.all([
@@ -2237,11 +2246,11 @@ document.addEventListener('DOMContentLoaded', function() {
             captureDivToImageURL(document.getElementById('back-canvas'))
         ]).then(([frontImageURL, backImageURL]) => {
             showNextStepScreen(frontImageURL, backImageURL);
-                        window.parent.postMessage({
-                            action: "addToCart",
-                            frontImage: frontImageURL,
-                            backImage: backImageURL
-                        }, "*");
+            window.parent.postMessage({
+                action: "addToCart",
+                frontImage: frontImageURL,
+                backImage: backImageURL
+            }, "*");
         }).catch(error => {
             console.error('Error capturing canvas images:', error);
         });
@@ -2253,14 +2262,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     proceedToNextButton.addEventListener('click', function() {
-        if (agreeCheckbox.checked) {
-            // Here you would implement the logic to move to the next step
-            alert('הזמנה אושרה! ממשיך לשלב הבא...');
-        }
-    });
-
-    agreeCheckbox.addEventListener('change', function() {
-        proceedToNextButton.disabled = !this.checked;
+        // Here you would implement the logic to move to the next step
+        alert('הזמנה אושרה! ממשיך לשלב הבא...');
     });
 });
 
@@ -2273,12 +2276,19 @@ function showNextStepScreen(frontImageURL, backImageURL) {
     document.getElementById('front-preview').src = frontImageURL;
     document.getElementById('back-preview').src = backImageURL;
 
-    // Reset form state
-    document.getElementById('comment').value = '';
-    document.getElementById('agree-checkbox').checked = false;
-    document.getElementById('proceed-to-next').disabled = true;
+    // Load saved comment
+    const savedComment = localStorage.getItem('userComment');
+    if (savedComment) {
+        document.getElementById('comment').value = savedComment;
+    }
 }
 
 function hideNextStepScreen() {
     document.getElementById('next-step-screen').style.display = 'none';
+}
+
+// Function to clear saved comment (use when needed, e.g., after order completion)
+function clearSavedComment() {
+    localStorage.removeItem('userComment');
+    document.getElementById('comment').value = '';
 }
