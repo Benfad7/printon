@@ -1612,11 +1612,12 @@ body, html {
         font-size: 1.2rem;
     }
 
-    .action-buttons {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 2rem;
-    }
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    flex-direction: row-reverse; /* Add this line */
+}
 
     .action-button {
         border: none;
@@ -1637,22 +1638,21 @@ body, html {
         transform: scale(0.98);
     }
 
-    .back-button {
-        background-color: #6c757d;
-        color: white;
-        font-size: 18px;
-        order: 1;
-    }
+.back-button {
+    background-color: #6c757d;
+    color: white;
+    font-size: 18px;
+    order: 1; /* Change this to 2 */
+}
 
     .back-button:hover {
         background-color: #5a6268;
     }
-
-    .add-to-cart-button {
-        background-color: #0066cc;
-        color: white;
-        order: 2;
-    }
+.add-to-cart-button {
+    background-color: #0066cc;
+    color: white;
+    order: 2; /* Change this to 1 */
+}
 
     .add-to-cart-button:hover {
         background-color: #0052a3;
