@@ -1414,9 +1414,8 @@ body, html {
 }
 
 
-   #next-step-screen {
-       background-color: white;
-
+        #next-step-screen {
+            background-color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1428,10 +1427,9 @@ body, html {
         .next-step-title {
             font-size: 48px;
             font-weight: bold;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             text-align: center;
             color: #2c3e50;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         .design-preview {
@@ -1439,6 +1437,7 @@ body, html {
             justify-content: space-around;
             width: 100%;
             margin-bottom: 2rem;
+            align-items: flex-start;
         }
 
         .preview-side {
@@ -1446,7 +1445,6 @@ body, html {
             background-color: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
         .preview-side h2 {
@@ -1462,28 +1460,9 @@ body, html {
             border-radius: 4px;
         }
 
-        .important-info {
-            background-color: #f8f9fa;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-            max-width: 800px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .important-info p {
-            margin: 0.5rem 0;
-            color: #2c3e50;
-        }
-
-        .important-info strong {
-            color: #e74c3c;
-        }
-
         .comment-section {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin-bottom: 2rem;
         }
 
@@ -1500,6 +1479,24 @@ body, html {
             border: 1px solid #ccc;
             border-radius: 4px;
             resize: vertical;
+        }
+
+        .important-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0 0 2rem;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .important-info p {
+            margin: 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .important-info strong {
+            color: #e74c3c;
         }
 
         .agreement {
@@ -1528,7 +1525,6 @@ body, html {
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         #back-to-design {
