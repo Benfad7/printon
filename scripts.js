@@ -2348,7 +2348,8 @@ function addToCart() {
         action: "addToCart",
         sizes: selectedSizes,
         frontImage: SfrontImageURL,
-        backImage: SbackImageURL
+        backImage: SbackImageURL,
+        comment: savedComment,
     }, "*");
     // Proceed to the next step (e.g., checkout)
     alert('הפריטים נוספו לעגלה!');
