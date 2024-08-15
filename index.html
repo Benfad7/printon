@@ -379,11 +379,7 @@
 <div id="image-upload-screen" style="display: none;">
     <div class="container">
         <h1 class="upload-title">תיאור הדפסה</h1>
-        <div class="comment-section">
-            <label for="print-comment">הסבר על ההדפסה, יש לציין את מיקום ההדפסה ואת צבע/צבעים של ההדפסה</label>
-            <textarea id="print-comment" rows="4"></textarea>
-        </div>
-        <h2 class="upload-subtitle">העלה קובץ לדוגמה (אופציונלי)</h2>
+        <h2 class="upload-subtitle">בחר מיקומי הדפסה</h2>
         <div class="upload-options">
             <select id="print-type">
                 <option value="">בחר מיקום הדפסה</option>
@@ -392,14 +388,25 @@
                 <option value="both">הדפסה מקדימה ומאחורה</option>
             </select>
         </div>
+        <h2 class="upload-subtitle">הסבר על ההדפסה</h2>
+        <div class="comment-section">
+            <textarea id="print-comment" rows="4" placeholder="יש לציין את מיקום ההדפסה ואת צבע/צבעים של ההדפסה"></textarea>
+        </div>
+        <h2 class="upload-subtitle">העלה קובץ לדוגמה (אופציונלי)</h2>
         <div class="file-upload-container">
-            <div class="file-upload" id="front-upload">
-                <label for="front-file">העלאת קובץ לחזית</label>
-                <input type="file" id="front-file" accept="image/*">
-            </div>
-            <div class="file-upload" id="back-upload">
-                <label for="back-file">העלאת קובץ לגב</label>
-                <input type="file" id="back-file" accept="image/*">
+            <div class="file-upload-row">
+                <div class="file-upload" id="front-upload">
+                    <label for="front-file">העלאת קובץ לחזית</label>
+                    <input type="file" id="front-file" accept="image/*">
+                    <span class="file-name"></span>
+                    <button class="remove-file" style="display:none;">הסר</button>
+                </div>
+                <div class="file-upload" id="back-upload">
+                    <label for="back-file">העלאת קובץ לגב</label>
+                    <input type="file" id="back-file" accept="image/*">
+                    <span class="file-name"></span>
+                    <button class="remove-file" style="display:none;">הסר</button>
+                </div>
             </div>
         </div>
         <div class="navigation-buttons">

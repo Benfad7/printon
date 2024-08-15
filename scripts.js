@@ -2489,3 +2489,26 @@ function proceedToSizeSelection() {
     console.log('Comment:', printComment);
     // Implement your logic to proceed to the size selection screen
 }
+document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
+    input.addEventListener('change', function(e) {
+        const fileName = e.target.files[0].name;
+        const fileNameElement = this.nextElementSibling;
+        const removeButton = fileNameElement.nextElementSibling;
+
+        fileNameElement.textContent = fileName;
+        removeButton.style.display = 'block';
+        this.previousElementSibling.textContent = 'קובץ הועלה';
+    });
+});
+
+document.querySelectorAll('.remove-file').forEach(button => {
+    button.addEventListener('click', function() {
+        const input = this.previousElementSibling.previousElementSibling;
+        const fileNameElement = this.previousElementSibling;
+
+        input.value = '';
+        fileNameElement.textContent = '';
+        this.style.display = 'none';
+        input.previousElementSibling.textContent = input.id === 'front-file' ? 'העלאת קובץ לחזית' : 'העלאת קובץ לגב';
+    });
+});
