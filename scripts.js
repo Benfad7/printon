@@ -13,7 +13,7 @@ const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
 let SfrontImageURL, SbackImageURL;
 let availableSizes = [];
-
+let sizeScreen;
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const screen3 = document.getElementById('screen3');
@@ -2230,13 +2230,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const backToDesignButton = document.getElementById('back-to-design');
     const proceedToNextButton = document.getElementById('proceed-to-next');
     const commentTextarea = document.getElementById('comment');
+    const noPrintsButton = document.getElementById('no-prints');
 
     // Load saved comment when the page loads
     const savedComment = localStorage.getItem('userComment');
     if (savedComment) {
         commentTextarea.value = savedComment;
     }
-
+    noPrintsButton.addEventListener('click', function() {
+        sizeScreen = "noPrints";
+        document.getElementById('default-screen').style.display = 'none';
+        document.getElementById('size-selection-screen').style.display = 'flex';
+        initializeSizeSelectionScreen;
+    });
     // Save comment whenever it changes
     commentTextarea.addEventListener('input', function() {
         localStorage.setItem('userComment', this.value);
@@ -2330,8 +2336,17 @@ function updateTotal() {
 }
 
 function goBack() {
-    document.getElementById('size-selection-screen').style.display = 'none';
-    document.getElementById('next-step-screen').style.display = 'flex';
+    if(sizeScreen=="designPrints")
+    {
+        document.getElementById('size-selection-screen').style.display = 'none';
+        document.getElementById('next-step-screen').style.display = 'flex';
+    }
+    else if(sizeScreen=="noPrints")
+    {
+        document.getElementById('size-selection-screen').style.display = 'none';
+        document.getElementById('default-screen').style.display = 'flex';
+    }
+
 }
 
 function addToCart() {
@@ -2342,15 +2357,32 @@ function addToCart() {
             selectedSizes[size] = quantity;
         }
     });
-
-    // Send the selected sizes to the parent window or process them as needed
+    if(sizeScreen == "noPrints")
+    {
     window.parent.postMessage({
         action: "addToCart",
         sizes: selectedSizes,
         frontImage: SfrontImageURL,
         backImage: SbackImageURL,
         comment: document.getElementById('comment').value,
+        kind: "ללא הדפסה"
+
+
     }, "*");
+}
+    else if(sizeScreen == "designPrints")
+    {
+    window.parent.postMessage({
+        action: "addToCart",
+        sizes: selectedSizes,
+        frontImage: SfrontImageURL,
+        backImage: SbackImageURL,
+        comment: document.getElementById('comment').value,
+        kind: "מקדימה ומאחורה"
+
+    }, "*");
+}
+
 
     alert('הפריטים נוספו לעגלה!');
     // Here you can add logic to move to the next step in your checkout process
@@ -2363,9 +2395,10 @@ function showSizeSelectionScreen() {
     initializeSizeSelectionScreen();
 }
 
-// Update your existing code to call showSizeSelectionScreen when the "Continue" button is clicked
-document.getElementById('proceed-to-next').addEventListener('click', showSizeSelectionScreen);
-
+document.getElementById('proceed-to-next').addEventListener('click', function() {
+    sizeScreen = "designPrints";
+    showSizeSelectionScreen();
+});
 
 window.addEventListener('message', function(event) {
     if (event.data.action === "setAvailableSizes") {
