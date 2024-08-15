@@ -11,7 +11,7 @@ const uploadBox = document.getElementById('upload-box');
 const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
-let SfrontImageURL, SbackImageURL;
+let SfrontImageURL = "", SbackImageURL = "";
 let availableSizes = [];
     let selectedType1;
     let printComment1;
@@ -2363,6 +2363,7 @@ function goBack() {
 }
 
 function addToCart() {
+    console.log(SfrontImageURL);
     const selectedSizes = {};
     availableSizes.forEach(size => {
         const quantity = parseInt(document.getElementById(`${size}-quantity`).value);
@@ -2546,14 +2547,21 @@ document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
     });
 });
 
+
 document.querySelectorAll('.remove-file').forEach(button => {
     button.addEventListener('click', function() {
         const input = this.previousElementSibling.previousElementSibling;
         const fileNameElement = this.previousElementSibling;
-
         input.value = '';
         fileNameElement.textContent = '';
         this.style.display = 'none';
-        input.previousElementSibling.textContent = input.id === 'front-file' ? 'העלאת קובץ לחזית' : 'העלאת קובץ לגב';
+
+        if (input.id === 'front-file') {
+            input.previousElementSibling.textContent = 'העלאת קובץ לחזית';
+            SfrontImageURL = "";
+        } else if (input.id === 'back-file') {
+            input.previousElementSibling.textContent = 'העלאת קובץ לגב';
+            SbackImageURL = "";
+        }
     });
 });
