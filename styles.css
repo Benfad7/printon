@@ -1661,6 +1661,11 @@ body, html {
         background-color: #0052a3;
     }
 
+
+
+
+
+
 #image-upload-screen {
     display: flex;
     flex-direction: column;
@@ -1835,7 +1840,14 @@ body, html {
 
 .navigation-buttons button:active {
     transform: scale(0.98);
-}#image-upload-screen .primary-button,
+}
+
+
+
+
+
+
+#image-upload-screen .primary-button,
  #image-upload-screen .secondary-button {
      padding: 10px 20px;
      font-size: 16px;
