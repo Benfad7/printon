@@ -12,6 +12,7 @@ const uploadBlackStrip = document.querySelector('.black-strip-upload');
 const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
 let SfrontImageURL = "", SbackImageURL = "";
+let SfrontImageURLGraphic = "", SbackImageURLGraphic = "";
 let availableSizes = [];
     let selectedType1;
     let printComment1;
@@ -2363,7 +2364,6 @@ function goBack() {
 }
 
 function addToCart() {
-    console.log(SfrontImageURL);
     const selectedSizes = {};
     availableSizes.forEach(size => {
         const quantity = parseInt(document.getElementById(`${size}-quantity`).value);
@@ -2401,8 +2401,8 @@ else if (sizeScreen == "graphicPage")
     window.parent.postMessage({
         action: "addToCart",
         sizes: selectedSizes,
-        frontImage: SfrontImageURL,
-        backImage: SbackImageURL,
+        frontImage: SfrontImageURLGraphic,
+        backImage: SbackImageURLGraphic,
         comment: printComment1,
         kind: selectedType1
     }, "*");
@@ -2494,10 +2494,10 @@ function handleFileUpload(event) {
         reader.onload = function(e) {
             const base64Image = e.target.result;
             if (event.target.id === 'front-file') {
-                SfrontImageURL = base64Image;
+                SfrontImageURLGraphic = base64Image;
                 console.log('Front image uploaded');
             } else if (event.target.id === 'back-file') {
-                SbackImageURL = base64Image;
+                SbackImageURLGraphic = base64Image;
                 console.log('Back image uploaded');
             }
         };
@@ -2558,10 +2558,10 @@ document.querySelectorAll('.remove-file').forEach(button => {
 
         if (input.id === 'front-file') {
             input.previousElementSibling.textContent = 'העלאת קובץ לחזית';
-            SfrontImageURL = "";
+            SfrontImageURLGraphic = "";
         } else if (input.id === 'back-file') {
             input.previousElementSibling.textContent = 'העלאת קובץ לגב';
-            SbackImageURL = "";
+            SbackImageURLGraphic = "";
         }
     });
 });
