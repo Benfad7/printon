@@ -14,6 +14,8 @@ let currentScreen = 'default';
 let SfrontImageURL, SbackImageURL;
 let availableSizes = [];
 let sizeScreen;
+    const selectedType = document.getElementById('print-type').value;
+    const printComment = document.getElementById('print-comment').value;
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
 const screen3 = document.getElementById('screen3');
@@ -2401,7 +2403,7 @@ else if (sizeScreen == "graphicPage")
         frontImage: SfrontImageURL,
         backImage: SbackImageURL,
         comment: printComment,
-        kind: printComment
+        kind: selectedType
     }, "*");
 }
 
@@ -2503,20 +2505,19 @@ function handleFileUpload(event) {
 }
 
 function proceedToSizeSelection() {
-    const selectedType = document.getElementById('print-type').value;
-    const printComment = document.getElementById('print-comment').value;
-    if (printComment=="front")
+
+    if (selectedType=="front")
     {
-        printComment = "מקדימה";
+        selectedType = "מקדימה";
     }
-    else if (printComment=="back")
+    else if (selectedType=="back")
     {
-            printComment = "מאחורה";
+            selectedType = "מאחורה";
 
     }
-        else if (printComment=="both")
+        else if (selectedType=="both")
         {
-                printComment = "מקדימה ומאחורה";
+                selectedType = "מקדימה ומאחורה";
         }
 
     if (!selectedType) {
