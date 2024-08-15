@@ -13,6 +13,8 @@ const blackStripAddText = document.querySelector('.black-strip-add-text');
 let currentScreen = 'default';
 let SfrontImageURL, SbackImageURL;
 let availableSizes = [];
+    let selectedType1;
+    let printComment1;
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -2400,8 +2402,8 @@ else if (sizeScreen == "graphicPage")
         sizes: selectedSizes,
         frontImage: SfrontImageURL,
         backImage: SbackImageURL,
-        comment: printComment,
-        kind: selectedType
+        comment: printComment1,
+        kind: selectedType1
     }, "*");
 }
 
@@ -2503,35 +2505,35 @@ function handleFileUpload(event) {
 }
 
 function proceedToSizeSelection() {
-    const selectedType = document.getElementById('print-type').value;
-    const printComment = document.getElementById('print-comment').value;
-    if (!selectedType) {
+     selectedType1 = document.getElementById('print-type').value;
+     printComment1 = document.getElementById('print-comment').value;
+    if (!selectedType1) {
         alert('אנא בחר סוג הדפסה');
         return;
     }
-    if (selectedType=="front")
+    if (selectedType1=="front")
     {
-      selectedType === "מקדימה";
+      selectedType1 === "מקדימה";
     }
-    else if (selectedType=="back")
+    else if (selectedType1=="back")
     {
-        selectedType === "מאחורה";
+        selectedType1 === "מאחורה";
     }
-    else if (selectedType=="both")
+    else if (selectedType1=="both")
     {
-        selectedType === "מקדימה ומאחורה";
+        selectedType1 === "מקדימה ומאחורה";
     }
 
-    if(printComment=="")
+    if(printComment1=="")
     {
         alert('אנא תאר את ההדפסה שלך');
         return;
     }
     sizeScreen = "graphicPage";
-    localStorage.setItem('printComment', printComment);
+    localStorage.setItem('printComment', printComment1);
     console.log('Proceeding to size selection');
-    console.log('Print type:', selectedType);
-    console.log('Comment:', printComment);
+    console.log('Print type:', selectedType1);
+    console.log('Comment:', printComment1);
     document.getElementById('image-upload-screen').style.display = 'none';
     document.getElementById('size-selection-screen').style.display = 'flex';
     initializeSizeSelectionScreen;
