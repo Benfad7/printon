@@ -2511,17 +2511,12 @@ function proceedToSizeSelection() {
         alert('אנא בחר סוג הדפסה');
         return;
     }
-    if (selectedType1=="front")
-    {
-      selectedType1 === "מקדימה";
-    }
-    else if (selectedType1=="back")
-    {
-        selectedType1 === "מאחורה";
-    }
-    else if (selectedType1=="both")
-    {
-        selectedType1 === "מקדימה ומאחורה";
+    if (selectedType1 === "front") {
+        selectedType1 = "מקדימה";
+    } else if (selectedType1 === "back") {
+        selectedType1 = "מאחורה";
+    } else if (selectedType1 === "both") {
+        selectedType1 = "מקדימה ומאחורה";
     }
 
     if(printComment1=="")
