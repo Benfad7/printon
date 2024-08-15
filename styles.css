@@ -1693,16 +1693,22 @@ body, html {
     width: 90%;
     max-width: 600px;
 }
-#image-upload-screen .navigation-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
+#image-upload-screen .navigation-buttons button {
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
 }
 .upload-title {
     font-size: 28px;
     color: #2c3e50;
     text-align: center;
+    margin-top: -10px;
     margin-bottom: 1.5rem;
 }
 
@@ -1721,7 +1727,7 @@ body, html {
 }
 
 #print-type {
-    width: 200px;
+    width: 220px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ced4da;
@@ -1736,7 +1742,7 @@ body, html {
 }
 
 .comment-section textarea {
-    width: 100%;
+    width: 96.5%;
     padding: 10px;
     border: 1px solid #ced4da;
     border-radius: 4px;
@@ -1808,19 +1814,9 @@ body, html {
 
 .navigation-buttons {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
-.navigation-buttons button {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
 
 .secondary-button {
     background-color: #6c757d;
@@ -1834,38 +1830,8 @@ body, html {
     font-size: 25px;
 }
 
-.navigation-buttons button:hover {
-    transform: scale(1.05);
-}
-
-.navigation-buttons button:active {
-    transform: scale(0.98);
-}
 
 
-
-
-
-
-#image-upload-screen .primary-button,
- #image-upload-screen .secondary-button {
-     padding: 10px 20px;
-     font-size: 16px;
-     border: none;
-     border-radius: 5px;
-     cursor: pointer;
-     transition: background-color 0.3s;
- }
-
- #image-upload-screen .primary-button {
-     background-color: #0066cc;
-     color: white;
- }
-
- #image-upload-screen .secondary-button {
-     background-color: #6c757d;
-     color: white;
- }
 
  #image-upload-screen .primary-button:hover,
  #image-upload-screen .secondary-button:hover {
