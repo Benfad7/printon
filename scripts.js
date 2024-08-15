@@ -2248,7 +2248,6 @@ document.addEventListener('DOMContentLoaded', function() {
         sizeScreen = "graphic";
         document.getElementById('default-screen').style.display = 'none';
         document.getElementById('image-upload-screen').style.display = 'flex';
-        initializeSizeSelectionScreen;
     });
     // Save comment whenever it changes
     commentTextarea.addEventListener('input', function() {
@@ -2389,6 +2388,17 @@ function addToCart() {
 
     }, "*");
 }
+else if (sizeScreen == "graphicPage")
+{
+    window.parent.postMessage({
+        action: "addToCart",
+        sizes: selectedSizes,
+        frontImage: SfrontImageURL,
+        backImage: SbackImageURL,
+        comment: printComment,
+        kind: printComment
+    }, "*");
+}
 
 
     alert('הפריטים נוספו לעגלה!');
@@ -2490,6 +2500,20 @@ function handleFileUpload(event) {
 function proceedToSizeSelection() {
     const selectedType = document.getElementById('print-type').value;
     const printComment = document.getElementById('print-comment').value;
+    if (printComment=="front")
+    {
+        printComment = "מקדימה";
+    }
+    else if (printComment=="back")
+    {
+            printComment = "מאחורה";
+
+    }
+        else if (printComment=="both")
+        {
+                printComment = "מקדימה ומאחורה";
+        }
+
     if (!selectedType) {
         alert('אנא בחר סוג הדפסה');
         return;
@@ -2499,12 +2523,14 @@ function proceedToSizeSelection() {
         alert('אנא תאר את ההדפסה שלך');
         return;
     }
-    sizeScreen = "גרפיקאי";
+    sizeScreen = "graphicPage";
     localStorage.setItem('printComment', printComment);
     console.log('Proceeding to size selection');
     console.log('Print type:', selectedType);
     console.log('Comment:', printComment);
-    // Implement your logic to proceed to the size selection screen
+    document.getElementById('image-upload-screen').style.display = 'none';
+    document.getElementById('size-selection-screen').style.display = 'flex';
+    initializeSizeSelectionScreen;
 }
 // Existing file upload and remove functionality
 document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
