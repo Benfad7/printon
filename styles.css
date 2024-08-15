@@ -1660,82 +1660,57 @@ body, html {
     .add-to-cart-button:hover {
         background-color: #0052a3;
     }
-
-
 #image-upload-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
-    background-color: white;
+    justify-content: center;
     min-height: 100vh;
+    background-color: #f0f4f8;
+    padding: 2rem;
     box-sizing: border-box;
+    direction: rtl;
+}
+
+#image-upload-screen .container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
 }
 
 .upload-title {
-    font-size: 48px;
-    margin-bottom: 1rem;
+    font-size: 28px;
     color: #2c3e50;
     text-align: center;
-    font-weight: bold;
+    margin-bottom: 1.5rem;
 }
 
 .upload-subtitle {
-    font-size: 24px;
-    margin-bottom: 1.5rem;
+    font-size: 18px;
     color: #34495e;
-    text-align: center;
+    text-align: right;
+    margin-bottom: 1rem;
+    font-weight: bold;
 }
 
 .upload-options {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 2rem;
-    width: 100%;
-    max-width: 400px;
+    margin-bottom: 1.5rem;
 }
 
-select {
+#print-type {
     width: 100%;
     padding: 10px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
     background-color: white;
-    cursor: pointer;
-}
-
-.file-upload-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    max-width: 600px;
-    margin-bottom: 2rem;
-}
-
-.file-upload {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.file-upload label {
-    background-color: #0066cc;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.file-upload input[type="file"] {
-    display: none;
+    text-align: right;
 }
 
 .comment-section {
-    width: 100%;
-    max-width: 800px;
     margin-bottom: 2rem;
 }
 
@@ -1745,28 +1720,58 @@ select {
     font-weight: bold;
     color: #2c3e50;
     text-align: right;
+    font-size: 18px;
 }
 
 .comment-section textarea {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border: 1px solid #ced4da;
     border-radius: 4px;
-    font-size: 22px;
+    font-size: 16px;
     resize: none;
     height: 100px;
+    text-align: right;
+}
+
+.file-upload-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload label {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.file-upload label:hover {
+    background-color: #357abd;
+}
+
+.file-upload input[type="file"] {
+    display: none;
 }
 
 .navigation-buttons {
     display: flex;
     justify-content: space-between;
-    width: 100%;
-    max-width: 400px;
 }
 
 .navigation-buttons button {
     padding: 10px 20px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     border: none;
     border-radius: 5px;
@@ -1782,6 +1787,7 @@ select {
 .primary-button {
     background-color: #0066cc;
     color: white;
+    font-size: 25px;
 }
 
 .navigation-buttons button:hover {
