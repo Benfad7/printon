@@ -2489,23 +2489,17 @@ function handleFileUpload(event) {
 
 function proceedToSizeSelection() {
     const selectedType = document.getElementById('print-type').value;
+    const printComment = document.getElementById('print-comment').value;
     if (!selectedType) {
         alert('אנא בחר סוג הדפסה');
         return;
     }
-
-    if ((selectedType === 'front' || selectedType === 'both') && !SfrontImageURL) {
-        alert('אנא העלה תמונה לחזית');
+    if(printComment=="")
+    {
+        alert('אנא תאר את ההדפסה שלך');
         return;
     }
-
-    if ((selectedType === 'back' || selectedType === 'both') && !SbackImageURL) {
-        alert('אנא העלה תמונה לגב');
-        return;
-    }
-
     sizeScreen = "גרפיקאי";
-    const printComment = document.getElementById('print-comment').value;
     localStorage.setItem('printComment', printComment);
     console.log('Proceeding to size selection');
     console.log('Print type:', selectedType);
