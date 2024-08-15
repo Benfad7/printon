@@ -1412,113 +1412,110 @@ body, html {
 #go-back-button:active {
     transform: scale(0.98);
 }
+#next-step-screen {
+    background-color: #f0f4f8;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
 
-   #next-step-screen {
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 2rem;
-        min-height: 100vh;
-        box-sizing: border-box;
-    }
+#next-step-screen .content-wrapper {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 90%;
+    max-width: 800px;
+}
 
-    .next-step-title {
-        font-size: 48px;
-        font-weight: bold;
-        margin-bottom: 20px;
-        text-align: center;
-        color: #2c3e50;
-    }
+#next-step-screen .next-step-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 28px;
+}
 
-    .design-preview {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        width: 100%;
-        margin-bottom: 2rem;
-        align-items: flex-start;
-    }
+#next-step-screen .design-preview {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+}
 
-    .preview-side {
-        text-align: center;
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-    }
+#next-step-screen .preview-side {
+    text-align: center;
+}
 
-    .preview-side h2 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
-    }
+#next-step-screen .preview-side h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
 
-    .preview-side img {
-        max-width: 300px;
-        max-height: 300px;
-        border: 2px solid #ccc;
-        border-radius: 4px;
-    }
+#next-step-screen .preview-side img {
+    max-width: 200px;
+    max-height: 200px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
 
-.comment-section {
-        width: 100%;
-        max-width: 800px;
-        margin-bottom: 2rem;
-    }
+#next-step-screen .comment-section {
+    margin-bottom: 2rem;
+}
 
-    .comment-section label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-        color: #2c3e50;
-        text-align: right;
-    }
+#next-step-screen .comment-section label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    text-align: right;
+}
 
-    .comment-section textarea {
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 22px;
-        resize: none; /* This makes the textarea non-resizable */
-        height: 100px; /* Set a fixed height */
-    }
+#next-step-screen .comment-section textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    resize: vertical;
+    min-height: 100px;
+}
 
-    .navigation-buttons {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 400px;
-    }
+#next-step-screen .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
 
-    .navigation-buttons button {
-        padding: 10px 20px;
-        font-size: 25px;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
+#next-step-screen .navigation-buttons button {
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-    #back-to-design {
-        background-color: #6c757d;
-        color: white;
-    }
+#next-step-screen #back-to-design {
+    background-color: #6c757d;
+    color: white;
+}
 
-    #proceed-to-next {
-        background-color: #0066cc;
-        color: white;
-    }
+#next-step-screen #proceed-to-next {
+    background-color: #0066cc;
+    color: white;
+}
 
-    .navigation-buttons button:hover {
-        transform: scale(1.05);
-    }
+#next-step-screen .navigation-buttons button:hover {
+    transform: scale(1.05);
+}
 
-    .navigation-buttons button:active {
-        transform: scale(0.98);
-    }
-
+#next-step-screen .navigation-buttons button:active {
+    transform: scale(0.98);
+}
 
     #size-selection-screen {
         font-family: 'Rubik', sans-serif;
