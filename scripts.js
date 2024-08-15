@@ -2401,7 +2401,7 @@ else if (sizeScreen == "graphicPage")
         frontImage: SfrontImageURL,
         backImage: SbackImageURL,
         comment: printComment,
-        kind: printComment
+        kind: selectedType
     }, "*");
 }
 
@@ -2505,24 +2505,23 @@ function handleFileUpload(event) {
 function proceedToSizeSelection() {
     const selectedType = document.getElementById('print-type').value;
     const printComment = document.getElementById('print-comment').value;
-    if (printComment=="front")
-    {
-        printComment = "מקדימה";
-    }
-    else if (printComment=="back")
-    {
-            printComment = "מאחורה";
-
-    }
-        else if (printComment=="both")
-        {
-                printComment = "מקדימה ומאחורה";
-        }
-
     if (!selectedType) {
         alert('אנא בחר סוג הדפסה');
         return;
     }
+    if (selectedType=="front")
+    {
+      selectedType === "מקדימה";
+    }
+    else if (selectedType=="back")
+    {
+        selectedType === "מאחורה";
+    }
+    else if (selectedType=="both")
+    {
+        selectedType === "מקדימה ומאחורה";
+    }
+
     if(printComment=="")
     {
         alert('אנא תאר את ההדפסה שלך');
