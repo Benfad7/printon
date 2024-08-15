@@ -2424,7 +2424,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const frontFileInput = document.getElementById('front-file');
     const backFileInput = document.getElementById('back-file');
     const printCommentTextarea = document.getElementById('print-comment');
-
+   const optionalUploadTitle = document.getElementById('optional-upload-title');
+    const fileUploadContainer = document.getElementById('file-upload-container');
     backToDefaultButton.addEventListener('click', function() {
         document.getElementById('image-upload-screen').style.display = 'none';
         document.getElementById('default-screen').style.display = 'flex';
@@ -2432,8 +2433,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     proceedToSizeSelectionButton.addEventListener('click', proceedToSizeSelection);
 
-    printTypeSelect.addEventListener('change', updateFileUploadVisibility);
+   printTypeSelect.addEventListener('change', function() {
+        if (this.value) {
+            optionalUploadTitle.style.display = 'block';
+            fileUploadContainer.style.display = 'block';
 
+            // Show/hide appropriate upload buttons based on selection
+            if (this.value === 'front' || this.value === 'both') {
+                frontUpload.style.display = 'block';
+            } else {
+                frontUpload.style.display = 'none';
+            }
+
+            if (this.value === 'back' || this.value === 'both') {
+                backUpload.style.display = 'block';
+            } else {
+                backUpload.style.display = 'none';
+            }
+        } else {
+            optionalUploadTitle.style.display = 'none';
+            fileUploadContainer.style.display = 'none';
+            frontUpload.style.display = 'none';
+            backUpload.style.display = 'none';
+        }
+    });
     frontFileInput.addEventListener('change', handleFileUpload);
     backFileInput.addEventListener('change', handleFileUpload);
 
@@ -2489,6 +2512,7 @@ function proceedToSizeSelection() {
     console.log('Comment:', printComment);
     // Implement your logic to proceed to the size selection screen
 }
+// Existing file upload and remove functionality
 document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
     input.addEventListener('change', function(e) {
         const fileName = e.target.files[0].name;
