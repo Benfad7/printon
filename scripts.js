@@ -2231,6 +2231,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const proceedToNextButton = document.getElementById('proceed-to-next');
     const commentTextarea = document.getElementById('comment');
     const noPrintsButton = document.getElementById('no-prints');
+    const graphicButton = document.getElementById('choose-image');
 
     // Load saved comment when the page loads
     const savedComment = localStorage.getItem('userComment');
@@ -2241,6 +2242,12 @@ document.addEventListener('DOMContentLoaded', function() {
         sizeScreen = "noPrints";
         document.getElementById('default-screen').style.display = 'none';
         document.getElementById('size-selection-screen').style.display = 'flex';
+        initializeSizeSelectionScreen;
+    });
+   graphicButton.addEventListener('click', function() {
+        sizeScreen = "graphic";
+        document.getElementById('default-screen').style.display = 'none';
+        document.getElementById('image-upload-screen').style.display = 'flex';
         initializeSizeSelectionScreen;
     });
     // Save comment whenever it changes
@@ -2406,3 +2413,79 @@ window.addEventListener('message', function(event) {
         initializeSizeSelectionScreen(); // Re-initialize the screen with new sizes
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const backToDefaultButton = document.getElementById('back-to-default');
+    const proceedToSizeSelectionButton = document.getElementById('proceed-to-size-selection');
+    const printTypeSelect = document.getElementById('print-type');
+    const frontUpload = document.getElementById('front-upload');
+    const backUpload = document.getElementById('back-upload');
+    const frontFileInput = document.getElementById('front-file');
+    const backFileInput = document.getElementById('back-file');
+    const printCommentTextarea = document.getElementById('print-comment');
+
+    backToDefaultButton.addEventListener('click', function() {
+        document.getElementById('image-upload-screen').style.display = 'none';
+        document.getElementById('default-screen').style.display = 'flex';
+    });
+
+    proceedToSizeSelectionButton.addEventListener('click', proceedToSizeSelection);
+
+    printTypeSelect.addEventListener('change', updateFileUploadVisibility);
+
+    frontFileInput.addEventListener('change', handleFileUpload);
+    backFileInput.addEventListener('change', handleFileUpload);
+
+    updateFileUploadVisibility();
+});
+
+function updateFileUploadVisibility() {
+    const selectedType = document.getElementById('print-type').value;
+    document.getElementById('front-upload').style.display = (selectedType === 'front' || selectedType === 'both') ? 'block' : 'none';
+    document.getElementById('back-upload').style.display = (selectedType === 'back' || selectedType === 'both') ? 'block' : 'none';
+}
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            if (event.target.id === 'front-file') {
+                SfrontImageURL = base64Image;
+                console.log('Front image uploaded');
+            } else if (event.target.id === 'back-file') {
+                SbackImageURL = base64Image;
+                console.log('Back image uploaded');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function proceedToSizeSelection() {
+    const selectedType = document.getElementById('print-type').value;
+    if (!selectedType) {
+        alert('אנא בחר סוג הדפסה');
+        return;
+    }
+
+    if ((selectedType === 'front' || selectedType === 'both') && !SfrontImageURL) {
+        alert('אנא העלה תמונה לחזית');
+        return;
+    }
+
+    if ((selectedType === 'back' || selectedType === 'both') && !SbackImageURL) {
+        alert('אנא העלה תמונה לגב');
+        return;
+    }
+
+    sizeScreen = "גרפיקאי";
+    const printComment = document.getElementById('print-comment').value;
+    localStorage.setItem('printComment', printComment);
+    console.log('Proceeding to size selection');
+    console.log('Print type:', selectedType);
+    console.log('Comment:', printComment);
+    // Implement your logic to proceed to the size selection screen
+}

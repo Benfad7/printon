@@ -376,6 +376,36 @@
         </div>
     </div>
 </div>
+<div id="image-upload-screen" style="display: none;">
+    <h1 class="upload-title">תיאור ההדפסה</h1>
+    <h2 class="upload-subtitle">מיקומי הדפסה</h2>
+    <div class="upload-options">
+        <select id="print-type">
+            <option value="">בחר מיקום הדפסה</option>
+            <option value="front">הדפסה מקדימה בלבד</option>
+            <option value="back">הדפסה מאחורה בלבד</option>
+            <option value="both">הדפסה מקדימה ומאחורה</option>
+        </select>
+    </div>
+    <div class="file-upload-container">
+        <div class="file-upload" id="front-upload">
+            <label for="front-file">העלאת קובץ לחזית</label>
+            <input type="file" id="front-file" accept="image/*">
+        </div>
+        <div class="file-upload" id="back-upload">
+            <label for="back-file">העלאת קובץ לגב</label>
+            <input type="file" id="back-file" accept="image/*">
+        </div>
+    </div>
+    <div class="comment-section">
+        <label for="print-comment">הסבר על ההדפסה, יש לציין את מיקום ההדפסה ואת צבע/צבעים של ההדפסה</label>
+        <textarea id="print-comment" rows="4"></textarea>
+    </div>
+    <div class="navigation-buttons">
+        <button id="back-to-default" class="secondary-button">חזרה</button>
+        <button id="proceed-to-size-selection" class="primary-button">המשך לבחירת מידות</button>
+    </div>
+</div>
 <!-- Context Menu -->
 <div class="context-menu" id="context-menu">
     <div class="context-menu-item" id="center-image">מרכוז</div>
