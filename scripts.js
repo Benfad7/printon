@@ -2352,6 +2352,11 @@ function goBack() {
         document.getElementById('size-selection-screen').style.display = 'none';
         document.getElementById('default-screen').style.display = 'flex';
     }
+        else if(sizeScreen=="graphicPage")
+        {
+            document.getElementById('size-selection-screen').style.display = 'none';
+            document.getElementById('image-upload-screen').style.display = 'flex';
+        }
 
 }
 
