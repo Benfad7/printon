@@ -2536,7 +2536,8 @@ function addToCart() {
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
-    document.getElementById('size-selection-screen').style.display = 'block';
+    document.getElementById('next-step-screen').style.display = 'none';
+    document.getElementById('size-selection-screen').style.display = 'flex';
     initializeSizeSelectionScreen();
 }
 
