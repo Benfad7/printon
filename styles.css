@@ -8,6 +8,8 @@ body, html {
   background-image: url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png');
   background-size: cover;
   background-position: center;
+      background-color: #f0f4f8; /* Light blue background color */
+
 }
 
 
@@ -1249,7 +1251,7 @@ body, html {
 #default-screen {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; /* Changed from center to flex-start */
     align-items: center;
     height: 100vh;
     width: 100vw;
@@ -1258,11 +1260,14 @@ body, html {
     top: 0;
     left: 0;
     z-index: 1000;
+    background-color: #f0f4f8; /* Light blue background color */
+
+    padding-top: 16vh; /* Added padding to the top */
 }
 
 .default-title {
     font-size: 48px;
-    margin-bottom: 80px;
+    margin-bottom: 40px; /* Reduced from 80px */
     text-align: center;
     color: #2c3e50;
     font-weight: bold;
@@ -1279,7 +1284,6 @@ body, html {
     padding: 0 30px;
     box-sizing: border-box;
 }
-
 .option-button {
     width: 300px;
     height: 300px;
@@ -1295,6 +1299,8 @@ body, html {
     padding: 30px;
     transition: all 0.3s ease;
     box-shadow: 0 15px 10px rgba(0,0,0,0.1);
+        background-color: #ffffff; /* White background for buttons */
+        box-shadow: 0 15px 10px rgba(0,0,0,0.1);
 }
 
 .option-button:hover {
@@ -1316,7 +1322,7 @@ body, html {
 }
 
 #no-prints {
-    background-color: #f1f8e9;
+    background-color: #e8f5e9; /* Lighter green */
 }
 
 #no-prints i {
@@ -1324,7 +1330,7 @@ body, html {
 }
 
 #design-myself {
-    background-color: #e3f2fd;
+    background-color: #e3f2fd; /* Keep as is or adjust if needed */
 }
 
 #design-myself i {
@@ -1332,7 +1338,7 @@ body, html {
 }
 
 #choose-image {
-    background-color: #fef6e4;
+    background-color: #fff3e0; /* Lighter orange */
 }
 
 #choose-image i {
