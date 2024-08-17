@@ -2531,8 +2531,6 @@ function addToCart() {
         kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
               sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
     }, "*");
-
-    alert('הפריטים נוספו לעגלה!');
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
