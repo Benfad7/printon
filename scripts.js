@@ -1014,18 +1014,7 @@ function updateCanvasState() {
         showScreen(screen1);
     }
 }
-window.addEventListener('load', () => {
-    const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "נייבי";
-    availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
-    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    initializeSizeSelectionScreen();
-    captureCanvasState(); // Capture initial empty state for back canvas
-    switchCanvas(frontCanvas); // Switch back to front canvas as default
-    captureCanvasState(); // Capture initial empty state for front canvas
-    switchCanvas(backCanvas);
 
-});
 
 function reattachEventListeners() {
     const imageContainers = currentCanvas.querySelectorAll('.image-container');
@@ -2698,4 +2687,16 @@ document.querySelectorAll('.remove-file').forEach(button => {
             SbackImageURLGraphic = "";
         }
     });
+});
+window.addEventListener('load', () => {
+  //  const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
+  //  selectedColor = "נייבי";
+//    availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
+ //   availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
+   // initializeSizeSelectionScreen();
+    captureCanvasState(); // Capture initial empty state for back canvas
+    switchCanvas(frontCanvas); // Switch back to front canvas as default
+    captureCanvasState(); // Capture initial empty state for front canvas
+    switchCanvas(backCanvas);
+
 });
