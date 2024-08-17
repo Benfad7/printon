@@ -359,9 +359,22 @@
             <button id="proceed-to-next">המשך לשלב הבא</button>
         </div>
     </div>
-</div><div id="size-selection-screen" style="display: none;">
+</div>
+
+<div id="size-selection-screen" style="display: none;">
     <div class="container">
-        <h1>בחירת מידות וכמויות</h1>
+        <h1>בחירת מידות כמויות וצבעים</h1>
+        <div class="color-selection">
+            <div id="color-buttons" class="color-buttons"></div>
+            <div class="add-color-container">
+                <button id="add-color-button" class="add-color-button">
+                    <i class="fas fa-plus"></i> הוסף צבע
+                </button>
+                <div id="color-dropdown" class="color-dropdown">
+                    <!-- Dropdown content will be added dynamically -->
+                </div>
+            </div>
+        </div>
         <div id="size-rows"></div>
         <div class="total-section">
             <p>סה"כ כמות: <span id="total-quantity">0</span></p>

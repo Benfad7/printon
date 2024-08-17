@@ -16,6 +16,12 @@ let SfrontImageURLGraphic = "", SbackImageURLGraphic = "";
 let availableSizes = [];
     let selectedType1;
     let printComment1;
+let selectedColors = [];
+let currentlySelectedColor = '';
+    let availableColors = [];
+    let colorQuantities = {};
+
+
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -1009,6 +1015,11 @@ function updateCanvasState() {
     }
 }
 window.addEventListener('load', () => {
+    const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
+    selectedColor = "נייבי";
+    availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
+    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
+    initializeSizeSelectionScreen();
     captureCanvasState(); // Capture initial empty state for back canvas
     switchCanvas(frontCanvas); // Switch back to front canvas as default
     captureCanvasState(); // Capture initial empty state for front canvas
@@ -2309,39 +2320,137 @@ const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const sizeRowsContainer = document.getElementById('size-rows');
 const totalQuantityElement = document.getElementById('total-quantity');
 
+
 function initializeSizeSelectionScreen() {
-    sizeRowsContainer.innerHTML = '';
+    selectedColors = [selectedColor];
+    currentlySelectedColor = selectedColor;
+    colorQuantities = { [selectedColor]: {} };
+    updateColorButtons();
+    updateSizeRows();
+    updateAddColorButton();
+}
+function setupColorDropdown(remainingColors) {
+    const dropdown = document.getElementById('color-dropdown');
+    dropdown.innerHTML = '';
+    remainingColors.forEach(color => {
+        const option = document.createElement('div');
+        option.className = 'color-option';
+        option.textContent = color;
+        option.onclick = () => addColor(color);
+        dropdown.appendChild(option);
+    });
+}
+
+function updateColorButtons() {
+    const container = document.getElementById('color-buttons');
+    container.innerHTML = '';
+    selectedColors.forEach(color => {
+        const button = document.createElement('button');
+        button.className = 'color-button';
+        if (color === currentlySelectedColor) {
+            button.classList.add('selected');
+        }
+        button.innerHTML = `
+            ${color}
+            ${color !== selectedColors[0] ? '<span class="remove-color">&times;</span>' : ''}
+        `;
+        button.onclick = (e) => {
+            if (e.target.classList.contains('remove-color')) {
+                removeColor(color);
+            } else {
+                selectColor(color);
+            }
+        };
+        container.appendChild(button);
+    });
+}
+function selectColor(color) {
+    currentlySelectedColor = color;
+    updateColorButtons();
+    updateSizeRows();
+}
+
+function updateSizeRows() {
+    const container = document.getElementById('size-rows');
+    container.innerHTML = '';
     availableSizes.forEach(size => {
-        sizeRowsContainer.appendChild(createSizeRow(size));
+        container.appendChild(createSizeRow(currentlySelectedColor, size));
     });
     updateTotal();
 }
-function createSizeRow(size) {
+
+function createColorSizeContainer(color) {
+    const colorContainer = document.createElement('div');
+    colorContainer.className = 'color-container';
+    colorContainer.innerHTML = `
+        <h3>צבע: ${color}</h3>
+        <div class="size-rows"></div>
+    `;
+    const sizeRows = colorContainer.querySelector('.size-rows');
+    availableSizes.forEach(size => {
+        sizeRows.appendChild(createSizeRow(color, size));
+    });
+    return colorContainer;
+}
+
+
+function createSizeRow(color, size) {
     const row = document.createElement('div');
     row.className = 'size-row';
+    const quantity = colorQuantities[color]?.[size] || 0;
     row.innerHTML = `
         <span class="size-label">${size}</span>
         <div class="quantity-control">
-            <button class="quantity-btn" onclick="changeQuantity('${size}', -1)">-</button>
-            <input type="number" class="quantity-input" id="${size}-quantity" value="0" min="0" onchange="updateTotal()">
-            <button class="quantity-btn" onclick="changeQuantity('${size}', 1)">+</button>
+            <button class="quantity-btn minus" onclick="changeQuantity('${color}', '${size}', -1)">-</button>
+            <input type="number" class="quantity-input" id="${color}-${size}-quantity" value="${quantity}" min="0" onchange="updateQuantity('${color}', '${size}')">
+            <button class="quantity-btn plus" onclick="changeQuantity('${color}', '${size}', 1)">+</button>
         </div>
     `;
     return row;
 }
 
-function changeQuantity(size, change) {
-    const input = document.getElementById(`${size}-quantity`);
-    input.value = Math.max(0, parseInt(input.value) + change);
+
+function updateQuantity(color, size) {
+    const input = document.getElementById(`${color}-${size}-quantity`);
+    const quantity = parseInt(input.value) || 0;
+    if (!colorQuantities[color]) {
+        colorQuantities[color] = {};
+    }
+    colorQuantities[color][size] = quantity;
     updateTotal();
 }
+function changeQuantity(color, size, change) {
+    const input = document.getElementById(`${color}-${size}-quantity`);
+    const newValue = Math.max(0, parseInt(input.value) + change);
+    input.value = newValue;
+    updateQuantity(color, size);
+}
+
 
 function updateTotal() {
     let total = 0;
-    sizes.forEach(size => {
-        total += parseInt(document.getElementById(`${size}-quantity`).value);
+    Object.values(colorQuantities).forEach(sizes => {
+        Object.values(sizes).forEach(quantity => {
+            total += quantity;
+        });
     });
-    totalQuantityElement.textContent = total;
+    document.getElementById('total-quantity').textContent = total;
+}
+
+
+document.getElementById('add-color-button').addEventListener('click', function() {
+    document.getElementById('color-dropdown').classList.toggle('show');
+});
+window.onclick = function(event) {
+    if (!event.target.matches('.add-color-button')) {
+        const dropdowns = document.getElementsByClassName("color-dropdown");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
 }
 
 function goBack() {
@@ -2362,61 +2471,83 @@ function goBack() {
         }
 
 }
+function showColorPicker(colors) {
+    const picker = document.createElement('div');
+    picker.className = 'color-picker';
+    colors.forEach(color => {
+        const option = document.createElement('div');
+        option.className = 'color-option';
+        option.textContent = color;
+        option.onclick = () => {
+            addColor(color);
+            document.body.removeChild(picker);
+        };
+        picker.appendChild(option);
+    });
+    document.body.appendChild(picker);
+}
+function addColor(color) {
+    if (!selectedColors.includes(color)) {
+        selectedColors.push(color);
+        colorQuantities[color] = {};
+        currentlySelectedColor = color;
+        updateColorButtons();
+        updateSizeRows();
+        updateAddColorButton();
+    }
+    document.getElementById('color-dropdown').classList.remove('show');
+}
+function updateAddColorButton() {
+    const addColorButton = document.getElementById('add-color-button');
+    const remainingColors = availableColors.filter(color => !selectedColors.includes(color));
+
+    if (remainingColors.length === 0) {
+        addColorButton.style.display = 'none';
+    } else {
+        addColorButton.style.display = 'flex';
+        setupColorDropdown(remainingColors);
+    }
+}
+function removeColor(color) {
+    const index = selectedColors.indexOf(color);
+    if (index > 0) {  // Prevent removing the first color
+        selectedColors.splice(index, 1);
+        delete colorQuantities[color];
+        if (currentlySelectedColor === color) {
+            currentlySelectedColor = selectedColors[0];
+        }
+        updateColorButtons();
+        updateSizeRows();
+        updateAddColorButton();
+    }
+}
 
 function addToCart() {
     const selectedSizes = {};
-    availableSizes.forEach(size => {
-        const quantity = parseInt(document.getElementById(`${size}-quantity`).value);
-        if (quantity > 0) {
-            selectedSizes[size] = quantity;
-        }
+    Object.entries(colorQuantities).forEach(([color, sizes]) => {
+        selectedSizes[color] = {};
+        Object.entries(sizes).forEach(([size, quantity]) => {
+            if (quantity > 0) {
+                selectedSizes[color][size] = quantity;
+            }
+        });
     });
-    if(sizeScreen == "noPrints")
-    {
+
     window.parent.postMessage({
         action: "addToCart",
         sizes: selectedSizes,
-        frontImage: SfrontImageURL,
-        backImage: SbackImageURL,
-        comment: document.getElementById('comment').value,
-        kind: "ללא הדפסה"
-
-
+        frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
+        backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
+        comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
+        kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
+              sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
     }, "*");
-}
-    else if(sizeScreen == "designPrints")
-    {
-    window.parent.postMessage({
-        action: "addToCart",
-        sizes: selectedSizes,
-        frontImage: SfrontImageURL,
-        backImage: SbackImageURL,
-        comment: document.getElementById('comment').value,
-        kind: "מקדימה ומאחורה"
-
-    }, "*");
-}
-else if (sizeScreen == "graphicPage")
-{
-    window.parent.postMessage({
-        action: "addToCart",
-        sizes: selectedSizes,
-        frontImage: SfrontImageURLGraphic,
-        backImage: SbackImageURLGraphic,
-        comment: printComment1,
-        kind: selectedType1
-    }, "*");
-}
-
 
     alert('הפריטים נוספו לעגלה!');
-    // Here you can add logic to move to the next step in your checkout process
 }
-
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
-    document.getElementById('next-step-screen').style.display = 'none';
-    document.getElementById('size-selection-screen').style.display = 'flex';
+    document.getElementById('size-selection-screen').style.display = 'block';
     initializeSizeSelectionScreen();
 }
 
@@ -2428,10 +2559,10 @@ document.getElementById('proceed-to-next').addEventListener('click', function() 
 window.addEventListener('message', function(event) {
     if (event.data.action === "setProductData") {
         const productId = event.data.productId;
-        const selectedColor = event.data.selectedColor;
-        const availableSizes = event.data.availableSizes;
-        const availableColors = event.data.availableColors;
-        initializeSizeSelectionScreen(); // Re-initialize the screen with new sizes
+        selectedColor = event.data.selectedColor;
+        availableSizes = event.data.availableSizes;
+        availableColors = event.data.availableColors;
+        initializeSizeSelectionScreen();
     }
 });
 
