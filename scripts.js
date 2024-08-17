@@ -2426,8 +2426,11 @@ document.getElementById('proceed-to-next').addEventListener('click', function() 
 });
 
 window.addEventListener('message', function(event) {
-    if (event.data.action === "setAvailableSizes") {
-        availableSizes = event.data.sizes;
+    if (event.data.action === "setProductData") {
+        const productId = event.data.productId;
+        const selectedColor = event.data.selectedColor;
+        const availableSizes = event.data.availableSizes;
+        const availableColors = event.data.availableColors;
         initializeSizeSelectionScreen(); // Re-initialize the screen with new sizes
     }
 });
