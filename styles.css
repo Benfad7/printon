@@ -2122,34 +2122,82 @@ margin-right: -25px;
  .return-button:hover {
      background-color: #5a6268;
  }
- .previous-designs-button {
-     width: 300px;
-     height: 60px;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     background-color: #f0f4f8;
-     border: 2px solid #3498db;
-     border-radius: 15px;
-     cursor: pointer;
-     margin-top: 20px;
-     transition: all 0.3s ease;
- }
+.previous-designs-button {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #e3f2fd; /* Light blue background, slightly different from אעצב בעצמי */
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    padding: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 15px 10px rgba(0,0,0,0.1);
+    margin-top: 40px;
+}
 
- .previous-designs-button:hover {
-     background-color: #e3f2fd;
-     transform: translateY(-5px);
-     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
- }
+.previous-designs-button:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
 
- .previous-designs-button i {
-     font-size: 24px;
-     color: #3498db;
-     margin-right: 10px;
- }
+.previous-designs-button i {
+    font-size: 7em;
+    color: #3498db;
+    margin-bottom: 30px;
+}
 
- .previous-designs-button span {
-     color: #34495e;
-     font-weight: 600;
-     font-size: 18px;
- }
+.previous-designs-button span {
+    max-width: 240px;
+    color: #34495e;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.3;
+}
+#previous-designs-screen {
+    display: none;
+    min-height: 100vh;
+    background-color: #f0f4f8;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+#previous-designs-screen .container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 90%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+#previous-designs-screen .screen-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 28px;
+}
+
+#previous-designs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 2rem;
+}
+
+#return-from-previous-designs {
+    display: block;
+    margin: 0 auto;
+}
+.no-designs-message {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+    margin: 2rem 0;
+}

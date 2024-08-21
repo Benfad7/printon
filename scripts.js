@@ -2749,16 +2749,10 @@ async function generatePreviewImage(canvasHTML) {
 }
 function displaySavedDesigns() {
     const container = document.getElementById('previous-designs-container');
-    if (!container) {
-        console.error('Previous designs container not found');
-        return;
-    }
-    container.innerHTML = ''; // Clear existing content
-
-    console.log('Displaying saved designs:', savedDesigns);
+    container.innerHTML = '';
 
     if (savedDesigns.length === 0) {
-        container.innerHTML = '<p>No saved designs found.</p>';
+        container.innerHTML = '<p class="no-designs-message">אין עיצובים שמורים. התחל לעצב כדי לראות את העיצובים שלך כאן!</p>';
         return;
     }
 
@@ -2774,7 +2768,7 @@ function displaySavedDesigns() {
             <div class="design-info">
                 <div class="design-title">עיצוב ${i + 1}</div>
                 <div class="design-date">${formattedDate}</div>
-                <div class="design-status">${design.hasContent ? 'Has content' : 'Empty'}</div>
+                <div class="design-status">${design.hasContent ? 'יש תוכן' : 'ריק'}</div>
             </div>
         `;
 
@@ -2837,4 +2831,7 @@ function handleCanvasClick(event) {
         deselectAllObjects();
         showScreen('screen1');
     }
-}
+}document.getElementById('return-from-previous-designs').addEventListener('click', function() {
+     document.getElementById('previous-designs-screen').style.display = 'none';
+     document.getElementById('default-screen').style.display = 'flex';
+ });
