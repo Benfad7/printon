@@ -2122,3 +2122,34 @@ margin-right: -25px;
  .return-button:hover {
      background-color: #5a6268;
  }
+ .previous-designs-button {
+     width: 300px;
+     height: 60px;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     background-color: #f0f4f8;
+     border: 2px solid #3498db;
+     border-radius: 15px;
+     cursor: pointer;
+     margin-top: 20px;
+     transition: all 0.3s ease;
+ }
+
+ .previous-designs-button:hover {
+     background-color: #e3f2fd;
+     transform: translateY(-5px);
+     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+ }
+
+ .previous-designs-button i {
+     font-size: 24px;
+     color: #3498db;
+     margin-right: 10px;
+ }
+
+ .previous-designs-button span {
+     color: #34495e;
+     font-weight: 600;
+     font-size: 18px;
+ }

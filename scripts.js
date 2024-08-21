@@ -1018,22 +1018,27 @@ function updateCanvasState() {
 }
 
 function reattachEventListeners() {
-    // Reattach event listeners for image containers
-    const imageContainers = currentCanvas.querySelectorAll('.image-container');
-    imageContainers.forEach(container => {
-        const img = container.querySelector('img');
-        const resizeHandle = container.querySelector('.resize-handle');
-        const deleteHandle = container.querySelector('.delete-handle');
-        setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
-    });
+    [frontCanvas, backCanvas].forEach(canvas => {
+        // Reattach event listeners for image containers
+        const imageContainers = canvas.querySelectorAll('.image-container');
+        imageContainers.forEach(container => {
+            const img = container.querySelector('img');
+            const resizeHandle = container.querySelector('.resize-handle');
+            const deleteHandle = container.querySelector('.delete-handle');
+            setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
+        });
 
-    // Reattach event listeners for text containers
-    const textContainers = currentCanvas.querySelectorAll('.text-container');
-    textContainers.forEach(container => {
-        const textElement = container.querySelector('p');
-        const resizeHandle = container.querySelector('.resize-handle');
-        const deleteHandle = container.querySelector('.delete-handle');
-        setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
+        // Reattach event listeners for text containers
+        const textContainers = canvas.querySelectorAll('.text-container');
+        textContainers.forEach(container => {
+            const textElement = container.querySelector('p');
+            const resizeHandle = container.querySelector('.resize-handle');
+            const deleteHandle = container.querySelector('.delete-handle');
+            setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
+        });
+
+        // Ensure the canvas is clickable
+        canvas.addEventListener('click', handleCanvasClick);
     });
 
     // Reattach other necessary event listeners
@@ -1043,9 +1048,6 @@ function reattachEventListeners() {
 
     // Update undo/redo buttons
     updateUndoRedoButtons();
-
-    // Ensure the canvas is clickable
-    currentCanvas.addEventListener('click', handleCanvasClick);
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
@@ -2092,8 +2094,8 @@ function switchCanvas(newCanvas) {
     newCanvas.style.display = 'block';
     currentCanvas = newCanvas;
     updateCanvasState();
+    reattachEventListeners(); // Add this line to reattach event listeners when switching canvases
 }
-
 
 
 
@@ -2814,21 +2816,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const previousDesignsButton = document.getElementById('previous-designs');
     if (previousDesignsButton) {
         previousDesignsButton.addEventListener('click', showPreviousDesignsScreen);
-        console.log('Previous designs button set up');
     } else {
         console.error('Previous designs button not found');
     }
-       const returnFromPreviousDesigns = document.getElementById('return-from-previous-designs');
-        if (returnFromPreviousDesigns) {
-            returnFromPreviousDesigns.addEventListener('click', function() {
-                document.getElementById('previous-designs-screen').style.display = 'none';
-                showDefaultScreen();
-            });
-        } else {
-            console.error('Return from previous designs button not found');
-        }
 });
-
 function showPreviousDesignsScreen() {
     console.log('Showing previous designs screen');
     document.getElementById('default-screen').style.display = 'none';
