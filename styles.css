@@ -2124,39 +2124,34 @@ margin-right: -25px;
  }
 .previous-designs-button {
     width: 300px;
-    height: 300px;
+    height: 60px; /* Keep the original height */
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    background-color: #e3f2fd; /* Light blue background, slightly different from אעצב בעצמי */
+    background-color: #e3f2fd;
     border: none;
-    border-radius: 25px;
+    border-radius: 15px;
     cursor: pointer;
-    padding: 30px;
+    margin-top: 20px;
     transition: all 0.3s ease;
     box-shadow: 0 15px 10px rgba(0,0,0,0.1);
-    margin-top: 40px;
 }
 
 .previous-designs-button:hover {
-    transform: translateY(-15px);
+    transform: translateY(-5px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .previous-designs-button i {
-    font-size: 7em;
+    font-size: 24px;
     color: #3498db;
-    margin-bottom: 30px;
+    margin-right: 10px;
 }
 
 .previous-designs-button span {
-    max-width: 240px;
     color: #34495e;
     font-weight: 600;
-    font-size: 24px;
-    line-height: 1.3;
+    font-size: 18px;
 }
 #previous-designs-screen {
     display: none;
@@ -2164,6 +2159,9 @@ margin-right: -25px;
     background-color: #f0f4f8;
     padding: 2rem;
     box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #previous-designs-screen .container {
@@ -2173,8 +2171,9 @@ margin-right: -25px;
     padding: 2rem;
     width: 90%;
     max-width: 800px;
-    margin: 0 auto;
 }
+
+/* Rest of the CSS remains the same */
 
 #previous-designs-screen .screen-title {
     color: #2c3e50;
