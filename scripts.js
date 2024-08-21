@@ -21,6 +21,8 @@ let currentlySelectedColor = '';
     let availableColors = [];
     let colorQuantities = {};
 
+let savedDesigns = [];
+const MAX_SAVED_DESIGNS = 7;
 
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
@@ -1015,8 +1017,8 @@ function updateCanvasState() {
     }
 }
 
-
 function reattachEventListeners() {
+    // Reattach event listeners for image containers
     const imageContainers = currentCanvas.querySelectorAll('.image-container');
     imageContainers.forEach(container => {
         const img = container.querySelector('img');
@@ -1025,66 +1027,25 @@ function reattachEventListeners() {
         setupImageInteractions(container, img, resizeHandle, deleteHandle, img.getAttribute('data-original-src'));
     });
 
+    // Reattach event listeners for text containers
     const textContainers = currentCanvas.querySelectorAll('.text-container');
     textContainers.forEach(container => {
         const textElement = container.querySelector('p');
         const resizeHandle = container.querySelector('.resize-handle');
         const deleteHandle = container.querySelector('.delete-handle');
-
-        // Restore text properties
-        const fontSize = container.getAttribute('data-font-size');
-        const textContent = container.getAttribute('data-text-content');
-        if (fontSize) textElement.style.fontSize = fontSize;
-        if (textContent) textElement.textContent = textContent;
-
-        // Apply text outline
-        applyTextOutline(textElement);
-
         setupTextInteractions(container, textElement, resizeHandle, deleteHandle);
     });
 
-    // Reattach event listeners for text editing screen
-    const textColorPicker = document.getElementById('text-color-picker');
-    const fontSelector = document.getElementById('font-selector');
-    const editTextInput = document.getElementById('edit-text-input');
-    const outlineColorPicker = document.getElementById('outline-color-picker');
-    const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
-    const rotationSlider = document.getElementById('rotation-slider');
-
-    textColorPicker.addEventListener('input', updateTextColor);
-    fontSelector.addEventListener('change', updateTextFont);
-    editTextInput.addEventListener('blur', updateTextContent);
-    editTextInput.addEventListener('keypress', handleEnterKey);
-    outlineColorPicker.addEventListener('input', updateTextOutline);
-    outlineThicknessSelector.addEventListener('change', updateTextOutline);
-    rotationSlider.addEventListener('input', updateTextRotation);
-
-    // Reattach event listeners for shape options
-    document.querySelectorAll('.shape-option').forEach(option => {
-        option.addEventListener('click', function() {
-            document.querySelectorAll('.shape-option').forEach(opt => opt.classList.remove('selected'));
-            this.classList.add('selected');
-            currentTextShape = this.dataset.shape;
-            const shapeSlider = document.getElementById('shape-slider');
-            shapeSlider.disabled = (currentTextShape === 'normal');
-            applyTextShape();
-            captureCanvasState();
-        });
-    });
-
-    document.getElementById('shape-slider').addEventListener('input', function() {
-        currentShapeIntensity = this.value;
-        if (currentTextShape !== 'normal') {
-            applyTextShape();
-            captureCanvasState();
-        }
-    });
-
     // Reattach other necessary event listeners
-    // ...
+    document.getElementById('upload').addEventListener('change', handleFileSelection);
+    document.querySelector('.add-text').addEventListener('click', showTextInputScreen);
+    document.getElementById('add-to-design-button').addEventListener('click', addTextToDesign);
 
     // Update undo/redo buttons
     updateUndoRedoButtons();
+
+    // Ensure the canvas is clickable
+    currentCanvas.addEventListener('click', handleCanvasClick);
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
@@ -2174,6 +2135,9 @@ function captureDivToImageURL(div) {
 function showDefaultScreen() {
     currentScreen = 'default';
     document.getElementById('default-screen').style.display = 'flex';
+    document.getElementById('previous-designs-screen').style.display = 'none';
+    const defaultScreen = document.getElementById('default-screen');
+    defaultScreen.style.display = 'flex';
     document.getElementById('design-screen').style.display = 'none';
     document.getElementById('next-step-screen').style.display = 'none';
     document.body.style.backgroundImage = 'none';
@@ -2184,15 +2148,46 @@ function showDefaultScreen() {
         mainContainer.style.display = 'none';
         mainContainer.style.height = 'auto';
     }
+
+    // Display saved designs
+    displaySavedDesigns();
 }
+
 function showDesignScreen() {
     currentScreen = 'design';
     document.getElementById('default-screen').style.display = 'none';
     document.getElementById('next-step-screen').style.display = 'none';
+    document.getElementById('previous-designs-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'flex';
     document.body.style.backgroundImage = "url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png')";
 
+    // Ensure the main-container is visible and sized correctly
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.style.display = 'flex';
+        mainContainer.style.height = '100vh';
+    }
+
     showScreen('screen1');
+
+    // Make sure the front canvas is displayed
+    frontCanvas.style.display = 'block';
+    backCanvas.style.display = 'none';
+    currentCanvas = frontCanvas;
+
+    // Update UI elements
+    updateUndoRedoButtons();
+    updateFrontBackButtons();
+
+    // Reattach event listeners
+    reattachEventListeners();
+}
+function updateFrontBackButtons() {
+    const frontButton = document.getElementById('front-button');
+    const backButton = document.getElementById('back-button');
+
+    frontButton.classList.toggle('selected', currentCanvas === frontCanvas);
+    backButton.classList.toggle('selected', currentCanvas === backCanvas);
 }
 // Update the showScreen function
 function showScreen(screenToShow) {
@@ -2275,6 +2270,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     proceedToNextButton.addEventListener('click', function() {
     });
+        loadSavedDesigns();
+    displaySavedDesigns();
+
 });
 
 function showNextStepScreen() {
@@ -2531,6 +2529,7 @@ function addToCart() {
         kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
               sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
     }, "*");
+       saveDesign();
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
@@ -2699,5 +2698,152 @@ window.addEventListener('load', () => {
     switchCanvas(frontCanvas); // Switch back to front canvas as default
     captureCanvasState(); // Capture initial empty state for front canvas
     switchCanvas(backCanvas);
+    loadSavedDesigns();
 
+})
+
+// Add this function to save a design
+function saveDesign() {
+    const design = {
+        timestamp: new Date().toISOString(),
+        frontCanvas: frontCanvas.innerHTML,
+        backCanvas: backCanvas.innerHTML,
+        hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== ''
+    };
+    savedDesigns.unshift(design);
+    if (savedDesigns.length > MAX_SAVED_DESIGNS) {
+        savedDesigns.pop();
+    }
+    localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
+    console.log('Design saved:', savedDesigns);
+}
+function loadSavedDesigns() {
+    const savedDesignsJSON = localStorage.getItem('savedDesigns');
+    if (savedDesignsJSON) {
+        savedDesigns = JSON.parse(savedDesignsJSON);
+        console.log('Loaded saved designs:', savedDesigns);
+    } else {
+        console.log('No saved designs found in localStorage');
+    }
+}
+
+// Add this function to create a preview image from canvas HTML
+async function generatePreviewImage(canvasHTML) {
+    return new Promise((resolve) => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = canvasHTML;
+        const canvas = tempDiv.querySelector('.canvas') || tempDiv;
+        html2canvas(canvas, {
+            width: canvas.offsetWidth || 300,
+            height: canvas.offsetHeight || 300,
+            scale: 1
+        }).then(renderedCanvas => {
+            resolve(renderedCanvas.toDataURL());
+        }).catch(error => {
+            console.error('Error generating preview:', error);
+            resolve(''); // Return an empty string if there's an error
+        });
+    });
+}
+function displaySavedDesigns() {
+    const container = document.getElementById('previous-designs-container');
+    if (!container) {
+        console.error('Previous designs container not found');
+        return;
+    }
+    container.innerHTML = ''; // Clear existing content
+
+    console.log('Displaying saved designs:', savedDesigns);
+
+    if (savedDesigns.length === 0) {
+        container.innerHTML = '<p>No saved designs found.</p>';
+        return;
+    }
+
+    for (let i = 0; i < savedDesigns.length; i++) {
+        const design = savedDesigns[i];
+        const designItem = document.createElement('div');
+        designItem.className = 'design-item';
+
+        const date = new Date(design.timestamp);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+        designItem.innerHTML = `
+            <div class="design-info">
+                <div class="design-title">עיצוב ${i + 1}</div>
+                <div class="design-date">${formattedDate}</div>
+                <div class="design-status">${design.hasContent ? 'Has content' : 'Empty'}</div>
+            </div>
+        `;
+
+        designItem.onclick = () => loadDesign(i);
+        container.appendChild(designItem);
+    }
+}
+function loadDesign(index) {
+    const design = savedDesigns[index];
+    if (design) {
+        console.log('Loading design:', design);
+
+        // Load the design content
+        if (design.frontCanvas) {
+            frontCanvas.innerHTML = design.frontCanvas;
+        }
+
+        if (design.backCanvas) {
+            backCanvas.innerHTML = design.backCanvas;
+        }
+
+        // Switch to the design screen
+        showDesignScreen();
+
+        // Hide the previous designs screen
+        document.getElementById('previous-designs-screen').style.display = 'none';
+
+        // Update the current canvas
+        currentCanvas = frontCanvas;
+
+        // Reattach event listeners and reinitialize necessary components
+        reattachEventListeners();
+
+        // Capture the initial state after loading
+        captureCanvasState();
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const previousDesignsButton = document.getElementById('previous-designs');
+    if (previousDesignsButton) {
+        previousDesignsButton.addEventListener('click', showPreviousDesignsScreen);
+        console.log('Previous designs button set up');
+    } else {
+        console.error('Previous designs button not found');
+    }
+       const returnFromPreviousDesigns = document.getElementById('return-from-previous-designs');
+        if (returnFromPreviousDesigns) {
+            returnFromPreviousDesigns.addEventListener('click', function() {
+                document.getElementById('previous-designs-screen').style.display = 'none';
+                showDefaultScreen();
+            });
+        } else {
+            console.error('Return from previous designs button not found');
+        }
 });
+
+function showPreviousDesignsScreen() {
+    console.log('Showing previous designs screen');
+    document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('design-screen').style.display = 'none';
+    const previousDesignsScreen = document.getElementById('previous-designs-screen');
+    if (previousDesignsScreen) {
+        previousDesignsScreen.style.display = 'flex';
+        displaySavedDesigns();
+    } else {
+        console.error('Previous designs screen not found');
+    }
+}
+function handleCanvasClick(event) {
+    if (event.target === currentCanvas) {
+        deselectAllObjects();
+        showScreen('screen1');
+    }
+}
