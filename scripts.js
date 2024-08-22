@@ -2758,35 +2758,34 @@ async function generatePreviewImage(canvasHTML) {
         });
     });
 }
-function displaySavedDesigns() {
-    const container = document.getElementById('previous-designs-container');
-    container.innerHTML = '';
+    function displaySavedDesigns() {
+        const container = document.getElementById('previous-designs-container');
+        container.innerHTML = '';
 
-    if (savedDesigns.length === 0) {
-        container.innerHTML = '<p class="no-designs-message">אין עיצובים שמורים. התחל לעצב כדי לראות את העיצובים שלך כאן!</p>';
-        return;
+        if (savedDesigns.length === 0) {
+            container.innerHTML = '<p class="no-designs-message">!אין עיצובים שמורים. התחל לעצב כדי לראות את העיצובים שלך כאן</p>';
+            return;
+        }
+
+        for (let i = 0; i < savedDesigns.length; i++) {
+            const design = savedDesigns[i];
+            const designItem = document.createElement('div');
+            designItem.className = 'design-item';
+
+            const date = new Date(design.timestamp);
+            const formattedDate = `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`;
+
+            designItem.innerHTML = `
+                <div class="design-info">
+                    <div class="design-title">עיצוב ${i + 1}</div>
+                    <div class="design-date">${formattedDate}</div>
+                </div>
+            `;
+
+            designItem.onclick = () => loadDesign(i);
+            container.appendChild(designItem);
+        }
     }
-
-    for (let i = 0; i < savedDesigns.length; i++) {
-        const design = savedDesigns[i];
-        const designItem = document.createElement('div');
-        designItem.className = 'design-item';
-
-        const date = new Date(design.timestamp);
-        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-
-        designItem.innerHTML = `
-            <div class="design-info">
-                <div class="design-title">עיצוב ${i + 1}</div>
-                <div class="design-date">${formattedDate}</div>
-                <div class="design-status">${design.hasContent ? 'יש תוכן' : 'ריק'}</div>
-            </div>
-        `;
-
-        designItem.onclick = () => loadDesign(i);
-        container.appendChild(designItem);
-    }
-}
 function loadDesign(index) {
     const design = savedDesigns[index];
     if (design) {
@@ -2893,7 +2892,7 @@ function displaySavedDescriptions() {
     container.innerHTML = '';
 
     if (savedDescriptions.length === 0) {
-        container.innerHTML = '<p class="no-designs-message">אין תיאורים שמורים. תאר הדפסה כדי לראות את התיאורים שלך כאן!</p>';
+        container.innerHTML = '<p class="no-designs-message">!אין תיאורים שמורים. תאר הדפסה כדי לראות את התיאורים שלך כאן</p>';
         return;
     }
 
@@ -2903,8 +2902,7 @@ function displaySavedDescriptions() {
         descriptionItem.className = 'description-item';
 
         const date = new Date(description.timestamp);
-        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-
+        const formattedDate = `${date.toLocaleTimeString()}, ${date.toLocaleDateString()}`;
         descriptionItem.innerHTML = `
             <div class="description-info">
                 <div class="description-title">תיאור ${i + 1}</div>
