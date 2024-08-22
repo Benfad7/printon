@@ -2999,3 +2999,12 @@ function resetUploadField(fieldId) {
     uploadField.querySelector('.remove-file').style.display = 'none';
 }
 document.getElementById('print-type').addEventListener('change', updateFileUploadVisibility);
+document.getElementById('previous-designs').addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent triggering the parent button's click event
+    showPreviousDesignsScreen();
+});
+
+document.getElementById('previous-descriptions').addEventListener('click', function(event) {
+    event.stopPropagation(); // Prevent triggering the parent button's click event
+    showPreviousDescriptionsScreen();
+});
