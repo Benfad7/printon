@@ -2908,7 +2908,7 @@ function displaySavedDescriptions() {
                 <div class="description-title">תיאור ${i + 1}</div>
                 <div class="description-date">${formattedDate}</div>
                 <div class="description-type">סוג הדפסה: ${description.printType}</div>
-                <div class="description-comment">${description.comment}</div>
+                <div class="description-comment"><strong>הערה:</strong> ${description.comment}</div>
             </div>
         `;
 
@@ -2938,7 +2938,20 @@ function loadDescription(index) {
     const description = savedDescriptions[index];
     if (description) {
         // Set the print type
-        document.getElementById('print-type').value = description.printType;
+        const printTypeSelect = document.getElementById('print-type');
+        switch (description.printType) {
+            case 'מקדימה':
+                printTypeSelect.value = 'front';
+                break;
+            case 'מאחורה':
+                printTypeSelect.value = 'back';
+                break;
+            case 'מקדימה ומאחורה':
+                printTypeSelect.value = 'both';
+                break;
+            default:
+                printTypeSelect.value = '';
+        }
 
         // Set the comment
         document.getElementById('print-comment').value = description.comment;
