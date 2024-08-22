@@ -2064,38 +2064,25 @@ document.getElementById('redo-button').addEventListener('click', redo);
 document.addEventListener('DOMContentLoaded', function() {
     const frontButton = document.getElementById('front-button');
     const backButton = document.getElementById('back-button');
-    const mainContainer = document.getElementById('main-container');
 
-    function setBackground(button) {
-        const backgroundUrl = button.getAttribute('data-background');
-        mainContainer.style.backgroundImage = `url('${backgroundUrl}')`;
-        frontButton.classList.toggle('selected', button === frontButton);
-        backButton.classList.toggle('selected', button === backButton);
-    }
+    frontButton.addEventListener('click', function() {
+        switchCanvas(frontCanvas);
+    });
 
-frontButton.addEventListener('click', function() {
-    setBackground(frontButton);
-    switchCanvas(frontCanvas);
-    this.classList.add('selected');
-    backButton.classList.remove('selected');
-});
-
-backButton.addEventListener('click', function() {
-    setBackground(backButton);
-    switchCanvas(backCanvas);
-    this.classList.add('selected');
-    frontButton.classList.remove('selected');
-});
+    backButton.addEventListener('click', function() {
+        switchCanvas(backCanvas);
+    });
 
     // Set initial background
-    setBackground(frontButton);
+    updateBackgroundAndButtons();
 });
 function switchCanvas(newCanvas) {
     currentCanvas.style.display = 'none';
     newCanvas.style.display = 'block';
     currentCanvas = newCanvas;
+    updateBackgroundAndButtons();
     updateCanvasState();
-    reattachEventListeners(); // Add this line to reattach event listeners when switching canvases
+    reattachEventListeners();
 }
 
 
@@ -2162,7 +2149,6 @@ function showDesignScreen() {
     document.getElementById('next-step-screen').style.display = 'none';
     document.getElementById('previous-designs-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'flex';
-    document.body.style.backgroundImage = "url('https://static.wixstatic.com/media/388468_d1d9bcb6765d4382bb5e468342681043~mv2.png')";
 
     // Ensure the main-container is visible and sized correctly
     const mainContainer = document.querySelector('.main-container');
@@ -2178,12 +2164,29 @@ function showDesignScreen() {
     backCanvas.style.display = 'none';
     currentCanvas = frontCanvas;
 
+    // Set the correct background
+    updateBackgroundAndButtons();
+
     // Update UI elements
     updateUndoRedoButtons();
-    updateFrontBackButtons();
 
     // Reattach event listeners
     reattachEventListeners();
+}
+function updateBackgroundAndButtons() {
+    const frontButton = document.getElementById('front-button');
+    const backButton = document.getElementById('back-button');
+    const mainContainer = document.getElementById('main-container');
+
+    if (currentCanvas === frontCanvas) {
+        mainContainer.style.backgroundImage = `url('${frontButton.getAttribute('data-background')}')`;
+        frontButton.classList.add('selected');
+        backButton.classList.remove('selected');
+    } else {
+        mainContainer.style.backgroundImage = `url('${backButton.getAttribute('data-background')}')`;
+        backButton.classList.add('selected');
+        frontButton.classList.remove('selected');
+    }
 }
 function updateFrontBackButtons() {
     const frontButton = document.getElementById('front-button');
@@ -2808,6 +2811,9 @@ function loadDesign(index) {
 
         // Update the current canvas
         currentCanvas = frontCanvas;
+
+        // Update background and buttons
+        updateBackgroundAndButtons();
 
         // Reattach event listeners and reinitialize necessary components
         reattachEventListeners();
