@@ -1863,29 +1863,14 @@ function deselectAllObjects() {
             wasAnythingDeselected = true;
         }
         obj.classList.remove('selected');
-        obj.style.border = '2px dashed transparent';
+        obj.style.border = 'none';
         const resizeHandle = obj.querySelector('.resize-handle');
         const deleteHandle = obj.querySelector('.delete-handle');
         if (resizeHandle) resizeHandle.style.display = 'none';
         if (deleteHandle) deleteHandle.style.display = 'none';
     });
     return wasAnythingDeselected;
-}function deselectAllObjects() {
-     let wasAnythingDeselected = false;
-     const allObjects = currentCanvas.querySelectorAll('.image-container, .text-container');
-     allObjects.forEach(obj => {
-         if (obj.classList.contains('selected')) {
-             wasAnythingDeselected = true;
-         }
-         obj.classList.remove('selected');
-         obj.style.border = '2px dashed transparent';
-         const resizeHandle = obj.querySelector('.resize-handle');
-         const deleteHandle = obj.querySelector('.delete-handle');
-         if (resizeHandle) resizeHandle.style.display = 'none';
-         if (deleteHandle) deleteHandle.style.display = 'none';
-     });
-     return wasAnythingDeselected;
- }
+}
 currentCanvas.addEventListener('click', function(event) {
     // Check if the click is directly on the canvas and not on any object
     if (event.target === currentCanvas) {
@@ -2117,8 +2102,23 @@ function captureDivToImageURL(div) {
         div.style.display = 'block';
     }
 
+    // Remove selection and hover effects
+    const selectedElements = div.querySelectorAll('.selected, .image-container:hover, .text-container:hover');
+    selectedElements.forEach(el => {
+        el.classList.remove('selected');
+        el.style.border = 'none';
+    });
+
     return html2canvas(div).then(canvas => {
+        // Restore the original display style
         div.style.display = originalDisplay;
+
+        // Restore selection and hover effects
+        selectedElements.forEach(el => {
+            el.classList.add('selected');
+            el.style.border = '2px solid #000';
+        });
+
         return canvas.toDataURL('image/png');
     });
 }
@@ -2258,16 +2258,19 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('userComment', this.value);
     });
 
-    getPriceButton.addEventListener('click', function() {
-        Promise.all([
-            captureDivToImageURL(document.getElementById('front-canvas')),
-            captureDivToImageURL(document.getElementById('back-canvas'))
-        ]).then(([frontImageURL, backImageURL]) => {
-            SfrontImageURL = frontImageURL;
-            SbackImageURL = backImageURL;
-            showNextStepScreen();
-        })
+getPriceButton.addEventListener('click', function() {
+    // Deselect all objects
+    deselectAllObjects();
+
+    Promise.all([
+        captureDivToImageURL(document.getElementById('front-canvas')),
+        captureDivToImageURL(document.getElementById('back-canvas'))
+    ]).then(([frontImageURL, backImageURL]) => {
+        SfrontImageURL = frontImageURL;
+        SbackImageURL = backImageURL;
+        showNextStepScreen();
     });
+});
 
     backToDesignButton.addEventListener('click', function() {
         hideNextStepScreen();
