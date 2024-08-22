@@ -2878,14 +2878,15 @@ function saveDescription() {
         localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
     }
 }
-
 function loadSavedDescriptions() {
     const savedDescriptionsJSON = localStorage.getItem('savedDescriptions');
     if (savedDescriptionsJSON) {
         savedDescriptions = JSON.parse(savedDescriptionsJSON);
+        console.log('Loaded saved descriptions:', savedDescriptions);
+    } else {
+        console.log('No saved descriptions found in localStorage');
     }
 }
-
 function displaySavedDescriptions() {
     const container = document.getElementById('previous-descriptions-container');
     container.innerHTML = '';
@@ -2933,8 +2934,7 @@ function displaySavedDescriptions() {
         descriptionItem.onclick = () => loadDescription(i);
         container.appendChild(descriptionItem);
     }
-}
-function loadDescription(index) {
+}function loadDescription(index) {
     const description = savedDescriptions[index];
     if (description) {
         // Set the print type
