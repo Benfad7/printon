@@ -2861,7 +2861,6 @@ document.getElementById('return-from-previous-descriptions').addEventListener('c
     document.getElementById('previous-descriptions-screen').style.display = 'none';
     document.getElementById('default-screen').style.display = 'flex';
 });
-
 function saveDescription() {
     if (sizeScreen === "graphicPage") {
         const description = {
@@ -2876,8 +2875,10 @@ function saveDescription() {
             savedDescriptions.pop();
         }
         localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
+        console.log('Saved descriptions:', savedDescriptions);
     }
 }
+
 function loadSavedDescriptions() {
     const savedDescriptionsJSON = localStorage.getItem('savedDescriptions');
     if (savedDescriptionsJSON) {
@@ -2887,7 +2888,9 @@ function loadSavedDescriptions() {
         console.log('No saved descriptions found in localStorage');
     }
 }
+
 function displaySavedDescriptions() {
+    console.log('Displaying saved descriptions:', savedDescriptions);
     const container = document.getElementById('previous-descriptions-container');
     container.innerHTML = '';
 
@@ -2934,7 +2937,11 @@ function displaySavedDescriptions() {
         descriptionItem.onclick = () => loadDescription(i);
         container.appendChild(descriptionItem);
     }
-}function loadDescription(index) {
+}
+
+
+
+function loadDescription(index) {
     const description = savedDescriptions[index];
     if (description) {
         // Set the print type
