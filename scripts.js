@@ -2613,10 +2613,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function updateFileUploadVisibility() {
     const selectedType = document.getElementById('print-type').value;
-    document.getElementById('front-upload').style.display = (selectedType === 'front' || selectedType === 'both') ? 'block' : 'none';
-    document.getElementById('back-upload').style.display = (selectedType === 'back' || selectedType === 'both') ? 'block' : 'none';
-}
+    const frontUpload = document.getElementById('front-upload');
+    const backUpload = document.getElementById('back-upload');
 
+    frontUpload.style.display = (selectedType === 'front' || selectedType === 'both') ? 'block' : 'none';
+    backUpload.style.display = (selectedType === 'back' || selectedType === 'both') ? 'block' : 'none';
+
+    document.getElementById('optional-upload-title').style.display = selectedType ? 'block' : 'none';
+    document.getElementById('file-upload-container').style.display = selectedType ? 'block' : 'none';
+}
 function handleFileUpload(event) {
     const file = event.target.files[0];
     if (file) {
@@ -2929,26 +2934,50 @@ function displaySavedDescriptions() {
         container.appendChild(descriptionItem);
     }
 }
-
 function loadDescription(index) {
     const description = savedDescriptions[index];
     if (description) {
-        // Load the description into the appropriate fields
+        // Set the print type
         document.getElementById('print-type').value = description.printType;
+
+        // Set the comment
         document.getElementById('print-comment').value = description.comment;
+
+        // Handle front image
         if (description.frontImage) {
-            // Load front image
             SfrontImageURLGraphic = description.frontImage;
-            document.getElementById('front-upload').querySelector('.file-name').textContent = 'קובץ הועלה';
+            const frontUpload = document.getElementById('front-upload');
+            frontUpload.querySelector('.file-name').textContent = 'קובץ הועלה';
+            frontUpload.querySelector('label').textContent = 'קובץ הועלה';
+            frontUpload.querySelector('.remove-file').style.display = 'block';
+        } else {
+            resetUploadField('front-upload');
         }
+
+        // Handle back image
         if (description.backImage) {
-            // Load back image
             SbackImageURLGraphic = description.backImage;
-            document.getElementById('back-upload').querySelector('.file-name').textContent = 'קובץ הועלה';
+            const backUpload = document.getElementById('back-upload');
+            backUpload.querySelector('.file-name').textContent = 'קובץ הועלה';
+            backUpload.querySelector('label').textContent = 'קובץ הועלה';
+            backUpload.querySelector('.remove-file').style.display = 'block';
+        } else {
+            resetUploadField('back-upload');
         }
 
         // Switch to the image upload screen
         document.getElementById('previous-descriptions-screen').style.display = 'none';
         document.getElementById('image-upload-screen').style.display = 'flex';
+
+        // Update file upload visibility based on the selected print type
+        updateFileUploadVisibility();
     }
 }
+function resetUploadField(fieldId) {
+    const uploadField = document.getElementById(fieldId);
+    uploadField.querySelector('input[type="file"]').value = '';
+    uploadField.querySelector('.file-name').textContent = '';
+    uploadField.querySelector('label').textContent = fieldId === 'front-upload' ? 'העלאת קובץ לחזית' : 'העלאת קובץ לגב';
+    uploadField.querySelector('.remove-file').style.display = 'none';
+}
+document.getElementById('print-type').addEventListener('change', updateFileUploadVisibility);
