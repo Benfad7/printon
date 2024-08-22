@@ -21,9 +21,9 @@ let currentlySelectedColor = '';
     let availableColors = [];
     let colorQuantities = {};
 let savedDescriptions = [];
-const MAX_SAVED_DESCRIPTIONS = 7;
+const MAX_SAVED_DESCRIPTIONS = 4;
 let savedDesigns = [];
-const MAX_SAVED_DESIGNS = 7;
+const MAX_SAVED_DESIGNS = 4;
 
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
