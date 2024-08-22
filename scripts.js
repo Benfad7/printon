@@ -20,7 +20,8 @@ let selectedColors = [];
 let currentlySelectedColor = '';
     let availableColors = [];
     let colorQuantities = {};
-
+let savedDescriptions = [];
+const MAX_SAVED_DESCRIPTIONS = 7;
 let savedDesigns = [];
 const MAX_SAVED_DESIGNS = 7;
 
@@ -2531,7 +2532,13 @@ function addToCart() {
         kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
               sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
     }, "*");
+    if (sizeScreen === "graphicPage") {
+            saveDescription();
+    }
+    else if (sizeScreen === "designPrints")
+    {
        saveDesign();
+       }
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
@@ -2701,6 +2708,7 @@ window.addEventListener('load', () => {
     captureCanvasState(); // Capture initial empty state for front canvas
     switchCanvas(backCanvas);
     loadSavedDesigns();
+    loadSavedDescriptions();
 
 })
 
@@ -2835,3 +2843,112 @@ function handleCanvasClick(event) {
      document.getElementById('previous-designs-screen').style.display = 'none';
      document.getElementById('default-screen').style.display = 'flex';
  });
+
+document.getElementById('previous-descriptions').addEventListener('click', showPreviousDescriptionsScreen);
+
+function showPreviousDescriptionsScreen() {
+    document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('previous-descriptions-screen').style.display = 'flex';
+    displaySavedDescriptions();
+}
+
+document.getElementById('return-from-previous-descriptions').addEventListener('click', function() {
+    document.getElementById('previous-descriptions-screen').style.display = 'none';
+    document.getElementById('default-screen').style.display = 'flex';
+});
+
+function saveDescription() {
+    if (sizeScreen === "graphicPage") {
+        const description = {
+            timestamp: new Date().toISOString(),
+            comment: printComment1,
+            printType: selectedType1,
+            frontImage: SfrontImageURLGraphic,
+            backImage: SbackImageURLGraphic
+        };
+        savedDescriptions.unshift(description);
+        if (savedDescriptions.length > MAX_SAVED_DESCRIPTIONS) {
+            savedDescriptions.pop();
+        }
+        localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
+    }
+}
+
+function loadSavedDescriptions() {
+    const savedDescriptionsJSON = localStorage.getItem('savedDescriptions');
+    if (savedDescriptionsJSON) {
+        savedDescriptions = JSON.parse(savedDescriptionsJSON);
+    }
+}
+
+function displaySavedDescriptions() {
+    const container = document.getElementById('previous-descriptions-container');
+    container.innerHTML = '';
+
+    if (savedDescriptions.length === 0) {
+        container.innerHTML = '<p class="no-designs-message">אין תיאורים שמורים. תאר הדפסה כדי לראות את התיאורים שלך כאן!</p>';
+        return;
+    }
+
+    for (let i = 0; i < savedDescriptions.length; i++) {
+        const description = savedDescriptions[i];
+        const descriptionItem = document.createElement('div');
+        descriptionItem.className = 'description-item';
+
+        const date = new Date(description.timestamp);
+        const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+
+        descriptionItem.innerHTML = `
+            <div class="description-info">
+                <div class="description-title">תיאור ${i + 1}</div>
+                <div class="description-date">${formattedDate}</div>
+                <div class="description-type">סוג הדפסה: ${description.printType}</div>
+                <div class="description-comment">${description.comment}</div>
+            </div>
+        `;
+
+        if (description.frontImage || description.backImage) {
+            const imagesContainer = document.createElement('div');
+            imagesContainer.className = 'description-images';
+            if (description.frontImage) {
+                const frontImg = document.createElement('img');
+                frontImg.src = description.frontImage;
+                frontImg.alt = 'Front Image';
+                imagesContainer.appendChild(frontImg);
+            }
+            if (description.backImage) {
+                const backImg = document.createElement('img');
+                backImg.src = description.backImage;
+                backImg.alt = 'Back Image';
+                imagesContainer.appendChild(backImg);
+            }
+            descriptionItem.appendChild(imagesContainer);
+        }
+
+        descriptionItem.onclick = () => loadDescription(i);
+        container.appendChild(descriptionItem);
+    }
+}
+
+function loadDescription(index) {
+    const description = savedDescriptions[index];
+    if (description) {
+        // Load the description into the appropriate fields
+        document.getElementById('print-type').value = description.printType;
+        document.getElementById('print-comment').value = description.comment;
+        if (description.frontImage) {
+            // Load front image
+            SfrontImageURLGraphic = description.frontImage;
+            document.getElementById('front-upload').querySelector('.file-name').textContent = 'קובץ הועלה';
+        }
+        if (description.backImage) {
+            // Load back image
+            SbackImageURLGraphic = description.backImage;
+            document.getElementById('back-upload').querySelector('.file-name').textContent = 'קובץ הועלה';
+        }
+
+        // Switch to the image upload screen
+        document.getElementById('previous-descriptions-screen').style.display = 'none';
+        document.getElementById('image-upload-screen').style.display = 'flex';
+    }
+}

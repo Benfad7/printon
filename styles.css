@@ -2216,3 +2216,21 @@ margin-right: -25px;
 #previous-designs span {
     color: #34495e !important; /* White text */
 }
+
+#previous-descriptions {
+    background-color: #fff3e0; /* Light orange background */
+    margin-top: 20px; /* Add space between buttons */
+}
+
+#previous-descriptions i {
+    color: #f39c12; /* Orange icon color */
+}
+
+/* Adjust layout for the new button */
+#default-screen {
+    padding-bottom: 20px; /* Add some padding at the bottom */
+}
+
+.option-container {
+    margin-bottom: 20px; /* Add space below the option buttons */
+}
