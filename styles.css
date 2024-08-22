@@ -2200,3 +2200,19 @@ margin-right: -25px;
     color: #666;
     margin: 2rem 0;
 }
+#previous-designs {
+    background-color: #e3f2fd !important; /* Blue background */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#previous-designs:hover {
+    transform: translateY(-5px);
+}
+
+#previous-designs i {
+    color: #3498db !important; /* White icon */
+}
+
+#previous-designs span {
+    color: #34495e !important; /* White text */
+}
