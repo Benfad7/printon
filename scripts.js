@@ -2709,9 +2709,7 @@ window.addEventListener('load', () => {
     initializeSizeSelectionScreen();
   //   */
     captureCanvasState(); // Capture initial empty state for back canvas
-    switchCanvas(frontCanvas); // Switch back to front canvas as default
     captureCanvasState(); // Capture initial empty state for front canvas
-    switchCanvas(backCanvas);
     loadSavedDesigns();
     loadSavedDescriptions();
 
