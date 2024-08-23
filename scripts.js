@@ -2144,6 +2144,7 @@ function showDefaultScreen() {
 }
 
 function showDesignScreen() {
+     setBackgroundImages(currentlySelectedColor);
     currentScreen = 'design';
     document.getElementById('default-screen').style.display = 'none';
     document.getElementById('next-step-screen').style.display = 'none';
@@ -2717,7 +2718,7 @@ document.querySelectorAll('.remove-file').forEach(button => {
 window.addEventListener('load', () => {
 // /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "כתום";
+    selectedColor = "ורוד";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     initializeSizeSelectionScreen();
@@ -3078,4 +3079,17 @@ function getBackgroundUrl(isFront, color) {
         default:
             return isFront ? defaultFront : defaultBack;
     }
+}
+function setBackgroundImages(color) {
+    const frontButton = document.getElementById('front-button');
+    const backButton = document.getElementById('back-button');
+
+    const frontImage = frontButton.querySelector('.cropped-image');
+    const backImage = backButton.querySelector('.cropped-image');
+
+    frontImage.style.backgroundImage = `url('${getBackgroundUrl(true, color)}')`;
+    backImage.style.backgroundImage = `url('${getBackgroundUrl(false, color)}')`;
+
+    frontButton.setAttribute('data-background', getBackgroundUrl(true, color));
+    backButton.setAttribute('data-background', getBackgroundUrl(false, color));
 }
