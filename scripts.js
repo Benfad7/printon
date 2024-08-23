@@ -2717,7 +2717,7 @@ document.querySelectorAll('.remove-file').forEach(button => {
 window.addEventListener('load', () => {
 // /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "שחור";
+    selectedColor = "כתום";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     initializeSizeSelectionScreen();
@@ -3036,6 +3036,45 @@ function getBackgroundUrl(isFront, color) {
         case 'כחול כהה':
             return isFront ? 'https://static.wixstatic.com/media/529f52_f41b5fc66a2c48e382c9b6a0c372e102~mv2.png' :
                             'https://static.wixstatic.com/media/529f52_14d3117f397943e59cf69fa2287be63e~mv2.png';
+        case 'כחול':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_4ca53e39739f4e94ac0f51abda04e602~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_b65628ac340b45a6bfb627443d7b24f1~mv2.png';
+        case 'תכלת':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_b65628ac340b45a6bfb627443d7b24f1~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_05cf8c47f4b244b4acfbc5a318276ec3~mv2.png';
+        case 'אפור':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_b926906a390a4028b402a37beaed1600~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_a6c15bbffcab420294bdba5b9fdc7eb1~mv2.png';
+        case 'שמנת':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_6d897e2d2c354403be60d2fb2effdc67~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_a52cad7e126d405f829583c7305c12ea~mv2.png';
+        case 'ירוק כהה':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_122736c9625d4f269a8802bb839fb565~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_b955a34075424ede87665e2fd28d6f6d~mv2.png';
+        case 'ירוק זית':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_83b716789c9145558863b4c18befb477~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_b04de4e217c14d2da80dddd1c04a3e4f~mv2.png';
+        case 'ירוק':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_032b26d949704faca4c941652720e69e~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_6591a286a8d14354a2a09c7178da8c22~mv2.png';
+        case 'בורדו':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_a6f3bc1a871243ed998fa18135c93fac~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_feb83d700b4148f2b0c600a85b1f723b~mv2.png';
+        case 'אדום':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_b9e42cbe81204d4ea5446767c6b66e59~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_a76232e5ff2642afb9d0315a4b83df62~mv2.png';
+        case 'ורוד':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_41dfbe6e86ba4f6094d2678fc570484d~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_50659eadf79a43aa9047d0f3f3c5911b~mv2.png';
+        case 'סגול':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_7c39c23a9bb0451294873c2b97ac7a91~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_58bd69f6f55746bcaa62e1f434ac92d2~mv2.png';
+        case 'צהוב':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_5229a63028784b37a857d9211aab1366~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_216c283b4d194349ab30c5a64051e20e~mv2.png';
+        case 'כתום':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_5b239f68697e4f7ca91c959e4f5db762~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_dbea44b40fd840749da1a18bb4193d59~mv2.png';
         default:
             return isFront ? defaultFront : defaultBack;
     }
