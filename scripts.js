@@ -2109,7 +2109,26 @@ function captureDivToImageURL(div) {
         el.style.border = 'none';
     });
 
-    return html2canvas(div).then(canvas => {
+    // Create a new canvas with the same dimensions as the div
+    const canvas = document.createElement('canvas');
+    canvas.width = div.offsetWidth;
+    canvas.height = div.offsetHeight;
+    const ctx = canvas.getContext('2d');
+
+    // Set the background color based on the currentlySelectedColor
+    if (currentlySelectedColor && currentlySelectedColor !== 'לבן') {
+        ctx.fillStyle = getColorHex(currentlySelectedColor);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else {
+        // Default to white if no color is selected or if it's white
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    return html2canvas(div, {
+        canvas: canvas,
+        backgroundColor: null // This ensures our custom background is used
+    }).then(renderedCanvas => {
         // Restore the original display style
         div.style.display = originalDisplay;
 
@@ -2119,8 +2138,28 @@ function captureDivToImageURL(div) {
             el.style.border = '2px solid #000';
         });
 
-        return canvas.toDataURL('image/png');
+        return renderedCanvas.toDataURL('image/png');
     });
+}
+function getColorHex(colorName) {
+    const colorMap = {
+        'שחור': '#000000',
+        'כחול כהה': '#000080',
+        'כחול': '#0000FF',
+        'תכלת': '#87CEEB',
+        'אפור': '#808080',
+        'שמנת': '#FFFDD0',
+        'ירוק כהה': '#006400',
+        'ירוק זית': '#808000',
+        'ירוק': '#008000',
+        'בורדו': '#800000',
+        'אדום': '#FF0000',
+        'ורוד': '#FFC0CB',
+        'סגול': '#800080',
+        'צהוב': '#FFFF00',
+        'כתום': '#FFA500'
+    };
+    return colorMap[colorName] || '#FFFFFF'; // Default to white if color not found
 }
 function showDefaultScreen() {
     currentScreen = 'default';
@@ -2718,7 +2757,7 @@ document.querySelectorAll('.remove-file').forEach(button => {
 window.addEventListener('load', () => {
 // /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "ורוד";
+    selectedColor = "כחול כהה";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     initializeSizeSelectionScreen();
