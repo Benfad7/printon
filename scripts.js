@@ -2178,15 +2178,22 @@ function updateBackgroundAndButtons() {
     const backButton = document.getElementById('back-button');
     const mainContainer = document.getElementById('main-container');
 
+    const frontBackground = getBackgroundUrl(true, currentlySelectedColor);
+    const backBackground = getBackgroundUrl(false, currentlySelectedColor);
+
     if (currentCanvas === frontCanvas) {
-        mainContainer.style.backgroundImage = `url('${frontButton.getAttribute('data-background')}')`;
+        mainContainer.style.backgroundImage = `url('${frontBackground}')`;
         frontButton.classList.add('selected');
         backButton.classList.remove('selected');
     } else {
-        mainContainer.style.backgroundImage = `url('${backButton.getAttribute('data-background')}')`;
+        mainContainer.style.backgroundImage = `url('${backBackground}')`;
         backButton.classList.add('selected');
         frontButton.classList.remove('selected');
     }
+
+    // Update the data-background attributes
+    frontButton.setAttribute('data-background', frontBackground);
+    backButton.setAttribute('data-background', backBackground);
 }
 function updateFrontBackButtons() {
     const frontButton = document.getElementById('front-button');
@@ -2364,6 +2371,7 @@ function selectColor(color) {
     currentlySelectedColor = color;
     updateColorButtons();
     updateSizeRows();
+    updateBackgroundAndButtons(); // Add this line
 }
 
 function updateSizeRows() {
@@ -2709,10 +2717,12 @@ document.querySelectorAll('.remove-file').forEach(button => {
 window.addEventListener('load', () => {
 // /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "נייבי";
+    selectedColor = "שחור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     initializeSizeSelectionScreen();
+        updateBackgroundAndButtons(); // Add this line
+
   //   */
     captureCanvasState(); // Capture initial empty state for back canvas
     captureCanvasState(); // Capture initial empty state for front canvas
@@ -3015,3 +3025,18 @@ document.getElementById('previous-descriptions').addEventListener('click', funct
     event.stopPropagation(); // Prevent triggering the parent button's click event
     showPreviousDescriptionsScreen();
 });
+function getBackgroundUrl(isFront, color) {
+    const defaultFront = 'https://static.wixstatic.com/media/529f52_e3653644757e47b7b601eb7f9e14d873~mv2.png';
+    const defaultBack = 'https://static.wixstatic.com/media/529f52_1aec0ffcd1914b1eb5a3e5d8ba69c104~mv2.png';
+
+    switch(color) {
+        case 'שחור':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_34e6923c3c7b447ea3285a518e019fd4~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_675acf44180141fc947670f1f983cd0d~mv2.png';
+        case 'כחול כהה':
+            return isFront ? 'https://static.wixstatic.com/media/529f52_f41b5fc66a2c48e382c9b6a0c372e102~mv2.png' :
+                            'https://static.wixstatic.com/media/529f52_14d3117f397943e59cf69fa2287be63e~mv2.png';
+        default:
+            return isFront ? defaultFront : defaultBack;
+    }
+}
