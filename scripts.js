@@ -2144,20 +2144,20 @@ function captureDivToImageURL(div) {
 function getColorHex(colorName) {
     const colorMap = {
         'שחור': '#000000',
-        'כחול כהה': '#000080',
-        'כחול': '#0000FF',
-        'תכלת': '#87CEEB',
-        'אפור': '#808080',
-        'שמנת': '#FFFDD0',
-        'ירוק כהה': '#006400',
-        'ירוק זית': '#808000',
-        'ירוק': '#008000',
-        'בורדו': '#800000',
-        'אדום': '#FF0000',
-        'ורוד': '#FFC0CB',
-        'סגול': '#800080',
-        'צהוב': '#FFFF00',
-        'כתום': '#FFA500'
+        'כחול כהה': '#0e0b22',
+        'כחול': '#232fc4',
+        'תכלת': 'aaf0ff#',
+        'אפור': '#a8a8a8',
+        'שמנת': '#dbc49e',
+        'ירוק כהה': '#03342a',
+        'ירוק זית': '#3f4223',
+        'ירוק': '#5bd137',
+        'בורדו': '#990707',
+        'אדום': '#ff0000',
+        'ורוד': '#ffd2f8',
+        'סגול': '#64347b',
+        'צהוב': '#c7d824',
+        'כתום': '#dd630a'
     };
     return colorMap[colorName] || '#FFFFFF'; // Default to white if color not found
 }
@@ -2757,7 +2757,7 @@ document.querySelectorAll('.remove-file').forEach(button => {
 window.addEventListener('load', () => {
 // /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "כחול כהה";
+    selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     initializeSizeSelectionScreen();
