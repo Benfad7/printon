@@ -24,6 +24,7 @@ let savedDescriptions = [];
 const MAX_SAVED_DESCRIPTIONS = 4;
 let savedDesigns = [];
 const MAX_SAVED_DESIGNS = 4;
+let existingPrintIds = new Set();
 
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
@@ -2565,8 +2566,8 @@ function removeColor(color) {
         updateAddColorButton();
     }
 }
-
 function addToCart() {
+    const printId = generatePrintId();
     const selectedSizes = {};
     Object.entries(colorQuantities).forEach(([color, sizes]) => {
         selectedSizes[color] = {};
@@ -2579,6 +2580,7 @@ function addToCart() {
 
     window.parent.postMessage({
         action: "addToCart",
+        printId: printId,
         sizes: selectedSizes,
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
@@ -2586,13 +2588,12 @@ function addToCart() {
         kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
               sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
     }, "*");
+
     if (sizeScreen === "graphicPage") {
-            saveDescription();
+        saveDescription();
+    } else if (sizeScreen === "designPrints") {
+        saveDesign();
     }
-    else if (sizeScreen === "designPrints")
-    {
-       saveDesign();
-       }
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
@@ -2605,13 +2606,13 @@ document.getElementById('proceed-to-next').addEventListener('click', function() 
     sizeScreen = "designPrints";
     showSizeSelectionScreen();
 });
-
 window.addEventListener('message', function(event) {
     if (event.data.action === "setProductData") {
         const productId = event.data.productId;
         selectedColor = event.data.selectedColor;
         availableSizes = event.data.availableSizes;
         availableColors = event.data.availableColors;
+        existingPrintIds = new Set(event.data.existingPrintIds);
         initializeSizeSelectionScreen();
     }
 });
@@ -2760,6 +2761,8 @@ window.addEventListener('load', () => {
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
+    existingPrintIds = new Set(["87926", "46995"]);
+
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
 
@@ -2773,7 +2776,9 @@ window.addEventListener('load', () => {
 
 // Add this function to save a design
 function saveDesign() {
+    const printId = generatePrintId();
     const design = {
+        printId: printId,
         timestamp: new Date().toISOString(),
         frontCanvas: frontCanvas.innerHTML,
         backCanvas: backCanvas.innerHTML,
@@ -2786,6 +2791,7 @@ function saveDesign() {
     localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
     console.log('Design saved:', savedDesigns);
 }
+
 function loadSavedDesigns() {
     const savedDesignsJSON = localStorage.getItem('savedDesigns');
     if (savedDesignsJSON) {
@@ -2795,6 +2801,7 @@ function loadSavedDesigns() {
         console.log('No saved designs found in localStorage');
     }
 }
+
 
 // Add this function to create a preview image from canvas HTML
 async function generatePreviewImage(canvasHTML) {
@@ -2814,36 +2821,38 @@ async function generatePreviewImage(canvasHTML) {
         });
     });
 }
-    function displaySavedDesigns() {
-        const container = document.getElementById('previous-designs-container');
-        container.innerHTML = '';
+function displaySavedDesigns() {
+    const container = document.getElementById('previous-designs-container');
+    container.innerHTML = '';
 
-        if (savedDesigns.length === 0) {
-            container.innerHTML = '<p class="no-designs-message">!אין עיצובים שמורים. התחל לעצב כדי לראות את העיצובים שלך כאן</p>';
-            return;
-        }
+    const filteredDesigns = savedDesigns.filter(design => existingPrintIds.has(design.printId.toString()));
 
-        for (let i = 0; i < savedDesigns.length; i++) {
-            const design = savedDesigns[i];
-            const designItem = document.createElement('div');
-            designItem.className = 'design-item';
-
-            const date = new Date(design.timestamp);
-            const formattedDate = `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`;
-
-            designItem.innerHTML = `
-                <div class="design-info">
-                    <div class="design-title">עיצוב ${i + 1}</div>
-                    <div class="design-date">${formattedDate}</div>
-                </div>
-            `;
-
-            designItem.onclick = () => loadDesign(i);
-            container.appendChild(designItem);
-        }
+    if (filteredDesigns.length === 0) {
+        container.innerHTML = '<p class="no-designs-message">!אין עיצובים שמורים. התחל לעצב כדי לראות את העיצובים שלך כאן</p>';
+        return;
     }
-function loadDesign(index) {
-    const design = savedDesigns[index];
+
+    for (let i = 0; i < filteredDesigns.length; i++) {
+        const design = filteredDesigns[i];
+        const designItem = document.createElement('div');
+        designItem.className = 'design-item';
+
+        const date = new Date(design.timestamp);
+        const formattedDate = `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`;
+
+        designItem.innerHTML = `
+            <div class="design-info">
+                <div class="design-title">עיצוב ${i + 1}</div>
+                <div class="design-date">${formattedDate}</div>
+            </div>
+        `;
+
+        designItem.onclick = () => loadDesign(design.printId);
+        container.appendChild(designItem);
+    }
+}
+function loadDesign(printId) {
+    const design = savedDesigns.find(d => d.printId === printId);
     if (design) {
         console.log('Loading design:', design);
 
@@ -2919,7 +2928,9 @@ document.getElementById('return-from-previous-descriptions').addEventListener('c
 });
 function saveDescription() {
     if (sizeScreen === "graphicPage") {
+        const printId = generatePrintId();
         const description = {
+            printId: printId,
             timestamp: new Date().toISOString(),
             comment: printComment1,
             printType: selectedType1,
@@ -2950,13 +2961,15 @@ function displaySavedDescriptions() {
     const container = document.getElementById('previous-descriptions-container');
     container.innerHTML = '';
 
-    if (savedDescriptions.length === 0) {
+    const filteredDescriptions = savedDescriptions.filter(description => existingPrintIds.has(description.printId.toString()));
+
+    if (filteredDescriptions.length === 0) {
         container.innerHTML = '<p class="no-designs-message">!אין תיאורים שמורים. תאר הדפסה כדי לראות את התיאורים שלך כאן</p>';
         return;
     }
 
-    for (let i = 0; i < savedDescriptions.length; i++) {
-        const description = savedDescriptions[i];
+    for (let i = 0; i < filteredDescriptions.length; i++) {
+        const description = filteredDescriptions[i];
         const descriptionItem = document.createElement('div');
         descriptionItem.className = 'description-item';
 
@@ -2989,15 +3002,14 @@ function displaySavedDescriptions() {
             descriptionItem.appendChild(imagesContainer);
         }
 
-        descriptionItem.onclick = () => loadDescription(i);
+        descriptionItem.onclick = () => loadDescription(description.printId);
         container.appendChild(descriptionItem);
     }
 }
 
 
-
-function loadDescription(index) {
-    const description = savedDescriptions[index];
+function loadDescription(printId) {
+    const description = savedDescriptions.find(d => d.printId.toString() === printId.toString());
     if (description) {
         // Set the print type
         const printTypeSelect = document.getElementById('print-type');
@@ -3131,4 +3143,7 @@ function setBackgroundImages(color) {
 
     frontButton.setAttribute('data-background', getBackgroundUrl(true, color));
     backButton.setAttribute('data-background', getBackgroundUrl(false, color));
+}
+function generatePrintId() {
+    return Math.floor(10000 + Math.random() * 90000).toString();
 }
