@@ -2590,9 +2590,9 @@ function addToCart() {
     }, "*");
 
     if (sizeScreen === "graphicPage") {
-        saveDescription();
+        saveDescription(printId);
     } else if (sizeScreen === "designPrints") {
-        saveDesign();
+        saveDesign(printId);
     }
 }
 // Call this function when showing the size selection screen
@@ -2775,8 +2775,7 @@ window.addEventListener('load', () => {
 })
 
 // Add this function to save a design
-function saveDesign() {
-    const printId = generatePrintId();
+function saveDesign(printId) {
     const design = {
         printId: printId,
         timestamp: new Date().toISOString(),
@@ -2926,9 +2925,8 @@ document.getElementById('return-from-previous-descriptions').addEventListener('c
     document.getElementById('previous-descriptions-screen').style.display = 'none';
     document.getElementById('default-screen').style.display = 'flex';
 });
-function saveDescription() {
+function saveDescription(printId) {
     if (sizeScreen === "graphicPage") {
-        const printId = generatePrintId();
         const description = {
             printId: printId,
             timestamp: new Date().toISOString(),
