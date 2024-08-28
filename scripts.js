@@ -2567,6 +2567,18 @@ function removeColor(color) {
     }
 }
 function addToCart() {
+    let totalQuantity = 0;
+    Object.values(colorQuantities).forEach(sizes => {
+        Object.values(sizes).forEach(quantity => {
+            totalQuantity += quantity;
+        });
+    });
+
+    if (totalQuantity === 0) {
+        alert('יש לבחור לפחות מוצר אחד כדי להוסיף לעגלה');
+        return;
+    }
+
     const printId = generatePrintId();
     const selectedSizes = {};
     Object.entries(colorQuantities).forEach(([color, sizes]) => {
