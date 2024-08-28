@@ -2627,6 +2627,9 @@ window.addEventListener('message', function(event) {
         existingPrintIds = new Set(event.data.existingPrintIds);
         initializeSizeSelectionScreen();
     }
+    else if (event.data.action === "editPrint") {
+        console.log("the data is" + event.data.printId);
+    }
 });
 
 
