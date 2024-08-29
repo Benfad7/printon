@@ -2628,7 +2628,31 @@ window.addEventListener('message', function(event) {
         initializeSizeSelectionScreen();
     }
     else if (event.data.action === "editPrint") {
-        console.log("the data is" + event.data.printId);
+        let editPrintId = event.data.printId;
+        console.log("Editing print with ID: " + editPrintId);
+
+        // Check if the printId matches any saved designs
+        const savedDesign = savedDesigns.find(design => design.printId === editPrintId);
+        if (savedDesign) {
+            console.log("Found matching saved design");
+            loadDesign(editPrintId);
+            showDesignScreen();
+            return;
+        }
+
+        // Check if the printId matches any saved descriptions
+        const savedDescription = savedDescriptions.find(desc => desc.printId === editPrintId);
+        if (savedDescription) {
+            console.log("Found matching saved description");
+            loadDescription(editPrintId);
+            document.getElementById('default-screen').style.display = 'none';
+            document.getElementById('image-upload-screen').style.display = 'flex';
+            return;
+        }
+
+        console.log("No matching design or description found for printId: " + editPrintId);
+        // If no matching design or description is found, show the default screen
+        showDefaultScreen();
     }
 });
 
@@ -2777,7 +2801,7 @@ window.addEventListener('load', () => {
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["87926", "46995"]);
-
+    testEditPrint("71954");
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
 
@@ -3160,3 +3184,17 @@ function setBackgroundImages(color) {
 function generatePrintId() {
     return Math.floor(10000 + Math.random() * 90000).toString();
 }
+
+
+function testEditPrint(printId) {
+    const testEvent = {
+        data: {
+            action: "editPrint",
+            printId: printId
+        }
+    };
+
+    // Simulate the message event
+    window.dispatchEvent(new MessageEvent('message', { data: testEvent.data }));
+}
+
