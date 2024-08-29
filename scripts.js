@@ -25,6 +25,7 @@ const MAX_SAVED_DESCRIPTIONS = 4;
 let savedDesigns = [];
 const MAX_SAVED_DESIGNS = 4;
 let existingPrintIds = new Set();
+let isEditMode = false;
 
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
@@ -2199,7 +2200,9 @@ function showDesignScreen() {
     }
 
     showScreen('screen1');
-
+        if (isEditMode) {
+            hideGoBackButton();
+        }
     // Make sure the front canvas is displayed
     frontCanvas.style.display = 'block';
     backCanvas.style.display = 'none';
@@ -2213,6 +2216,7 @@ function showDesignScreen() {
 
     // Reattach event listeners
     reattachEventListeners();
+
 }
 function updateBackgroundAndButtons() {
     const frontButton = document.getElementById('front-button');
@@ -2338,22 +2342,28 @@ function showNextStepScreen() {
     const nextStepScreen = document.getElementById('next-step-screen');
     nextStepScreen.style.display = 'flex';
 
-
-
     document.getElementById('front-preview').src = SfrontImageURL;
     document.getElementById('back-preview').src = SbackImageURL;
 
-    // Load saved comment
     const savedComment = localStorage.getItem('userComment');
     if (savedComment) {
         document.getElementById('comment').value = savedComment;
     }
-}
 
+    if (isEditMode) {
+        document.querySelector('#next-step-screen h1').textContent = 'האם אתה בטוח שאתה רוצה לשנות את ההדפסה?';
+        document.getElementById('proceed-to-next').textContent = 'ערוך הדפסה';
+    } else {
+        document.querySelector('#next-step-screen h1').textContent = 'הוספת הערה לעיצוב';
+        document.getElementById('proceed-to-next').textContent = 'המשך לשלב הבא';
+    }
+}
 function hideNextStepScreen() {
     document.getElementById('next-step-screen').style.display = 'none';
+    if (!isEditMode) {
+        showDesignScreen();
+    }
 }
-
 // Function to clear saved comment (use when needed, e.g., after order completion)
 function clearSavedComment() {
     localStorage.removeItem('userComment');
@@ -2615,8 +2625,12 @@ function showSizeSelectionScreen() {
 }
 
 document.getElementById('proceed-to-next').addEventListener('click', function() {
-    sizeScreen = "designPrints";
-    showSizeSelectionScreen();
+    if (isEditMode) {
+        alert('שונה הדפסה בהצלחה');
+    } else {
+        sizeScreen = "designPrints";
+        showSizeSelectionScreen();
+    }
 });
 window.addEventListener('message', function(event) {
     if (event.data.action === "setProductData") {
@@ -2627,36 +2641,47 @@ window.addEventListener('message', function(event) {
         existingPrintIds = new Set(event.data.existingPrintIds);
         initializeSizeSelectionScreen();
     }
-    else if (event.data.action === "editPrint") {
+  else if (event.data.action === "editPrint") {
+        isEditMode = true;
         let editPrintId = event.data.printId;
         console.log("Editing print with ID: " + editPrintId);
 
-        // Check if the printId matches any saved designs
         const savedDesign = savedDesigns.find(design => design.printId === editPrintId);
         if (savedDesign) {
-            console.log("Found matching saved design");
             loadDesign(editPrintId);
             showDesignScreen();
+            hideGoBackButton();
             return;
         }
 
-        // Check if the printId matches any saved descriptions
         const savedDescription = savedDescriptions.find(desc => desc.printId === editPrintId);
         if (savedDescription) {
-            console.log("Found matching saved description");
             loadDescription(editPrintId);
-            document.getElementById('default-screen').style.display = 'none';
-            document.getElementById('image-upload-screen').style.display = 'flex';
+            showGraphicScreen();
+            hideGoBackButton();
             return;
         }
 
         console.log("No matching design or description found for printId: " + editPrintId);
-        // If no matching design or description is found, show the default screen
         showDefaultScreen();
     }
 });
 
+function hideGoBackButton() {
+    const goBackButton = document.getElementById('go-back-button');
+    if (goBackButton) {
+        goBackButton.style.display = 'none';
+    }
+}
 
+function showGraphicScreen() {
+    document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('image-upload-screen').style.display = 'flex';
+    if (isEditMode) {
+        hideGoBackButton();
+        // Hide or disable any other back buttons in the graphic screen
+    }
+}
 document.addEventListener('DOMContentLoaded', function() {
     const backToDefaultButton = document.getElementById('back-to-default');
     const proceedToSizeSelectionButton = document.getElementById('proceed-to-size-selection');
@@ -3198,3 +3223,10 @@ function testEditPrint(printId) {
     window.dispatchEvent(new MessageEvent('message', { data: testEvent.data }));
 }
 
+document.getElementById('back-to-design').addEventListener('click', function() {
+    if (!isEditMode) {
+        hideNextStepScreen();
+        showDesignScreen();
+    }
+    // If in edit mode, do nothing or show a message that going back is not allowed
+});
