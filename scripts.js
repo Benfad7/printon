@@ -2641,29 +2641,41 @@ window.addEventListener('message', function(event) {
         existingPrintIds = new Set(event.data.existingPrintIds);
         initializeSizeSelectionScreen();
     }
-  else if (event.data.action === "editPrint") {
+    else if (event.data.action === "editPrint") {
+        let found = false;
         isEditMode = true;
         let editPrintId = event.data.printId;
         console.log("Editing print with ID: " + editPrintId);
 
-        const savedDesign = savedDesigns.find(design => design.printId === editPrintId);
+        // Check for saved designs
+        const savedDesign = savedDesigns.find(design => design.printId.toString() === editPrintId.toString());
         if (savedDesign) {
+            console.log("Found matching saved design");
             loadDesign(editPrintId);
             showDesignScreen();
             hideGoBackButton();
-            return;
+            found = true;
         }
 
-        const savedDescription = savedDescriptions.find(desc => desc.printId === editPrintId);
-        if (savedDescription) {
+        // Check for saved descriptions
+        if (!found) {
+            console.log("Checking saved descriptions");
             loadDescription(editPrintId);
-            showGraphicScreen();
-            hideGoBackButton();
-            return;
+            console.log("Current savedDescriptions:", savedDescriptions);
+            const savedDescription = savedDescriptions.find(desc => desc.printId.toString() === editPrintId.toString());
+            if (savedDescription) {
+                console.log("Found matching saved description:", savedDescription);
+                loadDescription(editPrintId);
+                showGraphicScreen();
+                found = true;
+            }
         }
 
-        console.log("No matching design or description found for printId: " + editPrintId);
-        showDefaultScreen();
+        if (!found) {
+            console.log("No matching design or description found for printId: " + editPrintId);
+            isEditMode = false;
+            showDefaultScreen();
+        }
     }
 });
 
@@ -2674,12 +2686,30 @@ function hideGoBackButton() {
     }
 }
 
+
 function showGraphicScreen() {
+    console.log("Showing graphic screen");
     document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('design-screen').style.display = 'none';
     document.getElementById('image-upload-screen').style.display = 'flex';
+
+    const titleElement = document.querySelector('#image-upload-screen .upload-title');
+    const proceedButton = document.getElementById('proceed-to-size-selection');
+
     if (isEditMode) {
         hideGoBackButton();
         // Hide or disable any other back buttons in the graphic screen
+        document.getElementById('back-to-default').style.display = 'none';
+
+        // Change title for edit mode
+        titleElement.textContent = 'עריכת תיאור הדפסה';
+
+        // Change button text for edit mode
+        proceedButton.textContent = 'סיום עריכה';
+    } else {
+        // Reset to default title and button text
+        titleElement.textContent = 'תיאור הדפסה';
+        proceedButton.textContent = 'המשך לבחירת מידות';
     }
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -2760,12 +2790,14 @@ function handleFileUpload(event) {
 }
 
 function proceedToSizeSelection() {
-     selectedType1 = document.getElementById('print-type').value;
-     printComment1 = document.getElementById('print-comment').value;
+    selectedType1 = document.getElementById('print-type').value;
+    printComment1 = document.getElementById('print-comment').value;
+
     if (!selectedType1) {
         alert('אנא בחר סוג הדפסה');
         return;
     }
+
     if (selectedType1 === "front") {
         selectedType1 = "מקדימה";
     } else if (selectedType1 === "back") {
@@ -2774,21 +2806,24 @@ function proceedToSizeSelection() {
         selectedType1 = "מקדימה ומאחורה";
     }
 
-    if(printComment1=="")
-    {
+    if (printComment1 == "") {
         alert('אנא תאר את ההדפסה שלך');
         return;
     }
-    sizeScreen = "graphicPage";
-    localStorage.setItem('printComment', printComment1);
-    console.log('Proceeding to size selection');
-    console.log('Print type:', selectedType1);
-    console.log('Comment:', printComment1);
-    document.getElementById('image-upload-screen').style.display = 'none';
-    document.getElementById('size-selection-screen').style.display = 'flex';
-    initializeSizeSelectionScreen;
-}
-// Existing file upload and remove functionality
+
+    if (isEditMode) {
+        alert('שונה הדפסה בהצלחה');
+    } else {
+        sizeScreen = "graphicPage";
+        localStorage.setItem('printComment', printComment1);
+        console.log('Proceeding to size selection');
+        console.log('Print type:', selectedType1);
+        console.log('Comment:', printComment1);
+        document.getElementById('image-upload-screen').style.display = 'none';
+        document.getElementById('size-selection-screen').style.display = 'flex';
+        initializeSizeSelectionScreen();
+    }
+}// Existing file upload and remove functionality
 document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
     input.addEventListener('change', function(e) {
         const fileName = e.target.files[0].name;
@@ -2826,15 +2861,17 @@ window.addEventListener('load', () => {
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["87926", "46995"]);
-    testEditPrint("71954");
+            loadSavedDesigns();
+            loadSavedDescriptions();
+    testEditPrint("81227");
+
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
 
   //   */
     captureCanvasState(); // Capture initial empty state for back canvas
     captureCanvasState(); // Capture initial empty state for front canvas
-    loadSavedDesigns();
-    loadSavedDescriptions();
+
 
 })
 
@@ -3071,8 +3108,10 @@ function displaySavedDescriptions() {
 
 
 function loadDescription(printId) {
+    console.log("Loading description for printId:", printId);
     const description = savedDescriptions.find(d => d.printId.toString() === printId.toString());
     if (description) {
+        console.log("Description found:", description);
         // Set the print type
         const printTypeSelect = document.getElementById('print-type');
         switch (description.printType) {
@@ -3095,10 +3134,7 @@ function loadDescription(printId) {
         // Handle front image
         if (description.frontImage) {
             SfrontImageURLGraphic = description.frontImage;
-            const frontUpload = document.getElementById('front-upload');
-            frontUpload.querySelector('.file-name').textContent = 'קובץ הועלה';
-            frontUpload.querySelector('label').textContent = 'קובץ הועלה';
-            frontUpload.querySelector('.remove-file').style.display = 'block';
+            updateFileUploadUI('front-upload', true);
         } else {
             resetUploadField('front-upload');
         }
@@ -3106,22 +3142,34 @@ function loadDescription(printId) {
         // Handle back image
         if (description.backImage) {
             SbackImageURLGraphic = description.backImage;
-            const backUpload = document.getElementById('back-upload');
-            backUpload.querySelector('.file-name').textContent = 'קובץ הועלה';
-            backUpload.querySelector('label').textContent = 'קובץ הועלה';
-            backUpload.querySelector('.remove-file').style.display = 'block';
+            updateFileUploadUI('back-upload', true);
         } else {
             resetUploadField('back-upload');
         }
 
-        // Switch to the image upload screen
-        document.getElementById('previous-descriptions-screen').style.display = 'none';
-        document.getElementById('image-upload-screen').style.display = 'flex';
-
         // Update file upload visibility based on the selected print type
         updateFileUploadVisibility();
+    } else {
+        console.log("No description found for printId:", printId);
     }
 }
+function updateFileUploadUI(uploadId, fileUploaded) {
+    const uploadElement = document.getElementById(uploadId);
+    if (uploadElement) {
+        const fileNameElement = uploadElement.querySelector('.file-name');
+        const labelElement = uploadElement.querySelector('label');
+        const removeButton = uploadElement.querySelector('.remove-file');
+
+        if (fileUploaded) {
+            fileNameElement.textContent = 'קובץ הועלה';
+            labelElement.textContent = 'קובץ הועלה';
+            removeButton.style.display = 'block';
+        } else {
+            resetUploadField(uploadId);
+        }
+    }
+}
+
 function resetUploadField(fieldId) {
     const uploadField = document.getElementById(fieldId);
     uploadField.querySelector('input[type="file"]').value = '';
