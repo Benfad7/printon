@@ -26,6 +26,7 @@ let savedDesigns = [];
 const MAX_SAVED_DESIGNS = 4;
 let existingPrintIds = new Set();
 let isEditMode = false;
+let currentEditPrintId = null;
 
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
@@ -2345,17 +2346,30 @@ function showNextStepScreen() {
     document.getElementById('front-preview').src = SfrontImageURL;
     document.getElementById('back-preview').src = SbackImageURL;
 
-    const savedComment = localStorage.getItem('userComment');
-    if (savedComment) {
-        document.getElementById('comment').value = savedComment;
-    }
+    const commentTextarea = document.getElementById('comment');
 
     if (isEditMode) {
         document.querySelector('#next-step-screen h1').textContent = 'האם אתה בטוח שאתה רוצה לשנות את ההדפסה?';
         document.getElementById('proceed-to-next').textContent = 'ערוך הדפסה';
+
+        // Load the saved comment for the current design
+        const currentDesign = savedDesigns.find(d => d.printId === currentEditPrintId);
+        if (currentDesign && currentDesign.comment) {
+            commentTextarea.value = currentDesign.comment;
+        } else {
+            commentTextarea.value = '';
+        }
     } else {
         document.querySelector('#next-step-screen h1').textContent = 'הוספת הערה לעיצוב';
         document.getElementById('proceed-to-next').textContent = 'המשך לשלב הבא';
+
+        // Load the saved comment from localStorage
+        const savedComment = localStorage.getItem('userComment');
+        if (savedComment) {
+            commentTextarea.value = savedComment;
+        } else {
+            commentTextarea.value = '';
+        }
     }
 }
 function hideNextStepScreen() {
@@ -2626,7 +2640,17 @@ function showSizeSelectionScreen() {
 
 document.getElementById('proceed-to-next').addEventListener('click', function() {
     if (isEditMode) {
+        // Save the edited comment
+        const editedComment = document.getElementById('comment').value;
+        const designIndex = savedDesigns.findIndex(d => d.printId === currentEditPrintId);
+        if (designIndex !== -1) {
+            savedDesigns[designIndex].comment = editedComment;
+            localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
+        }
+
         alert('שונה הדפסה בהצלחה');
+        isEditMode = false;
+        currentEditPrintId = null;  // Reset the current edit print ID
     } else {
         sizeScreen = "designPrints";
         showSizeSelectionScreen();
@@ -2644,14 +2668,14 @@ window.addEventListener('message', function(event) {
     else if (event.data.action === "editPrint") {
         let found = false;
         isEditMode = true;
-        let editPrintId = event.data.printId;
-        console.log("Editing print with ID: " + editPrintId);
+        currentEditPrintId = event.data.printId;  // Set the current edit print ID
+        console.log("Editing print with ID: " + currentEditPrintId);
 
         // Check for saved designs
-        const savedDesign = savedDesigns.find(design => design.printId.toString() === editPrintId.toString());
+        const savedDesign = savedDesigns.find(design => design.printId.toString() === currentEditPrintId.toString());
         if (savedDesign) {
             console.log("Found matching saved design");
-            loadDesign(editPrintId);
+            loadDesign(currentEditPrintId);
             showDesignScreen();
             hideGoBackButton();
             found = true;
@@ -2660,20 +2684,21 @@ window.addEventListener('message', function(event) {
         // Check for saved descriptions
         if (!found) {
             console.log("Checking saved descriptions");
-            loadDescription(editPrintId);
+            loadDescription(currentEditPrintId);
             console.log("Current savedDescriptions:", savedDescriptions);
-            const savedDescription = savedDescriptions.find(desc => desc.printId.toString() === editPrintId.toString());
+            const savedDescription = savedDescriptions.find(desc => desc.printId.toString() === currentEditPrintId.toString());
             if (savedDescription) {
                 console.log("Found matching saved description:", savedDescription);
-                loadDescription(editPrintId);
+                loadDescription(currentEditPrintId);
                 showGraphicScreen();
                 found = true;
             }
         }
 
         if (!found) {
-            console.log("No matching design or description found for printId: " + editPrintId);
+            console.log("No matching design or description found for printId: " + currentEditPrintId);
             isEditMode = false;
+            currentEditPrintId = null;  // Reset the current edit print ID
             showDefaultScreen();
         }
     }
@@ -2861,9 +2886,9 @@ window.addEventListener('load', () => {
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["87926", "46995"]);
-            loadSavedDesigns();
-            loadSavedDescriptions();
-    testEditPrint("81227");
+    loadSavedDesigns();
+    loadSavedDescriptions();
+    testEditPrint("20574");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
@@ -2877,12 +2902,14 @@ window.addEventListener('load', () => {
 
 // Add this function to save a design
 function saveDesign(printId) {
+    const comment = document.getElementById('comment').value;
     const design = {
         printId: printId,
         timestamp: new Date().toISOString(),
         frontCanvas: frontCanvas.innerHTML,
         backCanvas: backCanvas.innerHTML,
-        hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== ''
+        hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== '',
+        comment: comment  // Add this line to save the comment
     };
     savedDesigns.unshift(design);
     if (savedDesigns.length > MAX_SAVED_DESIGNS) {
@@ -2940,10 +2967,16 @@ function displaySavedDesigns() {
         const date = new Date(design.timestamp);
         const formattedDate = `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`;
 
+        // Truncate comment if it's too long
+        const truncatedComment = design.comment && design.comment.length > 50
+            ? design.comment.substring(0, 50) + '...'
+            : design.comment || 'No comment';
+
         designItem.innerHTML = `
             <div class="design-info">
                 <div class="design-title">עיצוב ${i + 1}</div>
                 <div class="design-date">${formattedDate}</div>
+                <div class="design-comment">${truncatedComment}</div>
             </div>
         `;
 
@@ -2965,6 +2998,11 @@ function loadDesign(printId) {
             backCanvas.innerHTML = design.backCanvas;
         }
 
+        // Load the saved comment
+        if (design.comment) {
+            document.getElementById('comment').value = design.comment;
+        }
+
         // Switch to the design screen
         showDesignScreen();
 
@@ -2984,6 +3022,7 @@ function loadDesign(printId) {
         captureCanvasState();
     }
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     const previousDesignsButton = document.getElementById('previous-designs');
     if (previousDesignsButton) {
