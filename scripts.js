@@ -2648,9 +2648,19 @@ document.getElementById('proceed-to-next').addEventListener('click', function() 
             localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
         }
 
+        // Send finishEdit message to parent
+        window.parent.postMessage({
+            action: "finishEdit",
+            printId: currentEditPrintId,
+            kind: "מקדימה ומאחורה", // Assuming design is always front and back
+            comment: editedComment,
+            frontImage: SfrontImageURL,
+            backImage: SbackImageURL
+        }, "*");
+
         alert('שונה הדפסה בהצלחה');
         isEditMode = false;
-        currentEditPrintId = null;  // Reset the current edit print ID
+        currentEditPrintId = null;
     } else {
         sizeScreen = "designPrints";
         showSizeSelectionScreen();
@@ -2837,7 +2847,18 @@ function proceedToSizeSelection() {
     }
 
     if (isEditMode) {
+        // Send finishEdit message to parent
+        window.parent.postMessage({
+            action: "finishEdit",
+            printId: currentEditPrintId,
+            kind: selectedType1,
+            comment: printComment1,
+            frontImage: SfrontImageURLGraphic,
+            backImage: SbackImageURLGraphic
+        }, "*");
         alert('שונה הדפסה בהצלחה');
+        isEditMode = false;
+        currentEditPrintId = null;
     } else {
         sizeScreen = "graphicPage";
         localStorage.setItem('printComment', printComment1);
@@ -2848,7 +2869,7 @@ function proceedToSizeSelection() {
         document.getElementById('size-selection-screen').style.display = 'flex';
         initializeSizeSelectionScreen();
     }
-}// Existing file upload and remove functionality
+}
 document.querySelectorAll('.file-upload input[type="file"]').forEach(input => {
     input.addEventListener('change', function(e) {
         const fileName = e.target.files[0].name;
@@ -2880,20 +2901,21 @@ document.querySelectorAll('.remove-file').forEach(button => {
     });
 });
 window.addEventListener('load', () => {
-// /*
+ /*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["87926", "46995"]);
+        */
+
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("20574");
+    //testEditPrint("20574");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
 
-  //   */
     captureCanvasState(); // Capture initial empty state for back canvas
     captureCanvasState(); // Capture initial empty state for front canvas
 
