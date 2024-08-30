@@ -2640,27 +2640,19 @@ function showSizeSelectionScreen() {
 
 document.getElementById('proceed-to-next').addEventListener('click', function() {
     if (isEditMode) {
-        // Save the edited comment
-        const editedComment = document.getElementById('comment').value;
-        const designIndex = savedDesigns.findIndex(d => d.printId === currentEditPrintId);
-        if (designIndex !== -1) {
-            savedDesigns[designIndex].comment = editedComment;
-            localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
-        }
-
+        saveDesign(currentEditPrintId);
         // Send finishEdit message to parent
         window.parent.postMessage({
             action: "finishEdit",
             printId: currentEditPrintId,
-            kind: "מקדימה ומאחורה", // Assuming design is always front and back
-            comment: editedComment,
+            kind: "מקדימה ומאחורה",
+            comment: document.getElementById('comment').value,
             frontImage: SfrontImageURL,
             backImage: SbackImageURL
         }, "*");
 
-        alert('שונה הדפסה בהצלחה');
-        isEditMode = false;
-        currentEditPrintId = null;
+        alert('עיצוב עודכן בהצלחה');
+
     } else {
         sizeScreen = "designPrints";
         showSizeSelectionScreen();
@@ -2847,6 +2839,7 @@ function proceedToSizeSelection() {
     }
 
     if (isEditMode) {
+        saveDescription(currentEditPrintId);
         // Send finishEdit message to parent
         window.parent.postMessage({
             action: "finishEdit",
@@ -2856,9 +2849,8 @@ function proceedToSizeSelection() {
             frontImage: SfrontImageURLGraphic,
             backImage: SbackImageURLGraphic
         }, "*");
-        alert('שונה הדפסה בהצלחה');
-        isEditMode = false;
-        currentEditPrintId = null;
+        alert('תיאור הדפסה עודכן בהצלחה');
+
     } else {
         sizeScreen = "graphicPage";
         localStorage.setItem('printComment', printComment1);
@@ -2931,11 +2923,19 @@ function saveDesign(printId) {
         frontCanvas: frontCanvas.innerHTML,
         backCanvas: backCanvas.innerHTML,
         hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== '',
-        comment: comment  // Add this line to save the comment
+        comment: comment
     };
-    savedDesigns.unshift(design);
-    if (savedDesigns.length > MAX_SAVED_DESIGNS) {
-        savedDesigns.pop();
+
+    const existingIndex = savedDesigns.findIndex(d => d.printId === printId);
+    if (existingIndex !== -1) {
+        // Update existing design
+        savedDesigns[existingIndex] = design;
+    } else {
+        // Add new design
+        savedDesigns.unshift(design);
+        if (savedDesigns.length > MAX_SAVED_DESIGNS) {
+            savedDesigns.pop();
+        }
     }
     localStorage.setItem('savedDesigns', JSON.stringify(savedDesigns));
     console.log('Design saved:', savedDesigns);
@@ -3097,14 +3097,23 @@ function saveDescription(printId) {
             frontImage: SfrontImageURLGraphic,
             backImage: SbackImageURLGraphic
         };
-        savedDescriptions.unshift(description);
-        if (savedDescriptions.length > MAX_SAVED_DESCRIPTIONS) {
-            savedDescriptions.pop();
+
+        const existingIndex = savedDescriptions.findIndex(d => d.printId === printId);
+        if (existingIndex !== -1) {
+            // Update existing description
+            savedDescriptions[existingIndex] = description;
+        } else {
+            // Add new description
+            savedDescriptions.unshift(description);
+            if (savedDescriptions.length > MAX_SAVED_DESCRIPTIONS) {
+                savedDescriptions.pop();
+            }
         }
         localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
         console.log('Saved descriptions:', savedDescriptions);
     }
 }
+
 
 function loadSavedDescriptions() {
     const savedDescriptionsJSON = localStorage.getItem('savedDescriptions');
