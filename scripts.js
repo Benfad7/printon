@@ -2815,7 +2815,6 @@ function handleFileUpload(event) {
         reader.readAsDataURL(file);
     }
 }
-
 function proceedToSizeSelection() {
     selectedType1 = document.getElementById('print-type').value;
     printComment1 = document.getElementById('print-comment').value;
@@ -2849,8 +2848,6 @@ function proceedToSizeSelection() {
             frontImage: SfrontImageURLGraphic,
             backImage: SbackImageURLGraphic
         }, "*");
-        alert('תיאור הדפסה עודכן בהצלחה');
-
     } else {
         sizeScreen = "graphicPage";
         localStorage.setItem('printComment', printComment1);
@@ -2903,7 +2900,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    //testEditPrint("20574");
+    testEditPrint("23242");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
@@ -3088,30 +3085,28 @@ document.getElementById('return-from-previous-descriptions').addEventListener('c
     document.getElementById('default-screen').style.display = 'flex';
 });
 function saveDescription(printId) {
-    if (sizeScreen === "graphicPage") {
-        const description = {
-            printId: printId,
-            timestamp: new Date().toISOString(),
-            comment: printComment1,
-            printType: selectedType1,
-            frontImage: SfrontImageURLGraphic,
-            backImage: SbackImageURLGraphic
-        };
+    const description = {
+        printId: printId,
+        timestamp: new Date().toISOString(),
+        comment: printComment1,
+        printType: selectedType1,
+        frontImage: SfrontImageURLGraphic,
+        backImage: SbackImageURLGraphic
+    };
 
-        const existingIndex = savedDescriptions.findIndex(d => d.printId === printId);
-        if (existingIndex !== -1) {
-            // Update existing description
-            savedDescriptions[existingIndex] = description;
-        } else {
-            // Add new description
-            savedDescriptions.unshift(description);
-            if (savedDescriptions.length > MAX_SAVED_DESCRIPTIONS) {
-                savedDescriptions.pop();
-            }
+    const existingIndex = savedDescriptions.findIndex(d => d.printId === printId);
+    if (existingIndex !== -1) {
+        // Update existing description
+        savedDescriptions[existingIndex] = description;
+    } else {
+        // Add new description
+        savedDescriptions.unshift(description);
+        if (savedDescriptions.length > MAX_SAVED_DESCRIPTIONS) {
+            savedDescriptions.pop();
         }
-        localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
-        console.log('Saved descriptions:', savedDescriptions);
     }
+    localStorage.setItem('savedDescriptions', JSON.stringify(savedDescriptions));
+    console.log('Saved descriptions:', savedDescriptions);
 }
 
 
