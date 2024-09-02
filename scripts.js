@@ -2723,6 +2723,7 @@ function showGraphicScreen() {
     console.log("Showing graphic screen");
     document.getElementById('default-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'none';
+    document.getElementById('previous-descriptions-screen').style.display = 'none';
     document.getElementById('image-upload-screen').style.display = 'flex';
 
     const titleElement = document.querySelector('#image-upload-screen .upload-title');
@@ -2900,7 +2901,7 @@ window.addEventListener('load', () => {
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["17471", "60922"]);
+    existingPrintIds = new Set(["17471", "60922","30142","34464"]);
 
 
     loadSavedDesigns();
@@ -3171,7 +3172,10 @@ function displaySavedDescriptions() {
             descriptionItem.appendChild(imagesContainer);
         }
 
-        descriptionItem.onclick = () => loadDescription(description.printId);
+      descriptionItem.onclick = function() {
+            console.log('Description clicked:', description.printId);
+            loadDescription(description.printId);
+        };
         container.appendChild(descriptionItem);
     }
 }
@@ -3182,6 +3186,7 @@ function loadDescription(printId) {
     const description = savedDescriptions.find(d => d.printId.toString() === printId.toString());
     if (description) {
         console.log("Description found:", description);
+
         // Set the print type
         const printTypeSelect = document.getElementById('print-type');
         switch (description.printType) {
@@ -3219,6 +3224,9 @@ function loadDescription(printId) {
 
         // Update file upload visibility based on the selected print type
         updateFileUploadVisibility();
+
+        // Show the graphic screen
+        showGraphicScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
