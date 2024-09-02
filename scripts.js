@@ -2951,14 +2951,33 @@ document.querySelectorAll('.remove-file').forEach(button => {
 // Add this function to save a design
 function saveDesign(printId) {
     const comment = document.getElementById('comment').value;
+
+    // Determine printType based on canvas contents
+    let printType;
+    const frontContent = frontCanvas.innerHTML.trim();
+    const backContent = backCanvas.innerHTML.trim();
+    console.log("frontContent " + frontCanvas.innerHTML.trim());
+    const hasBackContent = frontContent !== "<!-- Front canvas content -->";
+    const hasFrontContent = backContent !== "<!-- Back canvas content -->";
+
+    if (hasFrontContent && hasBackContent) {
+        printType = "מקדימה ומאחורה";
+    } else if (hasFrontContent) {
+        printType = "מקדימה";
+    } else if (hasBackContent) {
+        printType = "מאחורה";
+    } else {
+        printType = "ללא הדפסה"; // No print
+    }
+
     const design = {
         printId: printId,
         timestamp: new Date().toISOString(),
         frontCanvas: frontCanvas.innerHTML,
         backCanvas: backCanvas.innerHTML,
-        hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== '',
+        hasContent: hasFrontContent || hasBackContent,
         comment: comment,
-        printType: "מקדימה ומאחורה", // Always "מקדימה ומאחורה" for designs
+        printType: printType,
         frontImage: SfrontImageURL,
         backImage: SbackImageURL
     };
