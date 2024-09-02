@@ -3064,7 +3064,12 @@ function displaySavedDesigns() {
             <div class="design-info">
                 <div class="design-title">עיצוב ${i + 1}</div>
                 <div class="design-date">${formattedDate}</div>
-                <div class="design-comment">${truncatedComment}</div>
+                <div class="design-comment"><strong>הערה:</strong> ${truncatedComment}</div>
+                <div class="design-type">סוג הדפסה: ${design.printType}</div>
+            </div>
+            <div class="design-images">
+                ${design.frontImage ? `<img src="${design.frontImage}" alt="Front Design" class="design-preview-image">` : ''}
+                ${design.backImage ? `<img src="${design.backImage}" alt="Back Design" class="design-preview-image">` : ''}
             </div>
         `;
 
@@ -3416,7 +3421,7 @@ window.addEventListener('load', () => {
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["17471", "60922","30142","34464"]);
+    existingPrintIds = new Set(["17471", "60922","30142","56844"]);
 
 
     loadSavedDesigns();
