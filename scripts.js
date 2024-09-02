@@ -2190,9 +2190,10 @@ function showDefaultScreen() {
 }
 
 function showDesignScreen() {
-     setBackgroundImages(currentlySelectedColor);
+    setBackgroundImages(currentlySelectedColor);
     currentScreen = 'design';
     document.getElementById('default-screen').style.display = 'none';
+    document.getElementById('size-selection-screen').style.display = 'none';
     document.getElementById('next-step-screen').style.display = 'none';
     document.getElementById('previous-designs-screen').style.display = 'none';
     document.getElementById('design-screen').style.display = 'flex';
@@ -2205,9 +2206,10 @@ function showDesignScreen() {
     }
 
     showScreen('screen1');
-        if (isEditMode) {
-            hideGoBackButton();
-        }
+    if (isEditMode) {
+        hideGoBackButton();
+    }
+
     // Make sure the front canvas is displayed
     frontCanvas.style.display = 'block';
     backCanvas.style.display = 'none';
@@ -2221,7 +2223,6 @@ function showDesignScreen() {
 
     // Reattach event listeners
     reattachEventListeners();
-
 }
 function updateBackgroundAndButtons() {
     const frontButton = document.getElementById('front-button');
@@ -2714,48 +2715,46 @@ window.addEventListener('message', function(event) {
         existingPrintIds = new Set(event.data.existingPrintIds);
         initializeSizeSelectionScreen();
     }
-    else if (event.data.action === "editPrint") {
-        let found = false;
-        isEditMode = true;
-        currentEditPrintId = event.data.printId;  // Set the current edit print ID
-        console.log("Editing print with ID: " + currentEditPrintId);
+else if (event.data.action === "editPrint") {
+    let found = false;
+    isEditMode = true;
+    currentEditPrintId = event.data.printId;
+    console.log("Editing print with ID: " + currentEditPrintId);
 
-        // Check for saved designs
-  let savedDesign = null;
+    // Check for saved designs
+    let savedDesign = null;
     try {
         savedDesign = savedDesigns.find(design => design.printId.toString() === currentEditPrintId.toString());
     } catch (error) {
         console.error("Error finding saved design:", error);
     }
-        if (savedDesign) {
-            console.log("Found matching saved design");
-            loadDesign(currentEditPrintId);
-            showDesignScreen();
-            hideGoBackButton();
+    if (savedDesign) {
+        console.log("Found matching saved design");
+        loadDesign(currentEditPrintId);
+        showDesignScreen();
+        hideGoBackButton();
+        found = true;
+    }
+
+    // Check for saved descriptions
+    if (!found) {
+        console.log("Checking saved descriptions");
+        const savedDescription = savedDescriptions.find(desc => desc.printId.toString() === currentEditPrintId.toString());
+        if (savedDescription) {
+            console.log("Found matching saved description:", savedDescription);
+            loadDescription(currentEditPrintId);
+            showGraphicScreen();
             found = true;
         }
-
-        // Check for saved descriptions
-        if (!found) {
-            console.log("Checking saved descriptions");
-            loadDescription(currentEditPrintId);
-            console.log("Current savedDescriptions:", savedDescriptions);
-            const savedDescription = savedDescriptions.find(desc => desc.printId.toString() === currentEditPrintId.toString());
-            if (savedDescription) {
-                console.log("Found matching saved description:", savedDescription);
-                loadDescription(currentEditPrintId);
-                showGraphicScreen();
-                found = true;
-            }
-        }
-
-        if (!found) {
-            console.log("No matching design or description found for printId: " + currentEditPrintId);
-            isEditMode = false;
-            currentEditPrintId = null;  // Reset the current edit print ID
-            showDefaultScreen();
-        }
     }
+
+    if (!found) {
+        console.log("No matching design or description found for printId: " + currentEditPrintId);
+        isEditMode = false;
+        currentEditPrintId = null;
+        showDefaultScreen();
+    }
+}
 });
 
 function hideGoBackButton() {
@@ -2942,27 +2941,7 @@ document.querySelectorAll('.remove-file').forEach(button => {
         }
     });
 });
-window.addEventListener('load', () => {
 
-    const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "אפור";
-    availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
-   availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["17471", "60922","30142","34464"]);
-
-
-    loadSavedDesigns();
-    loadSavedDescriptions();
-  //  testEditPrint("23242");
-
-    initializeSizeSelectionScreen();
-        updateBackgroundAndButtons(); // Add this line
-
-    captureCanvasState(); // Capture initial empty state for back canvas
-    captureCanvasState(); // Capture initial empty state for front canvas
-
-
-})
 
 // Add this function to save a design
 function saveDesign(printId) {
@@ -3079,18 +3058,20 @@ function loadDesign(printId) {
         sizeScreen = "designPrints";
         previousScreen = 'previous-designs';
 
-        // Capture images and show size selection screen
+        // Capture images but don't show size selection screen
         Promise.all([
             captureDivToImageURL(frontCanvas),
             captureDivToImageURL(backCanvas)
         ]).then(([frontImageURL, backImageURL]) => {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
-            showSizeSelectionScreen();
+            // Don't call showSizeSelectionScreen() here
         });
+
+        // Instead, ensure we're showing the design screen
+        showDesignScreen();
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const previousDesignsButton = document.getElementById('previous-designs');
@@ -3241,7 +3222,9 @@ function loadDescription(printId) {
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
-        showSizeSelectionScreen();
+        // Don't call showSizeSelectionScreen() here
+        // Instead, show the graphic screen
+        showGraphicScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
@@ -3371,3 +3354,24 @@ document.getElementById('back-to-design').addEventListener('click', function() {
     }
     // If in edit mode, do nothing or show a message that going back is not allowed
 });
+window.addEventListener('load', () => {
+
+    const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
+    selectedColor = "אפור";
+    availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
+   availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
+    existingPrintIds = new Set(["17471", "60922","30142","34464"]);
+
+
+    loadSavedDesigns();
+    loadSavedDescriptions();
+  testEditPrint("53307");
+
+    initializeSizeSelectionScreen();
+        updateBackgroundAndButtons(); // Add this line
+
+    captureCanvasState(); // Capture initial empty state for back canvas
+    captureCanvasState(); // Capture initial empty state for front canvas
+
+
+})
