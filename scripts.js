@@ -2900,7 +2900,7 @@ window.addEventListener('load', () => {
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["17471", "46995"]);
+    existingPrintIds = new Set(["17471", "60922"]);
 
 
     loadSavedDesigns();
