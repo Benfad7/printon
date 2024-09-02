@@ -17,6 +17,9 @@ let availableSizes = [];
     let selectedType1;
     let printComment1;
 let selectedColors = [];
+let previousScreen = null;
+
+
 let currentlySelectedColor = '';
     let availableColors = [];
     let colorQuantities = {};
@@ -27,7 +30,8 @@ const MAX_SAVED_DESIGNS = 30;
 let existingPrintIds = new Set();
 let isEditMode = false;
 let currentEditPrintId = null;
-
+let isEditingExisting = false;
+let currentEditingPrintId = null;
 let sizeScreen;
 const screen1 = document.getElementById('screen1');
 const screen2 = document.getElementById('screen2');
@@ -2523,22 +2527,31 @@ window.onclick = function(event) {
 }
 
 function goBack() {
-    if(sizeScreen=="designPrints")
-    {
+    if (isEditingExisting) {
+        // If editing an existing design/description, go back to the appropriate screen
         document.getElementById('size-selection-screen').style.display = 'none';
-        document.getElementById('next-step-screen').style.display = 'flex';
-    }
-    else if(sizeScreen=="noPrints")
-    {
-        document.getElementById('size-selection-screen').style.display = 'none';
-        document.getElementById('default-screen').style.display = 'flex';
-    }
-        else if(sizeScreen=="graphicPage")
-        {
+        if (previousScreen === 'previous-designs') {
+            showPreviousDesignsScreen();
+        } else if (previousScreen === 'previous-descriptions') {
+            showPreviousDescriptionsScreen();
+        }
+        // Reset editing state
+        isEditingExisting = false;
+        currentEditingPrintId = null;
+        previousScreen = null;
+    } else {
+        // Original back functionality
+        if (sizeScreen === "designPrints") {
+            document.getElementById('size-selection-screen').style.display = 'none';
+            document.getElementById('next-step-screen').style.display = 'flex';
+        } else if (sizeScreen === "noPrints") {
+            document.getElementById('size-selection-screen').style.display = 'none';
+            document.getElementById('default-screen').style.display = 'flex';
+        } else if (sizeScreen === "graphicPage") {
             document.getElementById('size-selection-screen').style.display = 'none';
             document.getElementById('image-upload-screen').style.display = 'flex';
         }
-
+    }
 }
 function showColorPicker(colors) {
     const picker = document.createElement('div');
@@ -2603,7 +2616,7 @@ function addToCart() {
         return;
     }
 
-    const printId = generatePrintId();
+    const printId = isEditingExisting ? currentEditingPrintId : generatePrintId();
     const selectedSizes = {};
     Object.entries(colorQuantities).forEach(([color, sizes]) => {
         selectedSizes[color] = {};
@@ -2614,7 +2627,7 @@ function addToCart() {
         });
     });
 
-    window.parent.postMessage({
+    const message = {
         action: "addToCart",
         printId: printId,
         sizes: selectedSizes,
@@ -2623,21 +2636,55 @@ function addToCart() {
         comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
         kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
               sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
-    }, "*");
+    };
+
+    // Console log the message
+    console.log('Message being sent to parent:', message);
+
+    // Send the message to the parent window
+    window.parent.postMessage(message, "*");
 
     if (sizeScreen === "graphicPage") {
         saveDescription(printId);
     } else if (sizeScreen === "designPrints") {
         saveDesign(printId);
     }
+
+    // Reset editing state
+    isEditingExisting = false;
+    currentEditingPrintId = null;
 }
 // Call this function when showing the size selection screen
 function showSizeSelectionScreen() {
     document.getElementById('next-step-screen').style.display = 'none';
+    document.getElementById('previous-designs-screen').style.display = 'none';
+    document.getElementById('previous-descriptions-screen').style.display = 'none';
     document.getElementById('size-selection-screen').style.display = 'flex';
     initializeSizeSelectionScreen();
-}
 
+    const headerElement = document.querySelector('#size-selection-screen h1');
+    const addToCartButton = document.getElementById('add-to-cart-button');
+
+    if (isEditingExisting) {
+        headerElement.textContent = 'עריכת מידות להדפסה קיימת';
+        addToCartButton.textContent = 'עדכן עגלה';
+    } else {
+        headerElement.textContent = 'בחירת מידות';
+        addToCartButton.textContent = 'הוסף לעגלה';
+    }
+}
+function goBackToPreviousScreen() {
+    document.getElementById('size-selection-screen').style.display = 'none';
+    if (previousScreen === 'previous-designs') {
+        showPreviousDesignsScreen();
+    } else if (previousScreen === 'previous-descriptions') {
+        showPreviousDescriptionsScreen();
+    }
+    // Reset variables
+    isEditingExisting = false;
+    currentEditingPrintId = null;
+    previousScreen = null;
+}
 document.getElementById('proceed-to-next').addEventListener('click', function() {
     if (isEditMode) {
         saveDesign(currentEditPrintId);
@@ -3018,7 +3065,6 @@ function loadDesign(printId) {
         if (design.frontCanvas) {
             frontCanvas.innerHTML = design.frontCanvas;
         }
-
         if (design.backCanvas) {
             backCanvas.innerHTML = design.backCanvas;
         }
@@ -3028,25 +3074,23 @@ function loadDesign(printId) {
             document.getElementById('comment').value = design.comment;
         }
 
-        // Switch to the design screen
-        showDesignScreen();
+        isEditingExisting = true;
+        currentEditingPrintId = design.printId;
+        sizeScreen = "designPrints";
+        previousScreen = 'previous-designs';
 
-        // Hide the previous designs screen
-        document.getElementById('previous-designs-screen').style.display = 'none';
-
-        // Update the current canvas
-        currentCanvas = frontCanvas;
-
-        // Update background and buttons
-        updateBackgroundAndButtons();
-
-        // Reattach event listeners and reinitialize necessary components
-        reattachEventListeners();
-
-        // Capture the initial state after loading
-        captureCanvasState();
+        // Capture images and show size selection screen
+        Promise.all([
+            captureDivToImageURL(frontCanvas),
+            captureDivToImageURL(backCanvas)
+        ]).then(([frontImageURL, backImageURL]) => {
+            SfrontImageURL = frontImageURL;
+            SbackImageURL = backImageURL;
+            showSizeSelectionScreen();
+        });
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', function() {
     const previousDesignsButton = document.getElementById('previous-designs');
@@ -3187,46 +3231,17 @@ function loadDescription(printId) {
     if (description) {
         console.log("Description found:", description);
 
-        // Set the print type
-        const printTypeSelect = document.getElementById('print-type');
-        switch (description.printType) {
-            case 'מקדימה':
-                printTypeSelect.value = 'front';
-                break;
-            case 'מאחורה':
-                printTypeSelect.value = 'back';
-                break;
-            case 'מקדימה ומאחורה':
-                printTypeSelect.value = 'both';
-                break;
-            default:
-                printTypeSelect.value = '';
-        }
+        selectedType1 = description.printType;
+        printComment1 = description.comment;
+        SfrontImageURLGraphic = description.frontImage || '';
+        SbackImageURLGraphic = description.backImage || '';
 
-        // Set the comment
-        document.getElementById('print-comment').value = description.comment;
+        isEditingExisting = true;
+        currentEditingPrintId = description.printId;
+        sizeScreen = "graphicPage";
+        previousScreen = 'previous-descriptions';
 
-        // Handle front image
-        if (description.frontImage) {
-            SfrontImageURLGraphic = description.frontImage;
-            updateFileUploadUI('front-upload', true);
-        } else {
-            resetUploadField('front-upload');
-        }
-
-        // Handle back image
-        if (description.backImage) {
-            SbackImageURLGraphic = description.backImage;
-            updateFileUploadUI('back-upload', true);
-        } else {
-            resetUploadField('back-upload');
-        }
-
-        // Update file upload visibility based on the selected print type
-        updateFileUploadVisibility();
-
-        // Show the graphic screen
-        showGraphicScreen();
+        showSizeSelectionScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
