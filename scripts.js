@@ -3384,7 +3384,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-  testEditPrint("53307");
+  testEditPrint("26515");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
