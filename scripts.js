@@ -2674,7 +2674,12 @@ window.addEventListener('message', function(event) {
         console.log("Editing print with ID: " + currentEditPrintId);
 
         // Check for saved designs
-        const savedDesign = savedDesigns.find(design => design.printId.toString() === currentEditPrintId.toString());
+  let savedDesign = null;
+    try {
+        savedDesign = savedDesigns.find(design => design.printId.toString() === currentEditPrintId.toString());
+    } catch (error) {
+        console.error("Error finding saved design:", error);
+    }
         if (savedDesign) {
             console.log("Found matching saved design");
             loadDesign(currentEditPrintId);
