@@ -2617,7 +2617,7 @@ function addToCart() {
         return;
     }
 
-    const kind = sizeScreen === "noPrints" ? "ללא הדפסה" :
+    let kind = sizeScreen === "noPrints" ? "ללא הדפסה" :
                  sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1;
 
     // Set the printId based on the kind of product
@@ -2666,7 +2666,7 @@ function addToCart() {
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
         comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
-        kind: printType,
+        kind: kind
     };
 
     // Console log the message
