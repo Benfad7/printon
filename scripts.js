@@ -2957,7 +2957,10 @@ function saveDesign(printId) {
         frontCanvas: frontCanvas.innerHTML,
         backCanvas: backCanvas.innerHTML,
         hasContent: frontCanvas.innerHTML.trim() !== '' || backCanvas.innerHTML.trim() !== '',
-        comment: comment
+        comment: comment,
+        printType: "מקדימה ומאחורה", // Always "מקדימה ומאחורה" for designs
+        frontImage: SfrontImageURL,
+        backImage: SbackImageURL
     };
 
     const existingIndex = savedDesigns.findIndex(d => d.printId === printId);
@@ -3379,13 +3382,13 @@ document.getElementById('back-to-design').addEventListener('click', function() {
     // If in edit mode, do nothing or show a message that going back is not allowed
 });
 window.addEventListener('load', () => {
-/*
+
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["17471", "60922","30142","34464"]);
-*/
+
 
     loadSavedDesigns();
     loadSavedDescriptions();
