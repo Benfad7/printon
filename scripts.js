@@ -2692,6 +2692,16 @@ function goBackToPreviousScreen() {
     previousScreen = null;
 }
 document.getElementById('proceed-to-next').addEventListener('click', function() {
+    const frontContent = frontCanvas.innerHTML.trim();
+    const backContent = backCanvas.innerHTML.trim();
+    const hasFrontContent = frontContent !== "<!-- Front canvas content -->";
+    const hasBackContent = backContent !== "<!-- Back canvas content -->";
+
+    if (!hasFrontContent && !hasBackContent) {
+        alert("יש להוסיף הדפסה מקדימה או מאחורה");
+        return;
+    }
+
     if (isEditMode) {
         saveDesign(currentEditPrintId);
         // Send finishEdit message to parent
@@ -2957,8 +2967,8 @@ function saveDesign(printId) {
     const frontContent = frontCanvas.innerHTML.trim();
     const backContent = backCanvas.innerHTML.trim();
     console.log("frontContent " + frontCanvas.innerHTML.trim());
-    const hasBackContent = frontContent !== "<!-- Front canvas content -->";
-    const hasFrontContent = backContent !== "<!-- Back canvas content -->";
+    const hasFrontContent = frontContent !== "<!-- Front canvas content -->";
+    const hasBackContent = backContent !== "<!-- Back canvas content -->";
 
     if (hasFrontContent && hasBackContent) {
         printType = "מקדימה ומאחורה";
