@@ -2895,17 +2895,17 @@ document.querySelectorAll('.remove-file').forEach(button => {
     });
 });
 window.addEventListener('load', () => {
- /*
+
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["87926", "46995"]);
-        */
+    existingPrintIds = new Set(["17471", "46995"]);
+
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("23242");
+  //  testEditPrint("23242");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
@@ -2994,7 +2994,7 @@ function displaySavedDesigns() {
         // Truncate comment if it's too long
         const truncatedComment = design.comment && design.comment.length > 50
             ? design.comment.substring(0, 50) + '...'
-            : design.comment || 'No comment';
+            : design.comment || 'ללא הערה';
 
         designItem.innerHTML = `
             <div class="design-info">
