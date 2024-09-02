@@ -2764,7 +2764,6 @@ function hideGoBackButton() {
     }
 }
 
-
 function showGraphicScreen() {
     console.log("Showing graphic screen");
     document.getElementById('default-screen').style.display = 'none';
@@ -2791,6 +2790,7 @@ function showGraphicScreen() {
         proceedButton.textContent = 'המשך לבחירת מידות';
     }
 }
+
 document.addEventListener('DOMContentLoaded', function() {
     const backToDefaultButton = document.getElementById('back-to-default');
     const proceedToSizeSelectionButton = document.getElementById('proceed-to-size-selection');
@@ -3205,13 +3205,13 @@ function displaySavedDescriptions() {
     }
 }
 
-
 function loadDescription(printId) {
     console.log("Loading description for printId:", printId);
     const description = savedDescriptions.find(d => d.printId.toString() === printId.toString());
     if (description) {
         console.log("Description found:", description);
 
+        // Set the global variables
         selectedType1 = description.printType;
         printComment1 = description.comment;
         SfrontImageURLGraphic = description.frontImage || '';
@@ -3222,13 +3222,32 @@ function loadDescription(printId) {
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
-        // Don't call showSizeSelectionScreen() here
-        // Instead, show the graphic screen
+        // Show the graphic screen
         showGraphicScreen();
+
+        // Populate the form fields
+        const printTypeSelect = document.getElementById('print-type');
+        const printCommentTextarea = document.getElementById('print-comment');
+
+        // Set the print type
+        printTypeSelect.value = description.printType === "מקדימה" ? "front" :
+                                description.printType === "מאחורה" ? "back" : "both";
+
+        // Set the comment
+        printCommentTextarea.value = description.comment;
+
+        // Update file upload UI
+        updateFileUploadUI('front-upload', !!description.frontImage);
+        updateFileUploadUI('back-upload', !!description.backImage);
+
+        // Update file upload visibility based on print type
+        updateFileUploadVisibility();
+
     } else {
         console.log("No description found for printId:", printId);
     }
 }
+
 function updateFileUploadUI(uploadId, fileUploaded) {
     const uploadElement = document.getElementById(uploadId);
     if (uploadElement) {
