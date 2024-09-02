@@ -2634,6 +2634,29 @@ function addToCart() {
         });
     });
 
+    // Determine the printType
+    let printType;
+    if (sizeScreen === "graphicPage") {
+        printType = selectedType1;
+    } else if (sizeScreen === "designPrints") {
+        const frontContent = frontCanvas.innerHTML.trim();
+        const backContent = backCanvas.innerHTML.trim();
+        const hasFrontContent = frontContent !== "<!-- Front canvas content -->";
+        const hasBackContent = backContent !== "<!-- Back canvas content -->";
+
+        if (hasFrontContent && hasBackContent) {
+            printType = "מקדימה ומאחורה";
+        } else if (hasFrontContent) {
+            printType = "מקדימה";
+        } else if (hasBackContent) {
+            printType = "מאחורה";
+        } else {
+            printType = "ללא הדפסה";
+        }
+    } else {
+        printType = "ללא הדפסה";
+    }
+
     const message = {
         action: "addToCart",
         printId: printId,
@@ -2641,7 +2664,8 @@ function addToCart() {
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
         comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
-        kind: kind
+        kind: kind,
+        printType: printType
     };
 
     // Console log the message
