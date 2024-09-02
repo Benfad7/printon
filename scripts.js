@@ -2617,7 +2617,13 @@ function addToCart() {
         return;
     }
 
-    const printId = isEditingExisting ? currentEditingPrintId : generatePrintId();
+    const kind = sizeScreen === "noPrints" ? "ללא הדפסה" :
+                 sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1;
+
+    // Set the printId based on the kind of product
+    const printId = kind === "ללא הדפסה" ? "00000" :
+                    (isEditingExisting ? currentEditingPrintId : generatePrintId());
+
     const selectedSizes = {};
     Object.entries(colorQuantities).forEach(([color, sizes]) => {
         selectedSizes[color] = {};
@@ -2635,8 +2641,7 @@ function addToCart() {
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
         comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
-        kind: sizeScreen === "noPrints" ? "ללא הדפסה" :
-              sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1
+        kind: kind
     };
 
     // Console log the message
@@ -3374,17 +3379,17 @@ document.getElementById('back-to-design').addEventListener('click', function() {
     // If in edit mode, do nothing or show a message that going back is not allowed
 });
 window.addEventListener('load', () => {
-
+/*
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["17471", "60922","30142","34464"]);
-
+*/
 
     loadSavedDesigns();
     loadSavedDescriptions();
-  testEditPrint("26515");
+  //testEditPrint("26515");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
