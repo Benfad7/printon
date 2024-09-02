@@ -2653,6 +2653,8 @@ function addToCart() {
         } else {
             printType = "ללא הדפסה";
         }
+        console.log("מיקום " + printType)
+        kind = printType;
     } else {
         printType = "ללא הדפסה";
     }
@@ -2664,8 +2666,7 @@ function addToCart() {
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
         comment: sizeScreen === "graphicPage" ? printComment1 : document.getElementById('comment').value,
-        kind: kind,
-        printType: printType
+        kind: printType,
     };
 
     // Console log the message
