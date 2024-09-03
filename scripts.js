@@ -1017,14 +1017,13 @@ function updateCenterButtonState(container) {
 function hasImagesOnCanvas() {
     return currentCanvas.querySelector('.image-container, .text-container') !== null;
 }
+
 function updateCanvasState() {
     updatePasteButtonState();
     updateUndoRedoButtons();
 
-    // Update other button states as needed
-
     // If there are no objects left, return to the main screen
-    if (!hasObjects && !screen1.classList.contains('active')) {
+    if (!hasObjectsOnCanvas() && !screen1.classList.contains('active')) {
         showScreen(screen1);
     }
 }
@@ -1055,11 +1054,13 @@ function reattachEventListeners() {
 
     // Reattach other necessary event listeners
     document.getElementById('upload').addEventListener('change', handleFileSelection);
-    document.querySelector('.add-text').addEventListener('click', showTextInputScreen);
-    document.getElementById('add-to-design-button').addEventListener('click', addTextToDesign);
+ document.querySelector('.add-text').addEventListener('click', function() {
+        showScreen(screen3); // Assuming screen3 is your text input screen
+    });    document.getElementById('add-to-design-button').addEventListener('click', addTextToDesign);
 
     // Update undo/redo buttons
     updateUndoRedoButtons();
+
 }
 const undoButton = document.getElementById('undo-button');
 const redoButton = document.getElementById('redo-button');
