@@ -2158,7 +2158,7 @@ function getColorHex(colorName) {
         'שחור': '#000000',
         'כחול כהה': '#0e0b22',
         'כחול': '#232fc4',
-        'תכלת': 'aaf0ff#',
+        'תכלת': '#aaf0ff',
         'אפור': '#a8a8a8',
         'שמנת': '#dbc49e',
         'ירוק כהה': '#03342a',
@@ -2170,6 +2170,7 @@ function getColorHex(colorName) {
         'סגול': '#64347b',
         'צהוב': '#c7d824',
         'כתום': '#dd630a'
+
     };
     return colorMap[colorName] || '#FFFFFF'; // Default to white if color not found
 }
@@ -3468,7 +3469,7 @@ function getBackgroundUrl(isFront, color) {
             return isFront ? 'https://static.wixstatic.com/media/529f52_4ca53e39739f4e94ac0f51abda04e602~mv2.png' :
                             'https://static.wixstatic.com/media/529f52_b65628ac340b45a6bfb627443d7b24f1~mv2.png';
         case 'תכלת':
-            return isFront ? 'https://static.wixstatic.com/media/529f52_b65628ac340b45a6bfb627443d7b24f1~mv2.png' :
+            return isFront ? 'https://static.wixstatic.com/media/529f52_07ebb6230be9477f9d4ed84904e2caeb~mv2.png' :
                             'https://static.wixstatic.com/media/529f52_05cf8c47f4b244b4acfbc5a318276ec3~mv2.png';
         case 'אפור':
             return isFront ? 'https://static.wixstatic.com/media/529f52_b926906a390a4028b402a37beaed1600~mv2.png' :
@@ -3547,7 +3548,7 @@ document.getElementById('back-to-design').addEventListener('click', function() {
 window.addEventListener('load', () => {
 
     const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
-    selectedColor = "אפור";
+    selectedColor = "תכלת";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
     existingPrintIds = new Set(["17471", "60922","30209","71167"]);
@@ -3555,7 +3556,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("32576");
+   // testEditPrint("32576");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
