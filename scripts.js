@@ -2174,6 +2174,8 @@ function getColorHex(colorName) {
     return colorMap[colorName] || '#FFFFFF'; // Default to white if color not found
 }
 function showDefaultScreen() {
+    hasAddedToCart = false;
+
     currentScreen = 'default';
     document.getElementById('default-screen').style.display = 'flex';
     document.getElementById('previous-designs-screen').style.display = 'none';
@@ -2751,8 +2753,11 @@ function addToCart() {
         printType = "ללא הדפסה";
     }
 
-    const printId = isEditingExisting ? currentEditingPrintId : (currentPrintId || generatePrintId());
-
+    let printId = isEditingExisting ? currentEditingPrintId : (currentPrintId || generatePrintId());
+    if (kind === "ללא הדפסה")
+    {
+        printId = "00000";
+    }
     const message = {
         action: "addToCart",
         printId: printId,
@@ -2767,7 +2772,9 @@ function addToCart() {
     window.parent.postMessage(message, "*");
 
     // Update the currentPrintId
-    currentPrintId = printId;
+    if (kind ==! "ללא הדפסה")
+    {
+currentPrintId = printId;    }
     hasAddedToCart = true;
 
     // Only save the design or description if it's not already saved
