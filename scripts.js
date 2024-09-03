@@ -2557,12 +2557,16 @@ function goBack() {
                 }
                 document.getElementById('size-selection-screen').style.display = 'none';
                 document.getElementById('default-screen').style.display = 'flex';
+                try{
+                                resetGraphicScreen();
 
+                }
+                catch{
+                }
                 // Reset design screen
                 resetDesignScreen();
 
                 // Reset graphic screen
-                resetGraphicScreen();
 
                 // Reset sizeScreen
                 sizeScreen = null;
