@@ -2744,9 +2744,11 @@ function addToCart() {
         printType = "ללא הדפסה";
     }
 
+    const printId = isEditingExisting ? currentEditingPrintId : (currentPrintId || generatePrintId());
+
     const message = {
         action: "addToCart",
-        printId: currentPrintId,
+        printId: printId,
         sizes: selectedSizes,
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
@@ -2756,6 +2758,9 @@ function addToCart() {
 
     console.log('Message being sent to parent:', message);
     window.parent.postMessage(message, "*");
+
+    // Update the currentPrintId
+    currentPrintId = printId;
     hasAddedToCart = true;
 
     // Only save the design or description if it's not already saved
@@ -2790,8 +2795,12 @@ function showSizeSelectionScreen() {
 
     // If we're coming from a previous design or description, populate the quantities
     if (isEditingExisting) {
-        // You might need to implement a function to populate the quantities based on the existing design or description
+        headerElement.textContent = 'עריכת מידות להדפסה קיימת';
+        addToCartButton.textContent = 'עדכן עגלה';
         populateQuantitiesFromExisting(currentEditingPrintId);
+    } else {
+        headerElement.textContent = 'בחירת מידות';
+        addToCartButton.textContent = 'הוסף לעגלה';
     }
 }
 
@@ -3214,6 +3223,7 @@ function loadDesign(printId) {
 
         isEditingExisting = true;
         currentEditingPrintId = design.printId;
+        currentPrintId = design.printId; // Set the currentPrintId to the existing printId
         sizeScreen = "designPrints";
         previousScreen = 'previous-designs';
 
@@ -3224,7 +3234,6 @@ function loadDesign(printId) {
         ]).then(([frontImageURL, backImageURL]) => {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
-            // Move directly to size selection screen
             showSizeSelectionScreen();
         });
     }
@@ -3376,10 +3385,10 @@ function loadDescription(printId) {
 
         isEditingExisting = true;
         currentEditingPrintId = description.printId;
+        currentPrintId = description.printId; // Set the currentPrintId to the existing printId
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
-        // Move directly to size selection screen
         showSizeSelectionScreen();
     } else {
         console.log("No description found for printId:", printId);
@@ -3516,7 +3525,7 @@ window.addEventListener('load', () => {
     selectedColor = "אפור";
     availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
    availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
-    existingPrintIds = new Set(["17471", "60922","30142","56844"]);
+    existingPrintIds = new Set(["17471", "60922","30209","71167"]);
 
 
     loadSavedDesigns();
