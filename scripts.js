@@ -19,6 +19,8 @@ let availableSizes = [];
 let selectedColors = [];
 let previousScreen = null;
 
+let currentPrintId = null;
+
 
 let currentlySelectedColor = '';
     let availableColors = [];
@@ -2542,9 +2544,13 @@ function goBack() {
         previousScreen = null;
     } else {
         // Original back functionality
-        if (sizeScreen === "designPrints") {
+        if (sizeScreen === "designPrints" || sizeScreen === "graphicPage") {
+            if (currentPrintId) {
+                existingPrintIds.add(currentPrintId);
+                currentPrintId = null; // Reset the currentPrintId
+            }
             document.getElementById('size-selection-screen').style.display = 'none';
-            document.getElementById('next-step-screen').style.display = 'flex';
+            document.getElementById('default-screen').style.display = 'flex';
         } else if (sizeScreen === "noPrints") {
             document.getElementById('size-selection-screen').style.display = 'none';
             document.getElementById('default-screen').style.display = 'flex';
@@ -2620,9 +2626,10 @@ function addToCart() {
     let kind = sizeScreen === "noPrints" ? "ללא הדפסה" :
                  sizeScreen === "designPrints" ? "מקדימה ומאחורה" : selectedType1;
 
-    // Set the printId based on the kind of product
-    const printId = kind === "ללא הדפסה" ? "00000" :
-                    (isEditingExisting ? currentEditingPrintId : generatePrintId());
+    // Use the existing printId if available, otherwise generate a new one
+    if (!currentPrintId) {
+        currentPrintId = generatePrintId();
+    }
 
     const selectedSizes = {};
     Object.entries(colorQuantities).forEach(([color, sizes]) => {
@@ -2634,7 +2641,6 @@ function addToCart() {
         });
     });
 
-    // Determine the printType
     let printType;
     if (sizeScreen === "graphicPage") {
         printType = selectedType1;
@@ -2653,7 +2659,7 @@ function addToCart() {
         } else {
             printType = "ללא הדפסה";
         }
-        console.log("מיקום " + printType)
+        console.log("מיקום " + printType);
         kind = printType;
     } else {
         printType = "ללא הדפסה";
@@ -2661,7 +2667,7 @@ function addToCart() {
 
     const message = {
         action: "addToCart",
-        printId: printId,
+        printId: currentPrintId,
         sizes: selectedSizes,
         frontImage: sizeScreen === "graphicPage" ? SfrontImageURLGraphic : SfrontImageURL,
         backImage: sizeScreen === "graphicPage" ? SbackImageURLGraphic : SbackImageURL,
@@ -2669,16 +2675,14 @@ function addToCart() {
         kind: kind
     };
 
-    // Console log the message
     console.log('Message being sent to parent:', message);
-
-    // Send the message to the parent window
     window.parent.postMessage(message, "*");
 
-    if (sizeScreen === "graphicPage") {
-        saveDescription(printId);
-    } else if (sizeScreen === "designPrints") {
-        saveDesign(printId);
+    // Only save the design or description if it's not already saved
+    if (sizeScreen === "graphicPage" && !savedDescriptions.some(d => d.printId === currentPrintId)) {
+        saveDescription(currentPrintId);
+    } else if (sizeScreen === "designPrints" && !savedDesigns.some(d => d.printId === currentPrintId)) {
+        saveDesign(currentPrintId);
     }
 
     // Reset editing state
