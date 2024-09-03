@@ -2842,20 +2842,30 @@ document.getElementById('proceed-to-next').addEventListener('click', function() 
         return;
     }
 
+    let printType;
+    if (hasFrontContent && hasBackContent) {
+        printType = "מקדימה ומאחורה";
+    } else if (hasFrontContent) {
+        printType = "מקדימה";
+    } else if (hasBackContent) {
+        printType = "מאחורה";
+    } else {
+        printType = "ללא הדפסה";
+    }
+
     if (isEditMode) {
         saveDesign(currentEditPrintId);
-        // Send finishEdit message to parent
+        // Send finishEdit message to parent with the determined printType
         window.parent.postMessage({
             action: "finishEdit",
             printId: currentEditPrintId,
-            kind: "מקדימה ומאחורה",
+            kind: printType,
             comment: document.getElementById('comment').value,
             frontImage: SfrontImageURL,
             backImage: SbackImageURL
         }, "*");
 
         alert('עיצוב עודכן בהצלחה');
-
     } else {
         sizeScreen = "designPrints";
         showSizeSelectionScreen();
@@ -3545,7 +3555,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("30209");
+    testEditPrint("32576");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
