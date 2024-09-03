@@ -2569,6 +2569,8 @@ function goBack() {
                 // Reset the hasAddedToCart flag
                 hasAddedToCart = false;
             } else {
+                document.getElementById('size-selection-screen').style.display = 'none';
+
                 // User hasn't added to cart, so we go back to the previous screen
                 if (sizeScreen === "designPrints") {
                     showNextStepScreen();
