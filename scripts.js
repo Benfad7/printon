@@ -2800,6 +2800,7 @@ function showSizeSelectionScreen() {
     const addToCartButton = document.getElementById('add-to-cart-button');
 
     if (isEditingExisting) {
+
         headerElement.textContent = 'עריכת מידות להדפסה קיימת';
         addToCartButton.textContent = 'עדכן עגלה';
     } else {
@@ -2888,6 +2889,8 @@ else if (event.data.action === "editPrint") {
         showDesignScreen();
         hideGoBackButton();
         found = true;
+                document.getElementById('size-selection-screen').style.display = 'none';
+
     }
 
     // Check for saved descriptions
@@ -3248,7 +3251,6 @@ function loadDesign(printId) {
         ]).then(([frontImageURL, backImageURL]) => {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
-            showSizeSelectionScreen();
         });
     }
 }
@@ -3403,7 +3405,6 @@ function loadDescription(printId) {
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
-        showSizeSelectionScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
@@ -3544,7 +3545,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-  //testEditPrint("26515");
+    testEditPrint("30209");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
