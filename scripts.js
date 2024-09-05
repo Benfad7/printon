@@ -3251,7 +3251,7 @@ function loadDesign(printId) {
 
         isEditingExisting = true;
         currentEditingPrintId = design.printId;
-        currentPrintId = design.printId; // Set the currentPrintId to the existing printId
+        currentPrintId = design.printId;
         sizeScreen = "designPrints";
         previousScreen = 'previous-designs';
 
@@ -3262,10 +3262,12 @@ function loadDesign(printId) {
         ]).then(([frontImageURL, backImageURL]) => {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
+
+            // After loading the design, show the size selection screen
+            showSizeSelectionScreen();
         });
     }
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     const previousDesignsButton = document.getElementById('previous-designs');
     if (previousDesignsButton) {
@@ -3412,10 +3414,12 @@ function loadDescription(printId) {
 
         isEditingExisting = true;
         currentEditingPrintId = description.printId;
-        currentPrintId = description.printId; // Set the currentPrintId to the existing printId
+        currentPrintId = description.printId;
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
+        // After loading the description, show the size selection screen
+        showSizeSelectionScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
