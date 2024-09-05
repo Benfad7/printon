@@ -2545,4 +2545,10 @@ margin-right: -25px;
     color: #34495e;
     font-weight: 700; /* Changed from 600 to 700 for bolder text */
     font-size: 18px; /* Increased from 16px to 18px for larger text */
-}
+}#previous-designs-screen .container {
+
+     max-height: 80vh; /* Added to limit the height */
+     overflow-y: auto; /* Added to enable vertical scrolling within the container */
+         scrollbar-width: none; /* Firefox */
+         -ms-overflow-style: none; /* Internet Explorer 10+ */
+ }
