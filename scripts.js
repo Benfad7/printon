@@ -3253,7 +3253,10 @@ function loadDesign(printId) {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
 
-
+            if (!isEditMode)
+            {
+                        showSizeSelectionScreen();
+            }
         });
     }
 }
@@ -3408,7 +3411,10 @@ function loadDescription(printId) {
         previousScreen = 'previous-descriptions';
 
         // After loading the description, show the size selection screen
-    } else {
+            if (!isEditMode)
+            {
+                        showSizeSelectionScreen();
+            }    } else {
         console.log("No description found for printId:", printId);
     }
 }
@@ -3548,7 +3554,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("82547");
+    testEditPrint("82f547");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
