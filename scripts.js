@@ -1071,23 +1071,31 @@
     const addTextButton = document.querySelector('.add-text');
     const textInput = document.getElementById('text-input');
     const addToDesignButton = document.getElementById('add-to-design-button');
-
+function addTextToDesign() {
+    const textToAdd = textInput.value;
+    if (textToAdd.trim() !== '') {
+        createTextObject(textToAdd);
+        showScreen(screen1); // Return to the main screen after adding text
+    }
+}
+textInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent the default form submission
+        addTextToDesign();
+    }
+});
     // Add event listener for the "Add Text" button on the first screen
     addTextButton.addEventListener('click', function() {
         showScreen(screen3);
         setClickedOption(blackStripAddText);
+            document.getElementById('text-input').focus();
+
     });
 
     // Clear the input field when showing screen3
 
     // For now, we'll just log the entered text when the "Add To Design" button is clicked
-    addToDesignButton.addEventListener('click', function() {
-        const textToAdd = textInput.value;
-        if (textToAdd.trim() !== '') {
-            createTextObject(textToAdd);
-            showScreen(screen1); // Return to the main screen after adding text
-        }
-    });
+addToDesignButton.addEventListener('click', addTextToDesign);
     let lastInputValue = '';
 
     textInput.addEventListener('focus', function() {
@@ -3564,14 +3572,13 @@
         // If in edit mode, do nothing or show a message that going back is not allowed
     });
     window.addEventListener('load', () => {
-    /*
+
         const productId = "77c43bdc-9344-0207-bd68-e3c65f5aba44";
         selectedColor = "תכלת";
         availableSizes = ["S", "M", "L", "XL", "XXL", "XXXXL"];
        availableColors =  ["שחור", "לבן", "נייבי", "אפור", "אדום", "ירוק זית"];
         existingPrintIds = new Set(["17471", "60922","30209","71167"]);
 
-    */
         loadSavedDesigns();
         loadSavedDescriptions();
        // testEditPrint("f11839");
