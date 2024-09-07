@@ -2113,55 +2113,95 @@ addToDesignButton.addEventListener('click', addTextToDesign);
 
     });
 
-    function captureDivToImageURL(div) {
-        // Store the original display style
-        const originalDisplay = div.style.display;
+function captureDivToImageURL(div) {
+    // Store the original display style
+    const originalDisplay = div.style.display;
 
-        // Make the div visible temporarily if it's hidden
-        if (originalDisplay === 'none') {
-            div.style.display = 'block';
-        }
-
-        // Remove selection and hover effects
-        const selectedElements = div.querySelectorAll('.selected, .image-container:hover, .text-container:hover');
-        selectedElements.forEach(el => {
-            el.classList.remove('selected');
-            el.style.border = 'none';
-        });
-
-        // Create a new canvas with the same dimensions as the div
-        const canvas = document.createElement('canvas');
-        canvas.width = div.offsetWidth;
-        canvas.height = div.offsetHeight;
-        const ctx = canvas.getContext('2d');
-
-        // Set the background color based on the currentlySelectedColor
-        if (currentlySelectedColor && currentlySelectedColor !== 'לבן') {
-            ctx.fillStyle = getColorHex(currentlySelectedColor);
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        } else {
-            // Default to white if no color is selected or if it's white
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
-        return html2canvas(div, {
-            canvas: canvas,
-            backgroundColor: null // This ensures our custom background is used
-        }).then(renderedCanvas => {
-            // Restore the original display style
-            div.style.display = originalDisplay;
-
-            // Restore selection and hover effects
-            selectedElements.forEach(el => {
-                el.classList.add('selected');
-                el.style.border = '2px solid #000';
-            });
-
-            return renderedCanvas.toDataURL('image/png');
-        });
+    // Make the div visible temporarily if it's hidden
+    if (originalDisplay === 'none') {
+        div.style.display = 'block';
     }
-    function getColorHex(colorName) {
+
+    // Remove selection and hover effects
+    const selectedElements = div.querySelectorAll('.selected, .image-container:hover, .text-container:hover');
+    selectedElements.forEach(el => {
+        el.classList.remove('selected');
+        el.style.border = 'none';
+    });
+
+    return html2canvas(div, {
+        backgroundColor: null, // This ensures our custom background is used
+        scale: 2, // Increase resolution
+        logging: false, // Disable logging
+        useCORS: true // Try to load images from other domains
+    }).then(renderedCanvas => {
+        // Restore the original display style
+        div.style.display = originalDisplay;
+
+        // Restore selection and hover effects
+        selectedElements.forEach(el => {
+            el.classList.add('selected');
+            el.style.border = '2px solid #000';
+        });
+
+        // Find the bounding box of non-transparent pixels
+        const ctx = renderedCanvas.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, renderedCanvas.width, renderedCanvas.height);
+        const bounds = findContentBounds(imageData);
+
+        // Crop the canvas to the content
+        const croppedCanvas = document.createElement('canvas');
+        croppedCanvas.width = bounds.width;
+        croppedCanvas.height = bounds.height;
+        const croppedCtx = croppedCanvas.getContext('2d');
+
+        // Draw background
+        croppedCtx.fillStyle = currentlySelectedColor && currentlySelectedColor !== 'לבן'
+            ? getColorHex(currentlySelectedColor)
+            : '#FFFFFF';
+        croppedCtx.fillRect(0, 0, croppedCanvas.width, croppedCanvas.height);
+
+        // Draw cropped content
+        croppedCtx.drawImage(renderedCanvas,
+            bounds.left, bounds.top, bounds.width, bounds.height,
+            0, 0, bounds.width, bounds.height
+        );
+
+        return croppedCanvas.toDataURL('image/png');
+    });
+}
+
+function findContentBounds(imageData) {
+    const width = imageData.width;
+    const height = imageData.height;
+    let minX = width, minY = height, maxX = 0, maxY = 0;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const alpha = imageData.data[(y * width + x) * 4 + 3];
+            if (alpha !== 0) {
+                minX = Math.min(minX, x);
+                minY = Math.min(minY, y);
+                maxX = Math.max(maxX, x);
+                maxY = Math.max(maxY, y);
+            }
+        }
+    }
+
+    // Add padding
+    const padding = 20;
+    minX = Math.max(0, minX - padding);
+    minY = Math.max(0, minY - padding);
+    maxX = Math.min(width - 1, maxX + padding);
+    maxY = Math.min(height - 1, maxY + padding);
+
+    return {
+        left: minX,
+        top: minY,
+        width: maxX - minX,
+        height: maxY - minY
+    };
+}    function getColorHex(colorName) {
         const colorMap = {
             'שחור': '#000000',
             'כחול כהה': '#0e0b22',
