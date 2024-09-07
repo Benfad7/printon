@@ -2808,16 +2808,6 @@ function showSizeSelectionScreen() {
         headerElement.textContent = 'בחירת מידות';
         addToCartButton.textContent = 'הוסף לעגלה';
     }
-
-    // If we're coming from a previous design or description, populate the quantities
-    if (isEditingExisting) {
-        headerElement.textContent = 'עריכת מידות להדפסה קיימת';
-        addToCartButton.textContent = 'עדכן עגלה';
-        populateQuantitiesFromExisting(currentEditingPrintId);
-    } else {
-        headerElement.textContent = 'בחירת מידות';
-        addToCartButton.textContent = 'הוסף לעגלה';
-    }
 }
 
 function goBackToPreviousScreen() {
@@ -3263,8 +3253,7 @@ function loadDesign(printId) {
             SfrontImageURL = frontImageURL;
             SbackImageURL = backImageURL;
 
-            // After loading the design, show the size selection screen
-            showSizeSelectionScreen();
+
         });
     }
 }
@@ -3419,7 +3408,6 @@ function loadDescription(printId) {
         previousScreen = 'previous-descriptions';
 
         // After loading the description, show the size selection screen
-        showSizeSelectionScreen();
     } else {
         console.log("No description found for printId:", printId);
     }
@@ -3560,7 +3548,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-   // testEditPrint("32576");
+    testEditPrint("82547");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
