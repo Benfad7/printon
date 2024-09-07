@@ -3404,13 +3404,24 @@ function loadDescription(printId) {
         SfrontImageURLGraphic = description.frontImage || '';
         SbackImageURLGraphic = description.backImage || '';
 
+        // Update the UI elements
+        document.getElementById('print-type').value = convertPrintTypeToValue(description.printType);
+        document.getElementById('print-comment').value = description.comment;
+
+        // Update file upload UI
+        updateFileUploadUI('front-upload', !!description.frontImage);
+        updateFileUploadUI('back-upload', !!description.backImage);
+
+        // Show/hide upload fields based on print type
+        updateFileUploadVisibility();
+
         isEditingExisting = true;
         currentEditingPrintId = description.printId;
         currentPrintId = description.printId;
         sizeScreen = "graphicPage";
         previousScreen = 'previous-descriptions';
 
-        // After loading the description, show the size selection screen
+        // Show the graphic screen with loaded data
             if (!isEditMode)
             {
                         showSizeSelectionScreen();
@@ -3418,6 +3429,16 @@ function loadDescription(printId) {
         console.log("No description found for printId:", printId);
     }
 }
+
+function convertPrintTypeToValue(printType) {
+    switch(printType) {
+        case "מקדימה": return "front";
+        case "מאחורה": return "back";
+        case "מקדימה ומאחורה": return "both";
+        default: return "";
+    }
+}
+
 function updateFileUploadUI(uploadId, fileUploaded) {
     const uploadElement = document.getElementById(uploadId);
     if (uploadElement) {
@@ -3434,7 +3455,6 @@ function updateFileUploadUI(uploadId, fileUploaded) {
         }
     }
 }
-
 function resetUploadField(fieldId) {
     const uploadField = document.getElementById(fieldId);
     uploadField.querySelector('input[type="file"]').value = '';
@@ -3554,7 +3574,7 @@ window.addEventListener('load', () => {
 
     loadSavedDesigns();
     loadSavedDescriptions();
-    testEditPrint("82f547");
+    testEditPrint("f11839");
 
     initializeSizeSelectionScreen();
         updateBackgroundAndButtons(); // Add this line
