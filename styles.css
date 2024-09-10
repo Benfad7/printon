@@ -2540,7 +2540,18 @@ margin-right: -25px;
      overflow-y: auto; /* Added to enable vertical scrolling within the container */
          scrollbar-width: none; /* Firefox */
          -ms-overflow-style: none; /* Internet Explorer 10+ */
- }@media (max-width: 768px) {
+ }
+
+
+
+
+
+
+
+
+
+
+ @media (max-width: 768px) {
       #default-screen {
           padding: 5vh 20px 80px;
       }
