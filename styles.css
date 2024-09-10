@@ -2603,12 +2603,21 @@ margin-right: -25px;
         max-width: 200px;
     }
 
-    .previous-button {
+.previous-button {
         width: 100%;
         max-width: 200px;
         margin-top: 15px;
         height: 40px;
     }
+
+    .previous-button span {
+        font-size: 14px; /* Reduced from 18px to 14px for mobile */
+    }
+
+    .previous-button i {
+        font-size: 24px; /* Reduced from 24px to 18px for mobile */
+    }
+
 
     #previous-descriptions {
         position: static;
