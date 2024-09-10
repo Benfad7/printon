@@ -3654,7 +3654,14 @@ document.addEventListener('DOMContentLoaded', function() {
         <i class="fas fa-cloud-upload-alt cloud-icon"></i>
         <div class="upload-text-box">לחץ כאן להעלאת תמונה</div>
       </div>
+      <input type="file" id="mobile-file-input" style="display: none;">
     `);
+
+    const uploadBox = mobileScreenContent.querySelector('.upload-box');
+    const fileInput = document.getElementById('mobile-file-input');
+
+    uploadBox.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', handleMobileFileSelection);
   });
 
   mobileAddText.addEventListener('click', function() {
@@ -3662,10 +3669,119 @@ document.addEventListener('DOMContentLoaded', function() {
       <input type="text" class="text-input" placeholder="הקלד טקסט כאן">
       <button class="add-to-design-button">הוסף לעיצוב</button>
     `);
+
+    const textInput = mobileScreenContent.querySelector('.text-input');
+    const addButton = mobileScreenContent.querySelector('.add-to-design-button');
+
+    addButton.addEventListener('click', () => {
+      if (textInput.value.trim() !== '') {
+        createMobileTextObject(textInput.value);
+        hideMobileScreen();
+      }
+    });
   });
 
   mobileCloseButton.addEventListener('click', hideMobileScreen);
 
-  // Existing code for handling file uploads and text addition
-  // You'll need to modify these functions to work with the mobile layout
+  function handleMobileFileSelection(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        createMobileImageContainer(e.target.result, file.name);
+        hideMobileScreen();
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function createMobileImageContainer(src, fileName) {
+    const imgContainer = document.createElement('div');
+    imgContainer.classList.add('image-container');
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.setAttribute('data-original-src', src);
+
+    imgContainer.appendChild(img);
+    currentCanvas.appendChild(imgContainer);
+
+    setupMobileImageInteractions(imgContainer, img);
+  }
+
+  function createMobileTextObject(text) {
+    const textContainer = document.createElement('div');
+    textContainer.classList.add('text-container');
+
+    const textElement = document.createElement('p');
+    textElement.textContent = text;
+
+    textContainer.appendChild(textElement);
+    currentCanvas.appendChild(textContainer);
+
+    setupMobileTextInteractions(textContainer, textElement);
+  }
+
+  function setupMobileImageInteractions(container, img) {
+    // Add mobile-specific touch events for dragging, resizing, etc.
+    // This is a simplified example; you may need to add more complex touch handling
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
+
+    container.addEventListener('touchstart', function(e) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startLeft = container.offsetLeft;
+      startTop = container.offsetTop;
+    });
+
+    document.addEventListener('touchmove', function(e) {
+      if (isDragging) {
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+        container.style.left = `${startLeft + dx}px`;
+        container.style.top = `${startTop + dy}px`;
+      }
+    });
+
+    document.addEventListener('touchend', function() {
+      isDragging = false;
+    });
+  }
+
+  function setupMobileTextInteractions(container, textElement) {
+    // Add mobile-specific touch events for dragging, editing, etc.
+    // This is a simplified example; you may need to add more complex touch handling
+    let isDragging = false;
+    let startX, startY, startLeft, startTop;
+
+    container.addEventListener('touchstart', function(e) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      startLeft = container.offsetLeft;
+      startTop = container.offsetTop;
+    });
+
+    document.addEventListener('touchmove', function(e) {
+      if (isDragging) {
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+        container.style.left = `${startLeft + dx}px`;
+        container.style.top = `${startTop + dy}px`;
+      }
+    });
+
+    document.addEventListener('touchend', function() {
+      isDragging = false;
+    });
+
+    textElement.addEventListener('dblclick', function() {
+      const newText = prompt('Edit text:', textElement.textContent);
+      if (newText !== null) {
+        textElement.textContent = newText;
+      }
+    });
+  }
 });
