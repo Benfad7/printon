@@ -3630,15 +3630,42 @@ function findContentBounds(imageData) {
 
 
     })
-    document.addEventListener('DOMContentLoaded', function() {
-      const mobileUpload = document.getElementById('mobile-upload');
-      const mobileAddText = document.getElementById('mobile-add-text');
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileDesignContainer = document.getElementById('mobile-design-container');
+  const mobileUpload = document.getElementById('mobile-upload');
+  const mobileAddText = document.getElementById('mobile-add-text');
+  const mobileCloseButton = document.querySelector('.mobile-close-button');
+  const mobileScreenTitle = document.querySelector('.mobile-screen-title');
+  const mobileScreenContent = document.querySelector('.mobile-screen-content');
 
-      mobileUpload.addEventListener('click', function() {
-        showScreen(screen2);
-      });
+  function showMobileScreen(title, content) {
+    mobileScreenTitle.textContent = title;
+    mobileScreenContent.innerHTML = content;
+    mobileDesignContainer.style.display = 'block';
+  }
 
-      mobileAddText.addEventListener('click', function() {
-        showScreen(screen3);
-      });
-    });
+  function hideMobileScreen() {
+    mobileDesignContainer.style.display = 'none';
+  }
+
+  mobileUpload.addEventListener('click', function() {
+    showMobileScreen('העלאת תמונה', `
+      <div class="upload-box">
+        <i class="fas fa-cloud-upload-alt cloud-icon"></i>
+        <div class="upload-text-box">לחץ כאן להעלאת תמונה</div>
+      </div>
+    `);
+  });
+
+  mobileAddText.addEventListener('click', function() {
+    showMobileScreen('הוספת טקסט', `
+      <input type="text" class="text-input" placeholder="הקלד טקסט כאן">
+      <button class="add-to-design-button">הוסף לעיצוב</button>
+    `);
+  });
+
+  mobileCloseButton.addEventListener('click', hideMobileScreen);
+
+  // Existing code for handling file uploads and text addition
+  // You'll need to modify these functions to work with the mobile layout
+});
