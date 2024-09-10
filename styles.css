@@ -2501,18 +2501,7 @@ margin-right: -25px;
     z-index: 0;
 }
 
-@media (max-width: 768px) {
-    .history-icon {
-        width: 40px;
-        height: 40px;
-        top: 10px;
-        right: 10px;
-    }
 
-    .history-icon i {
-        font-size: 22px;
-    }
-}
 #return-from-previous-descriptions {
     display: block;
     margin: 0 auto;
@@ -2551,4 +2540,76 @@ margin-right: -25px;
      overflow-y: auto; /* Added to enable vertical scrolling within the container */
          scrollbar-width: none; /* Firefox */
          -ms-overflow-style: none; /* Internet Explorer 10+ */
- }
+ }@media (max-width: 768px) {
+      #default-screen {
+          padding: 5vh 20px 80px;
+      }
+
+      .default-title {
+          font-size: 24px;
+          margin-bottom: 20px;
+      }
+
+      .option-container {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto;
+          gap: 15px;
+          width: 100%;
+      }
+
+      .option-group {
+          width: 100%;
+      }
+
+      .option-button {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 1 / 1;
+          margin: 0;
+          padding: 10px;
+      }
+
+      .option-button i {
+          font-size: 2.5em;
+      }
+
+      .option-button span {
+          font-size: 14px;
+      }
+
+      /* Target the third button specifically */
+      .option-group:nth-child(3) {
+          grid-column: 1 / -1;
+          justify-self: center;
+          max-width: 200px;
+      }
+
+      .previous-button {
+          width: 100%;
+          max-width: 200px;
+          margin-top: 15px;
+          height: 40px;
+      }
+
+      #previous-descriptions {
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: calc(100% - 40px);
+          max-width: 200px;
+      }
+
+      .history-icon {
+          top: 5px;
+          right: 5px;
+          width: 25px;
+          height: 25px;
+      }
+
+      .history-icon i {
+          font-size: 16px;
+          padding-top: 12px;
+      }
+  }
