@@ -2548,106 +2548,105 @@ margin-right: -25px;
 
 @media (max-width: 768px) {
   #default-screen {
-       padding: 2vh 0px 120px;
-       position: relative;
-       min-height: 100vh;
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-   }
+    padding: 2vh 0px 120px;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-   .default-title {
-       font-size: 34px;
-       margin-bottom: 30px;
-       width: 100%;
-       display: flex;
-       justify-content: center;
-       align-items: center;
-       text-align: center;
-       padding: 0 20px;
-       box-sizing: border-box;
-   }
+  .default-title {
+    font-size: 34px;
+    margin-bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
 
   .option-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto auto;
-        gap: 15px;
-        width: 100%;
-        flex-grow: 1;
-    }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 15px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
 
-    .option-group {
-        width: 100%;
-    }
+  .option-group {
+    width: 100%;
+  }
 
-    .option-button {
-        width: 90%;
-        height: auto;
-        aspect-ratio: 1 / 1;
-        margin: 0;
-        padding: 10px;
-    }
+  .option-group:nth-child(1) { order: 3;    grid-column: 1 / -1;
+                                            justify-self: center; } /* Green button */
+  .option-group:nth-child(2) { order: 1; } /* Blue button */
+  .option-group:nth-child(3) {
+    order: 2;
 
-    .option-button i {
-        font-size: 2.5em;
-    }
+  }
 
-    .option-button span {
-        font-size: 20px;
-    }
+  .option-button {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    padding: 10px;
+  }
 
-    .option-group:nth-child(3) {
-        grid-column: 1 / -1;
-        justify-self: center;
-        max-width: 200px;
-    }
+  .option-button i {
+    font-size: 2.5em;
+  }
 
-.previous-button {
-        width: 100%;
-        max-width: 200px;
-        margin-top: 15px;
-        height: 40px;
-    }
+  .option-button span {
+    font-size: 18px;
+  }
 
-    .previous-button span {
-        font-size: 14px; /* Reduced from 18px to 14px for mobile */
-    }
+  .previous-button {
+    width: 100%;
+    max-width: 200px;
+    margin-top: 15px;
+    height: 40px;
+  }
 
-    .previous-button i {
-        font-size: 24px; /* Reduced from 24px to 18px for mobile */
-    }
+  .previous-button span {
+    font-size: 14px;
+  }
 
+  .previous-button i {
+    font-size: 24px;
+  }
 
-    #previous-descriptions {
-        position: static;
-        margin: 10px auto;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: calc(90% - 40px);
-        max-width: 200px;
-    }
+  #previous-descriptions {
+    position: static;
+    margin: 10px auto;
+    width: calc(90% - 40px);
+    max-width: 200px;
+  }
 
-    .previous-buttons-container {
-        position: absolute;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+  .previous-buttons-container {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .history-icon {
-        top: 5px;
-        right: 5px;
-        width: 25px;
-        height: 25px;
-    }
+  .history-icon {
+    top: 5px;
+    right: 5px;
+    width: 25px;
+    height: 25px;
+  }
 
-    .history-icon i {
-        font-size: 16px;
-        padding-top: 12px;
-    }
- }
+  .history-icon i {
+    font-size: 16px;
+    padding-top: 12px;
+  }
+}
