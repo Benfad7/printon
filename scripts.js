@@ -3630,3 +3630,15 @@ function findContentBounds(imageData) {
 
 
     })
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileUpload = document.getElementById('mobile-upload');
+      const mobileAddText = document.getElementById('mobile-add-text');
+
+      mobileUpload.addEventListener('click', function() {
+        showScreen(screen2);
+      });
+
+      mobileAddText.addEventListener('click', function() {
+        showScreen(screen3);
+      });
+    });
