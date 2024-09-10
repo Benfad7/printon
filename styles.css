@@ -2557,7 +2557,7 @@ margin-right: -25px;
   }
 
   .default-title {
-    font-size: 34px;
+    font-size: 30px;
     margin-bottom: 50px;
     width: 100%;
     display: flex;
@@ -2604,31 +2604,33 @@ margin-right: -25px;
     padding: 10px;
   }
 
-  .option-button i {
-    font-size: 2.5em;
-  }
 
+.option-button i {
+  font-size: 3rem !important; /* Use !important to ensure this rule takes precedence */
+    margin-bottom: 9px !important;
+}
   .option-button span {
-    font-size: 18px;
+    font-size: 12px;
+    line-height: 1.2;
   }
 
   .previous-button {
-    width: 100%;
+    width: 120%;
     max-width: 200px;
     margin-top: 10px;
     height: 40px;
   }
 
   .previous-button span {
-    font-size: 14px;
+    font-size: 8px;
   }
 
   .previous-button i {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   #previous-descriptions {
-    width: 100%;
+    width: 120%;
     max-width: 200px;
     margin-top: 10px;
     height: 40px;
