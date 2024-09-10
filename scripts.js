@@ -2103,6 +2103,7 @@ addToDesignButton.addEventListener('click', addTextToDesign);
             document.querySelector('.main-container').style.height = '100vh';
         });
         goBackButton.addEventListener('click', function() {
+
             showDefaultScreen();
         });
         // Show the default screen initially
@@ -3293,19 +3294,11 @@ function findContentBounds(imageData) {
             sizeScreen = "designPrints";
             previousScreen = 'previous-designs';
 
-            // Capture images
-            Promise.all([
-                captureDivToImageURL(frontCanvas),
-                captureDivToImageURL(backCanvas)
-            ]).then(([frontImageURL, backImageURL]) => {
-                SfrontImageURL = frontImageURL;
-                SbackImageURL = backImageURL;
 
                 if (!isEditMode)
                 {
                             showSizeSelectionScreen();
                 }
-            });
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
@@ -3336,6 +3329,9 @@ function findContentBounds(imageData) {
     }document.getElementById('return-from-previous-designs').addEventListener('click', function() {
          document.getElementById('previous-designs-screen').style.display = 'none';
          document.getElementById('default-screen').style.display = 'flex';
+                         isEditingExisting = false;
+                         currentEditingPrintId = null;
+                         currentPrintId = null
      });
 
     document.getElementById('previous-descriptions').addEventListener('click', showPreviousDescriptionsScreen);
@@ -3349,6 +3345,9 @@ function findContentBounds(imageData) {
     document.getElementById('return-from-previous-descriptions').addEventListener('click', function() {
         document.getElementById('previous-descriptions-screen').style.display = 'none';
         document.getElementById('default-screen').style.display = 'flex';
+                        isEditingExisting = false;
+                        currentEditingPrintId = null;
+                        currentPrintId = null
     });
     function saveDescription(printId) {
         const description = {
