@@ -464,6 +464,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
                 !event.target.closest('.image-container') &&
                 !event.target.closest('.text-container')) {
                 showScreen('screen1');
+                            deselectAllObjects();
+
                 document.querySelectorAll('.black-strip-option').forEach(option => {
                     option.classList.remove('clicked');
                 });
@@ -1861,10 +1863,12 @@ function deselectAllObjects() {
         if (deleteHandle) deleteHandle.style.display = 'none';
     });
 }
+
     currentCanvas.addEventListener('click', function(event) {
         // Check if the click is directly on the canvas and not on any object
         if (event.target === currentCanvas) {
             deselectAllObjects();
+
             showScreen(screen1); // Return to the main screen
         }
     });
