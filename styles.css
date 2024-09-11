@@ -2947,8 +2947,74 @@ margin-right: -25px;
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
+    }#mobile-background {
+         display: block;
+         position: fixed;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background-color: #f0f0f0; /* Light gray background */
+         z-index: -1;
+       }
 
+       .main-container {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+         height: 100vh;
+         padding: 0;
+         box-sizing: border-box;
+       }
+
+       .left-side, .right-side {
+         width: 100%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+       }
+
+       .canvas {
+         width: 90vw;
+         height: 90vw; /* Make it square */
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         margin: 0;
+         background-color: transparent;
+         border: 2px solid #ccc;
+       }
+
+       .white-square {
+         display: none;
+       }
+
+       #get-price-button-container,
+       #go-back-button-container {
+         position: fixed;
+         bottom: 20px;
+         z-index: 1000;
+       }
+
+       #get-price-button-container {
+         right: 20px;
+       }
+
+       #go-back-button-container {
+         left: 20px;
+       }
+
+       /* Hide undo/redo buttons */
+       #undo-redo-control {
+         display: none;
+       }
+
+       /* Hide front/back switch */
+       #front-back-control {
+         display: none;
+       }
 }
 #mobile-background {
     display: none;
