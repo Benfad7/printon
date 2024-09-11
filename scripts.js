@@ -1,4 +1,4 @@
-    const canvas = document.getElementById('canvas');
+ const canvas = document.getElementById('canvas');
     const fileInput = document.getElementById('upload');
     const contextMenu = document.getElementById('context-menu');
     const contextMoveForward = document.getElementById('context-move-forward');
