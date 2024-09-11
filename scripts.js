@@ -203,21 +203,16 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     imgContainer.addEventListener('mousedown', startDragging);
     imgContainer.addEventListener('touchstart', startDragging);
 
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
-
-    document.addEventListener('mouseup', endDragging);
-    document.addEventListener('touchend', endDragging);
-
     function startDragging(event) {
         if (event.target === img && !isResizing) {
+            deselectAllObjects();
             isDragging = true;
+            imgContainer.classList.add('selected');
             startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
             startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
             startLeft = imgContainer.offsetLeft;
             startTop = imgContainer.offsetTop;
             img.style.cursor = 'grabbing';
-            imgContainer.classList.add('selected');
             imgContainer.style.border = '2px solid #000';
             resizeHandle.style.display = 'block';
             deleteHandle.style.display = 'block';
@@ -240,7 +235,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
             imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
             imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
             updateCenterButtonState(imgContainer);
-        } else if (isResizing && !isDragging) {
+        } else if (isResizing) {
             const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
             const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
             const dx = clientX - startX;
@@ -319,7 +314,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
     function hideBorder() {
         if (!imgContainer.classList.contains('selected')) {
-            imgContainer.style.border = '2px dashed transparent';
+            imgContainer.style.border = 'none';
         }
     }
 
@@ -328,13 +323,11 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
 
     function selectImage(event) {
         event.stopPropagation();
-        if (!imgContainer.classList.contains('selected')) {
-            deselectAllObjects();
-            imgContainer.classList.add('selected');
-            imgContainer.style.border = '2px solid #000';
-            resizeHandle.style.display = 'block';
-            deleteHandle.style.display = 'block';
-        }
+        deselectAllObjects();
+        imgContainer.classList.add('selected');
+        imgContainer.style.border = '2px solid #000';
+        resizeHandle.style.display = 'block';
+        deleteHandle.style.display = 'block';
 
         const imgWidth = img.offsetWidth;
         const imgHeight = img.offsetHeight;
@@ -349,8 +342,13 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
         const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
         backgroundRemovalToggle.checked = isBackgroundRemoved;
     }
-}
-    document.addEventListener('click', function(event) {
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+
+    document.addEventListener('mouseup', endDragging);
+    document.addEventListener('touchend', endDragging);
+} document.addEventListener('click', function(event) {
       if (contextMenu.style.display === 'block') {
         contextMenu.style.display = 'none';
       }
@@ -1131,6 +1129,9 @@ addToDesignButton.addEventListener('click', addTextToDesign);
 
     }
 
+
+
+
 function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
     let isDragging = false;
     let isResizing = false;
@@ -1141,12 +1142,6 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
     textContainer.addEventListener('mousedown', startDragging);
     textContainer.addEventListener('touchstart', startDragging);
-
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
-
-    document.addEventListener('mouseup', endDragging);
-    document.addEventListener('touchend', endDragging);
 
     function startDragging(event) {
         if (!isResizing) {
@@ -1191,7 +1186,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             newTop = Math.max(minTop, Math.min(newTop, maxTop));
             textContainer.style.left = newLeft + 'px';
             textContainer.style.top = newTop + 'px';
-        } else if (isResizing && !isDragging) {
+        } else if (isResizing) {
             const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
             const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
             const dx = clientX - startX;
@@ -1287,7 +1282,7 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
     function hideBorder() {
         if (!textContainer.classList.contains('selected')) {
-            textContainer.style.border = '2px dashed transparent';
+            textContainer.style.border = 'none';
             textContainer.style.cursor = 'default';
             textElement.style.cursor = 'default';
         }
@@ -1298,20 +1293,24 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
     function selectText(event) {
         event.stopPropagation();
-        if (!textContainer.classList.contains('selected')) {
-            deselectAllObjects();
-            textContainer.classList.add('selected');
-            textContainer.style.border = '2px solid #000';
-            resizeHandle.style.display = 'block';
-            deleteHandle.style.display = 'block';
-        }
+        deselectAllObjects();
+        textContainer.classList.add('selected');
+        textContainer.style.border = '2px solid #000';
+        resizeHandle.style.display = 'block';
+        deleteHandle.style.display = 'block';
         showTextEditScreen(textElement);
     }
 
     textElement.addEventListener('selectstart', function(e) {
         e.preventDefault();
     });
-}    let currentlyEditedTextElement = null;
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+
+    document.addEventListener('mouseup', endDragging);
+    document.addEventListener('touchend', endDragging);
+} let currentlyEditedTextElement = null;
     let currentOutlineColor = '#000000';
     let currentOutlineThickness = 0;
     let currentRotation = 0;
@@ -1846,22 +1845,17 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
         return rtlChars.test(text.trim()[0]);
     }
-    function deselectAllObjects() {
-        let wasAnythingDeselected = false;
-        const allObjects = currentCanvas.querySelectorAll('.image-container, .text-container');
-        allObjects.forEach(obj => {
-            if (obj.classList.contains('selected')) {
-                wasAnythingDeselected = true;
-            }
-            obj.classList.remove('selected');
-            obj.style.border = 'none';
-            const resizeHandle = obj.querySelector('.resize-handle');
-            const deleteHandle = obj.querySelector('.delete-handle');
-            if (resizeHandle) resizeHandle.style.display = 'none';
-            if (deleteHandle) deleteHandle.style.display = 'none';
-        });
-        return wasAnythingDeselected;
-    }
+function deselectAllObjects() {
+    const allObjects = currentCanvas.querySelectorAll('.image-container, .text-container');
+    allObjects.forEach(obj => {
+        obj.classList.remove('selected');
+        obj.style.border = 'none';
+        const resizeHandle = obj.querySelector('.resize-handle');
+        const deleteHandle = obj.querySelector('.delete-handle');
+        if (resizeHandle) resizeHandle.style.display = 'none';
+        if (deleteHandle) deleteHandle.style.display = 'none';
+    });
+}
     currentCanvas.addEventListener('click', function(event) {
         // Check if the click is directly on the canvas and not on any object
         if (event.target === currentCanvas) {
@@ -3601,3 +3595,14 @@ function findContentBounds(imageData) {
 
 
     })
+currentCanvas.addEventListener('mousedown', function(event) {
+    if (event.target === currentCanvas) {
+        deselectAllObjects();
+    }
+});
+
+currentCanvas.addEventListener('touchstart', function(event) {
+    if (event.target === currentCanvas) {
+        deselectAllObjects();
+    }
+});
