@@ -235,35 +235,40 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
             imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
             imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
             updateCenterButtonState(imgContainer);
-        } else if (isResizing) {
-            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
-            const dx = clientX - startX;
-            const dy = clientY - startY;
+            } else if (isResizing) {
+                   const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+                   const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+                   const dx = clientX - startX;
+                   const dy = clientY - startY;
 
-            let newWidth = startWidth + dx;
-            let newHeight = startHeight + dy;
+                   let newWidth = startWidth + dx;
+                   let newHeight = newWidth / aspectRatio;
 
-            if (newWidth / newHeight > aspectRatio) {
-                newWidth = newHeight * aspectRatio;
-            } else {
-                newHeight = newWidth / aspectRatio;
-            }
+                   const canvasRect = currentCanvas.getBoundingClientRect();
+                   const containerRect = imgContainer.getBoundingClientRect();
 
-            const maxWidth = currentCanvas.clientWidth - imgContainer.offsetLeft;
-            const maxHeight = currentCanvas.clientHeight - imgContainer.offsetTop;
+                   // Calculate maximum allowed dimensions
+                   const maxWidth = canvasRect.width - containerRect.left + canvasRect.left;
+                   const maxHeight = canvasRect.height - containerRect.top + canvasRect.top;
 
-            newWidth = Math.min(newWidth, maxWidth);
-            newHeight = Math.min(newHeight, maxHeight);
+                   // Constrain dimensions to fit within the canvas
+                   if (newWidth > maxWidth) {
+                       newWidth = maxWidth;
+                       newHeight = newWidth / aspectRatio;
+                   }
+                   if (newHeight > maxHeight) {
+                       newHeight = maxHeight;
+                       newWidth = newHeight * aspectRatio;
+                   }
 
-            newWidth = Math.max(newWidth, 50);
-            newHeight = Math.max(newHeight, 50);
+                   // Ensure minimum size
+                   newWidth = Math.max(newWidth, 50);
+                   newHeight = Math.max(newHeight, 50);
 
-            img.style.width = newWidth + 'px';
-            img.style.height = newHeight + 'px';
-        }
-    }
-
+                   img.style.width = `${newWidth}px`;
+                   img.style.height = `${newHeight}px`;
+               }
+           }
     function endDragging() {
         if (isDragging || isResizing) {
             captureCanvasState();
