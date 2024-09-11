@@ -190,87 +190,86 @@
       }
     }
 
-    function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName) {
-      let isDragging = false;
-      let isResizing = false;
-      let startX, startY, startLeft, startTop, startWidth, startHeight;
-      let aspectRatio = img.naturalWidth / img.naturalHeight;
+function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName) {
+    let isDragging = false;
+    let isResizing = false;
+    let startX, startY, startLeft, startTop, startWidth, startHeight;
+    let aspectRatio = img.naturalWidth / img.naturalHeight;
 
-      img.addEventListener('dragstart', function(event) {
+    imgContainer.addEventListener('dragstart', function(event) {
         event.preventDefault();
-      });
+    });
 
-      imgContainer.addEventListener('mousedown', function(event) {
+    imgContainer.addEventListener('mousedown', startDragging);
+    imgContainer.addEventListener('touchstart', startDragging);
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+
+    document.addEventListener('mouseup', endDragging);
+    document.addEventListener('touchend', endDragging);
+
+    function startDragging(event) {
         if (event.target === img && !isResizing) {
-          deselectAllObjects();
-          isDragging = true;
-          startX = event.clientX;
-          startY = event.clientY;
-          startLeft = imgContainer.offsetLeft;
-          startTop = imgContainer.offsetTop;
-          img.style.cursor = 'grabbing';
-          imgContainer.classList.add('selected');
-          imgContainer.style.border = '2px solid #000';
-          resizeHandle.style.display = 'block';
-          deleteHandle.style.display = 'block';
+            isDragging = true;
+            startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            startLeft = imgContainer.offsetLeft;
+            startTop = imgContainer.offsetTop;
+            img.style.cursor = 'grabbing';
+            imgContainer.classList.add('selected');
+            imgContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
         }
         event.preventDefault();
-      });
+    }
 
-      document.addEventListener('mousemove', function(event) {
+    function drag(event) {
         if (isDragging && !isResizing) {
-          const dx = event.clientX - startX;
-          const dy = event.clientY - startY;
-          const newLeft = startLeft + dx;
-          const newTop = startTop + dy;
+            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            const newLeft = startLeft + dx;
+            const newTop = startTop + dy;
 
-          const maxX = currentCanvas.clientWidth - imgContainer.offsetWidth;
-          const maxY = currentCanvas.clientHeight - imgContainer.offsetHeight;
+            const maxX = currentCanvas.clientWidth - imgContainer.offsetWidth;
+            const maxY = currentCanvas.clientHeight - imgContainer.offsetHeight;
 
-          imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
-          imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
-                      updateCenterButtonState(imgContainer);
-
+            imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
+            imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
+            updateCenterButtonState(imgContainer);
         } else if (isResizing && !isDragging) {
-          const dx = event.clientX - startX;
-          const dy = event.clientY - startY;
+            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
 
-          let newWidth = startWidth + dx;
-          let newHeight = startHeight + dy;
+            let newWidth = startWidth + dx;
+            let newHeight = startHeight + dy;
 
-          if (newWidth / newHeight > aspectRatio) {
-            newWidth = newHeight * aspectRatio;
-          } else {
-            newHeight = newWidth / aspectRatio;
-          }
+            if (newWidth / newHeight > aspectRatio) {
+                newWidth = newHeight * aspectRatio;
+            } else {
+                newHeight = newWidth / aspectRatio;
+            }
 
-          const maxWidth = currentCanvas.clientWidth - imgContainer.offsetLeft;
-          const maxHeight = currentCanvas.clientHeight - imgContainer.offsetTop;
+            const maxWidth = currentCanvas.clientWidth - imgContainer.offsetLeft;
+            const maxHeight = currentCanvas.clientHeight - imgContainer.offsetTop;
 
-          if (newWidth > maxWidth) {
-            newWidth = maxWidth;
-            newHeight = newWidth / aspectRatio;
-          }
-          if (newHeight > maxHeight) {
-            newHeight = maxHeight;
-            newWidth = newHeight * aspectRatio;
-          }
+            newWidth = Math.min(newWidth, maxWidth);
+            newHeight = Math.min(newHeight, maxHeight);
 
-          if (newWidth < 50) {
-            newWidth = 50;
-            newHeight = newWidth / aspectRatio;
-          }
-          if (newHeight < 50) {
-            newHeight = 50;
-            newWidth = newHeight * aspectRatio;
-          }
+            newWidth = Math.max(newWidth, 50);
+            newHeight = Math.max(newHeight, 50);
 
-          img.style.width = newWidth + 'px';
-          img.style.height = newHeight + 'px';
+            img.style.width = newWidth + 'px';
+            img.style.height = newHeight + 'px';
         }
-      });
+    }
 
-      document.addEventListener('mouseup', function() {
+    function endDragging() {
         if (isDragging || isResizing) {
             captureCanvasState();
         }
@@ -278,104 +277,79 @@
         isResizing = false;
         img.style.cursor = 'grab';
 
-        // Recalculate center option state
         const centerOption = document.getElementById('center-image');
         if (isImageCentered(imgContainer)) {
-          centerOption.classList.add('disabled');
+            centerOption.classList.add('disabled');
         } else {
-          centerOption.classList.remove('disabled');
+            centerOption.classList.remove('disabled');
         }
-      });
-      resizeHandle.addEventListener('mousedown', function(event) {
+    }
+
+    resizeHandle.addEventListener('mousedown', startResizing);
+    resizeHandle.addEventListener('touchstart', startResizing);
+
+    function startResizing(event) {
         isResizing = true;
         isDragging = false;
-        startX = event.clientX;
-        startY = event.clientY;
+        startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+        startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
         startWidth = img.offsetWidth;
         startHeight = img.offsetHeight;
         event.stopPropagation();
         event.preventDefault();
-      });
-
-      deleteHandle.addEventListener('click', function(event) {
-        currentCanvas.removeChild(imgContainer);
-
-      });
-
-      document.addEventListener('click', function(event) {
-        if (!imgContainer.contains(event.target) && !event.target.closest('.white-square')) {
-          imgContainer.classList.remove('selected');
-          resizeHandle.style.display = 'none';
-          deleteHandle.style.display = 'none';
-        }
-      });
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.image-container') &&
-            !event.target.closest('.text-container') &&
-            !event.target.closest('.white-square')) {
-            if (deselectAllObjects()) {
-
-            }
-        }
-    });
-
-
-        imgContainer.addEventListener('mouseup', () => {
-            if(!isCropping)
-            {
-
-            }
-        });
-
-        resizeHandle.addEventListener('mouseup', () => {
-
-        });
-
-        deleteHandle.addEventListener('click', () => {
-            currentCanvas.removeChild(imgContainer);
-
-        });
-
-      imgContainer.addEventListener('mouseenter', function() {
-        if (!imgContainer.classList.contains('selected')) {
-          imgContainer.style.border = '2px dashed #000';
-        }
-      });
-
-      imgContainer.addEventListener('mouseleave', function() {
-        if (!imgContainer.classList.contains('selected')) {
-          imgContainer.style.border = '2px dashed transparent';
-        }
-      });
-
-        imgContainer.addEventListener('click', function(event) {
-            event.stopPropagation();
-            if (!imgContainer.classList.contains('selected')) {
-                deselectAllObjects();
-                imgContainer.classList.add('selected');
-                imgContainer.style.border = '2px solid #000';
-                resizeHandle.style.display = 'block';
-                deleteHandle.style.display = 'block';
-            }
-
-            const imgWidth = img.offsetWidth;
-            const imgHeight = img.offsetHeight;
-
-            const sizeDisplay = document.getElementById('image-size');
-            sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
-
-            showScreen(screen4);
-            selectedImageContainer = imgContainer;
-            updateLayerButtons(selectedImageContainer);
-
-            // Set background removal toggle based on stored state
-            const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
-            backgroundRemovalToggle.checked = isBackgroundRemoved;
-
-
-        });
     }
 
+    deleteHandle.addEventListener('click', deleteImage);
+    deleteHandle.addEventListener('touchend', deleteImage);
+
+    function deleteImage(event) {
+        currentCanvas.removeChild(imgContainer);
+        captureCanvasState();
+        event.stopPropagation();
+    }
+
+    imgContainer.addEventListener('mouseenter', showBorder);
+    imgContainer.addEventListener('mouseleave', hideBorder);
+
+    function showBorder() {
+        if (!imgContainer.classList.contains('selected')) {
+            imgContainer.style.border = '2px dashed #000';
+        }
+    }
+
+    function hideBorder() {
+        if (!imgContainer.classList.contains('selected')) {
+            imgContainer.style.border = '2px dashed transparent';
+        }
+    }
+
+    imgContainer.addEventListener('click', selectImage);
+    imgContainer.addEventListener('touchend', selectImage);
+
+    function selectImage(event) {
+        event.stopPropagation();
+        if (!imgContainer.classList.contains('selected')) {
+            deselectAllObjects();
+            imgContainer.classList.add('selected');
+            imgContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+        }
+
+        const imgWidth = img.offsetWidth;
+        const imgHeight = img.offsetHeight;
+
+        const sizeDisplay = document.getElementById('image-size');
+        sizeDisplay.textContent = `${imgWidth}px x ${imgHeight}px`;
+
+        showScreen(screen4);
+        selectedImageContainer = imgContainer;
+        updateLayerButtons(selectedImageContainer);
+
+        const isBackgroundRemoved = imgContainer.getAttribute('data-background-removed') === 'true';
+        backgroundRemovalToggle.checked = isBackgroundRemoved;
+    }
+}
     document.addEventListener('click', function(event) {
       if (contextMenu.style.display === 'block') {
         contextMenu.style.display = 'none';
@@ -1156,191 +1130,188 @@ addToDesignButton.addEventListener('click', addTextToDesign);
 
 
     }
-    function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
-        let isDragging = false;
-        let isResizing = false;
-        let startX, startY, startLeft, startTop, startFontSize;
-        let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
-           textContainer.style.cursor = 'grab';
-            textElement.style.cursor = 'grab';
 
-     textContainer.addEventListener('mousedown', function(event) {
-            if (!isResizing) {
-                deselectAllObjects(); // Deselect all objects before selecting this one
-                isDragging = true;
-                startX = event.clientX;
-                startY = event.clientY;
-                startLeft = textContainer.offsetLeft;
-                startTop = textContainer.offsetTop;
-                textContainer.classList.add('selected');
-                textContainer.style.border = '2px solid #000';
-                resizeHandle.style.display = 'block';
-                deleteHandle.style.display = 'block';
-                textContainer.style.cursor = 'grabbing';
-                textElement.style.cursor = 'grabbing';
+function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
+    let isDragging = false;
+    let isResizing = false;
+    let startX, startY, startLeft, startTop, startFontSize;
+    let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+    textContainer.style.cursor = 'grab';
+    textElement.style.cursor = 'grab';
+
+    textContainer.addEventListener('mousedown', startDragging);
+    textContainer.addEventListener('touchstart', startDragging);
+
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('touchmove', drag);
+
+    document.addEventListener('mouseup', endDragging);
+    document.addEventListener('touchend', endDragging);
+
+    function startDragging(event) {
+        if (!isResizing) {
+            deselectAllObjects();
+            isDragging = true;
+            startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            startLeft = textContainer.offsetLeft;
+            startTop = textContainer.offsetTop;
+            textContainer.classList.add('selected');
+            textContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+            textContainer.style.cursor = 'grabbing';
+            textElement.style.cursor = 'grabbing';
+        }
+        event.preventDefault();
+    }
+
+    function drag(event) {
+        if (isDragging && !isResizing) {
+            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            let newLeft = startLeft + dx;
+            let newTop = startTop + dy;
+            const canvasRect = currentCanvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
+
+            const leftOffset = -0.5 * textRect.width;
+            const topOffset = -0.5 * textRect.height;
+            const rightOffset = 0.5 * textRect.width - 4;
+            const bottomOffset = 0.5 * textRect.height - 4;
+
+            const minLeft = -leftOffset;
+            const maxLeft = canvasRect.width - textRect.width + rightOffset;
+            const minTop = -topOffset;
+            const maxTop = canvasRect.height - textRect.height + bottomOffset;
+
+            newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
+            newTop = Math.max(minTop, Math.min(newTop, maxTop));
+            textContainer.style.left = newLeft + 'px';
+            textContainer.style.top = newTop + 'px';
+        } else if (isResizing && !isDragging) {
+            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+
+            const diagonalDistance = Math.sqrt(dx * dx + dy * dy);
+            const direction = dx + dy > 0 ? 1 : -1;
+            let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.6);
+
+            const originalWidth = textContainer.offsetWidth;
+            const originalHeight = textContainer.offsetHeight;
+
+            textElement.style.fontSize = newFontSize + 'px';
+
+            const canvasRect = currentCanvas.getBoundingClientRect();
+            const textRect = textContainer.getBoundingClientRect();
+
+            if (textRect.left < canvasRect.left ||
+                textRect.right > canvasRect.right ||
+                textRect.top < canvasRect.top ||
+                textRect.bottom > canvasRect.bottom) {
+                textElement.style.fontSize = currentFontSize + 'px';
+            } else {
+                currentFontSize = newFontSize;
+                textElement.style.fontSize = currentFontSize + 'px';
+
+                const deltaWidth = textContainer.offsetWidth - originalWidth;
+                const deltaHeight = textContainer.offsetHeight - originalHeight;
+
+                textContainer.style.left = (startLeft) + 'px';
+                textContainer.style.top = (startTop) + 'px';
             }
-            event.preventDefault();
-        });
-      textContainer.addEventListener('click', function(event) {
-            event.stopPropagation();
-            if (!textContainer.classList.contains('selected')) {
-                deselectAllObjects();
-                textContainer.classList.add('selected');
-                textContainer.style.border = '2px solid #000';
-                resizeHandle.style.display = 'block';
-                deleteHandle.style.display = 'block';
-            }
-            showTextEditScreen(textElement);
+        }
+    }
 
-        });
+    function endDragging() {
+        if (isDragging || isResizing) {
+            captureCanvasState();
+        }
+        isDragging = false;
+        isResizing = false;
+        textContainer.style.cursor = 'grab';
+        textElement.style.cursor = 'grab';
+    }
 
+    resizeHandle.addEventListener('mousedown', startResizing);
+    resizeHandle.addEventListener('touchstart', startResizing);
 
-        document.addEventListener('mousemove', function(event) {
-            if (isDragging && !isResizing) {
-                const dx = event.clientX - startX;
-                const dy = event.clientY - startY;
-                let newLeft = startLeft + dx;
-                let newTop = startTop + dy;
-                const canvasRect = currentCanvas.getBoundingClientRect();
-                const textRect = textContainer.getBoundingClientRect();
-
-                // Calculate offsets based on object dimensions
-                const leftOffset = -0.5 * textRect.width;
-                const topOffset = -0.5 * textRect.height;
-                const rightOffset = 0.5 * textRect.width - 4;
-                const bottomOffset = 0.5 * textRect.height - 4;
-
-                // Adjust boundaries to keep the text object within the canvas
-                const minLeft = -leftOffset;
-                const maxLeft = canvasRect.width - textRect.width + rightOffset;
-                const minTop = -topOffset;
-                const maxTop = canvasRect.height - textRect.height + bottomOffset;
-
-                // Constrain the position
-                newLeft = Math.max(minLeft, Math.min(newLeft, maxLeft));
-                newTop = Math.max(minTop, Math.min(newTop, maxTop));
-          textContainer.style.left = newLeft + 'px';
-                textContainer.style.top = newTop + 'px';
-       } else if (isResizing && !isDragging) {
-             const dx = event.clientX - startX;
-             const dy = event.clientY - startY;
-
-             // Calculate diagonal distance
-             const diagonalDistance = Math.sqrt(dx * dx + dy * dy);
-
-             // Determine direction (growing or shrinking)
-             const direction = dx + dy > 0 ? 1 : -1;
-
-             // Calculate new font size based on diagonal movement
-             let newFontSize = Math.max(10, startFontSize + direction * diagonalDistance * 0.6);
-
-             // Store the original width and height
-             const originalWidth = textContainer.offsetWidth;
-             const originalHeight = textContainer.offsetHeight;
-
-             // Apply the new font size temporarily
-             textElement.style.fontSize = newFontSize + 'px';
-
-             // Get the updated rectangles
-             const canvasRect = currentCanvas.getBoundingClientRect();
-             const textRect = textContainer.getBoundingClientRect();
-
-             // Check all boundaries
-             if (textRect.left < canvasRect.left ||
-                 textRect.right > canvasRect.right ||
-                 textRect.top < canvasRect.top ||
-                 textRect.bottom > canvasRect.bottom) {
-                 // If any boundary is exceeded, revert to the current font size
-                 textElement.style.fontSize = currentFontSize + 'px';
-             } else {
-                 // If it doesn't exceed any boundary, update the current font size
-                 currentFontSize = newFontSize;
-                 textElement.style.fontSize = currentFontSize + 'px';
-
-                 // Calculate the change in size
-                 const deltaWidth = textContainer.offsetWidth - originalWidth;
-                 const deltaHeight = textContainer.offsetHeight - originalHeight;
-
-                 // Adjust the position to keep the top-left corner fixed
-                 textContainer.style.left = (startLeft) + 'px';
-                 textContainer.style.top = (startTop) + 'px';
-             }
-         }
-     });
-      document.addEventListener('mouseup', function() {
-            if (isDragging || isResizing) {
-                captureCanvasState();  // Capture state after moving or resizing
-            }
-            isDragging = false;
-            isResizing = false;
-            textContainer.style.cursor = 'grab';
-            textElement.style.cursor = 'grab';
-        });
-
-
-
-    resizeHandle.addEventListener('mousedown', function(event) {
+    function startResizing(event) {
         isResizing = true;
         isDragging = false;
-        startX = event.clientX;
-        startY = event.clientY;
+        startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
+        startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
         currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
         startFontSize = currentFontSize;
         startLeft = textContainer.offsetLeft;
         startTop = textContainer.offsetTop;
         event.stopPropagation();
         event.preventDefault();
-    });
-       deleteHandle.addEventListener('click', function() {
-            currentCanvas.removeChild(textContainer);
-            captureCanvasState(); // Capture the new state after deletion
-
-            // If this was the currently edited text element, reset it
-            if (currentlyEditedTextElement === textElement) {
-                currentlyEditedTextElement = null;
-            }
-
-            // If this was the selected container, reset it
-            if (selectedImageContainer === textContainer) {
-                selectedImageContainer = null;
-            }
-
-            // Return to the main screen if we're in the text editing screen
-            if (screen5.classList.contains('active')) {
-                showScreen(screen1);
-            }
-
-            updateCanvasState(); // Update UI elements
-        });
-        document.addEventListener('click', function(event) {
-            if (!textContainer.contains(event.target) && !event.target.closest('.white-square')) {
-                textContainer.classList.remove('selected');
-                textContainer.style.border = '2px dashed transparent';
-                resizeHandle.style.display = 'none';
-                deleteHandle.style.display = 'none';
-            }
-        });
-      textContainer.addEventListener('mouseenter', function() {
-            if (!textContainer.classList.contains('selected')) {
-                textContainer.style.border = '2px dashed #000';
-                textContainer.style.cursor = 'grab';
-            }
-        });
-
-        textContainer.addEventListener('mouseleave', function() {
-            if (!textContainer.classList.contains('selected')) {
-                textContainer.style.border = '2px dashed transparent';
-                textContainer.style.cursor = 'default';
-                textElement.style.cursor = 'default';
-            }
-        });
-
-        // Prevent text selection
-        textElement.addEventListener('selectstart', function(e) {
-            e.preventDefault();
-        });
     }
-    let currentlyEditedTextElement = null;
+
+    deleteHandle.addEventListener('click', deleteText);
+    deleteHandle.addEventListener('touchend', deleteText);
+
+    function deleteText() {
+        currentCanvas.removeChild(textContainer);
+        captureCanvasState();
+
+        if (currentlyEditedTextElement === textElement) {
+            currentlyEditedTextElement = null;
+        }
+
+        if (selectedImageContainer === textContainer) {
+            selectedImageContainer = null;
+        }
+
+        if (screen5.classList.contains('active')) {
+            showScreen(screen1);
+        }
+
+        updateCanvasState();
+    }
+
+    textContainer.addEventListener('mouseenter', showBorder);
+    textContainer.addEventListener('mouseleave', hideBorder);
+
+    function showBorder() {
+        if (!textContainer.classList.contains('selected')) {
+            textContainer.style.border = '2px dashed #000';
+            textContainer.style.cursor = 'grab';
+        }
+    }
+
+    function hideBorder() {
+        if (!textContainer.classList.contains('selected')) {
+            textContainer.style.border = '2px dashed transparent';
+            textContainer.style.cursor = 'default';
+            textElement.style.cursor = 'default';
+        }
+    }
+
+    textContainer.addEventListener('click', selectText);
+    textContainer.addEventListener('touchend', selectText);
+
+    function selectText(event) {
+        event.stopPropagation();
+        if (!textContainer.classList.contains('selected')) {
+            deselectAllObjects();
+            textContainer.classList.add('selected');
+            textContainer.style.border = '2px solid #000';
+            resizeHandle.style.display = 'block';
+            deleteHandle.style.display = 'block';
+        }
+        showTextEditScreen(textElement);
+    }
+
+    textElement.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+    });
+}    let currentlyEditedTextElement = null;
     let currentOutlineColor = '#000000';
     let currentOutlineThickness = 0;
     let currentRotation = 0;
