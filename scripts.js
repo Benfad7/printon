@@ -122,20 +122,25 @@
     });
 
 
-    function handleFileSelection(event) {
-        const files = event.target.files;
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    createImageContainer(e.target.result, file.name);
+function handleFileSelection(event) {
+    const files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                createImageContainer(e.target.result, file.name);
+                if (isMobile()) {
+                    hideMobileScreen();
                 }
-                reader.readAsDataURL(file);
             }
+            reader.readAsDataURL(file);
         }
-        event.target.value = ''; // Reset the file input
     }
+    event.target.value = ''; // Reset the file input
+}
+
+
 
 
     function createImageContainer(src, fileName) {
@@ -1086,8 +1091,12 @@ function addTextToDesign() {
     const textToAdd = textInput.value;
     if (textToAdd.trim() !== '') {
         createTextObject(textToAdd);
-        hideMobileScreen();
-        showScreen(screen1);
+        textInput.value = '';
+        if (isMobile()) {
+            hideMobileScreen();
+        } else {
+            showScreen(screen1);
+        }
     }
 }
 textInput.addEventListener('keypress', function(event) {
@@ -1160,13 +1169,14 @@ addToDesignButton.addEventListener('click', addTextToDesign);
         textContainer.appendChild(resizeHandle);
         textContainer.appendChild(deleteHandle);
 
-       currentCanvas.appendChild(textContainer);
-        captureCanvasState();
+   currentCanvas.appendChild(textContainer);
+    captureCanvasState();
 
-        setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
-            applyTextOutline(textElement); // Apply the default outline
-
-
+    setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle);
+    applyTextOutline(textElement);
+    if (isMobile()) {
+        hideMobileScreen();
+    }
     }
 
 
@@ -3702,51 +3712,66 @@ function showMobileScreen(title, content) {
     mobileContent.innerHTML = content;
     mobileContainer.style.display = 'block';
 
-    // Find the close button within the newly added content
     const closeButton = mobileContent.querySelector('.close-button');
     if (closeButton) {
         closeButton.addEventListener('click', hideMobileScreen);
     }
 
-    // Find the add-to-design button and add event listener
-    const addToDesignButton = mobileContent.querySelector('#add-to-design-button');
-    if (addToDesignButton) {
-        addToDesignButton.addEventListener('click', function() {
-            addTextToDesign();
-            hideMobileScreen();
-        });
-    }
+    if (title === 'הוספת טקסט') {
+        const addToDesignButton = mobileContent.querySelector('#add-to-design-button');
+        const textInput = mobileContent.querySelector('#text-input');
 
-    // Add event listener for Enter key on text input
-    const textInput = mobileContent.querySelector('#text-input');
-    if (textInput) {
-        textInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
+        if (addToDesignButton) {
+            addToDesignButton.addEventListener('click', function() {
                 addTextToDesign();
-                hideMobileScreen();
-            }
-        });
+            });
+        }
+
+        if (textInput) {
+            textInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addTextToDesign();
+                }
+            });
+            textInput.focus();
+        }
+    } else if (title === 'העלאה') {
+        setupMobileFileUpload();
     }
 
     continueButton.style.display = 'none';
     backButton.style.display = 'none';
 }
-
 function hideMobileScreen() {
     mobileContainer.style.display = 'none';
     continueButton.style.display = 'block';
     backButton.style.display = 'block';
 }
 
-  document.getElementById('mobile-upload').addEventListener('click', function() {
+document.getElementById('mobile-upload').addEventListener('click', function() {
     const uploadContent = document.getElementById('screen2').innerHTML;
     showMobileScreen('העלאה', uploadContent);
-  continueButton.style.display = 'none';
-    backButton.style.display = 'none';
+    setupMobileFileUpload();
+});
+function setupMobileFileUpload() {
+    const mobileUploadBox = mobileContent.querySelector('.upload-box');
+    const mobileFileInput = document.createElement('input');
+    mobileFileInput.type = 'file';
+    mobileFileInput.style.display = 'none';
+    mobileContent.appendChild(mobileFileInput);
 
-  });
+    if (mobileUploadBox) {
+        mobileUploadBox.addEventListener('click', function() {
+            mobileFileInput.click();
+        });
+    }
 
+    mobileFileInput.addEventListener('change', function(event) {
+        handleFileSelection(event);
+        hideMobileScreen();
+    });
+}
 document.getElementById('mobile-add-text').addEventListener('click', function() {
     showMobileScreen('הוספת טקסט', document.getElementById('screen3').innerHTML);
     document.getElementById('text-input').focus();
@@ -3754,3 +3779,15 @@ document.getElementById('mobile-add-text').addEventListener('click', function() 
 });
 });
 
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+function hideMobileScreen() {
+  const mobileContainer = document.getElementById('mobile-design-container');
+
+  const continueButton = document.getElementById('get-price-button-container');
+  const backButton = document.getElementById('go-back-button-container');
+    mobileContainer.style.display = 'none';
+    continueButton.style.display = 'block';
+    backButton.style.display = 'block';
+}
