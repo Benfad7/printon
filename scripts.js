@@ -189,27 +189,32 @@
         setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName);
       }
     }
-
 function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, fileName) {
     let isDragging = false;
     let isResizing = false;
     let startX, startY, startLeft, startTop, startWidth, startHeight;
     let aspectRatio = img.naturalWidth / img.naturalHeight;
-
-    imgContainer.addEventListener('dragstart', function(event) {
-        event.preventDefault();
-    });
+    let activeTouchId = null;
 
     imgContainer.addEventListener('mousedown', startDragging);
-    imgContainer.addEventListener('touchstart', startDragging);
+    imgContainer.addEventListener('touchstart', handleTouchStart);
+
+    function handleTouchStart(event) {
+        if (event.touches.length === 1) {
+            event.preventDefault();
+            const touch = event.touches[0];
+            activeTouchId = touch.identifier;
+            startDragging(touch);
+        }
+    }
 
     function startDragging(event) {
         if (event.target === img && !isResizing) {
             deselectAllObjects();
             isDragging = true;
             imgContainer.classList.add('selected');
-            startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-            startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            startX = event.clientX || event.touches[0].clientX;
+            startY = event.clientY || event.touches[0].clientY;
             startLeft = imgContainer.offsetLeft;
             startTop = imgContainer.offsetTop;
             img.style.cursor = 'grabbing';
@@ -217,13 +222,25 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
             resizeHandle.style.display = 'block';
             deleteHandle.style.display = 'block';
         }
-        event.preventDefault();
+                event.preventDefault();
+
     }
 
     function drag(event) {
+        event.preventDefault(); // Prevent default dragging behavior
+
         if (isDragging && !isResizing) {
-            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            let clientX, clientY;
+            if (event.type === 'touchmove') {
+                const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouchId);
+                if (!touch) return;
+                clientX = touch.clientX;
+                clientY = touch.clientY;
+            } else {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+
             const dx = clientX - startX;
             const dy = clientY - startY;
             const newLeft = startLeft + dx;
@@ -235,7 +252,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
             imgContainer.style.left = Math.max(0, Math.min(newLeft, maxX)) + 'px';
             imgContainer.style.top = Math.max(0, Math.min(newTop, maxY)) + 'px';
             updateCenterButtonState(imgContainer);
-            } else if (isResizing) {
+        } else if (isResizing) {
                    const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
                    const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
                    const dx = clientX - startX;
@@ -276,6 +293,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
         isDragging = false;
         isResizing = false;
         img.style.cursor = 'grab';
+        activeTouchId = null;
 
         const centerOption = document.getElementById('center-image');
         if (isImageCentered(imgContainer)) {
@@ -286,21 +304,30 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
 
     resizeHandle.addEventListener('mousedown', startResizing);
-    resizeHandle.addEventListener('touchstart', startResizing);
+    resizeHandle.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 1) {
+            event.preventDefault();
+            startResizing(event.touches[0]);
+        }
+    });
 
     function startResizing(event) {
         isResizing = true;
         isDragging = false;
-        startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-        startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+        startX = event.clientX || event.touches[0].clientX;
+        startY = event.clientY || event.touches[0].clientY;
         startWidth = img.offsetWidth;
         startHeight = img.offsetHeight;
         event.stopPropagation();
-        event.preventDefault();
+                event.preventDefault();
+
     }
 
     deleteHandle.addEventListener('click', deleteImage);
-    deleteHandle.addEventListener('touchend', deleteImage);
+    deleteHandle.addEventListener('touchend', function(event) {
+        event.preventDefault();
+        deleteImage(event);
+    });
 
     function deleteImage(event) {
         currentCanvas.removeChild(imgContainer);
@@ -324,7 +351,11 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
 
     imgContainer.addEventListener('click', selectImage);
-    imgContainer.addEventListener('touchend', selectImage);
+    imgContainer.addEventListener('touchend', function(event) {
+        if (!isDragging && !isResizing) {
+            selectImage(event);
+        }
+    });
 
     function selectImage(event) {
         event.stopPropagation();
@@ -349,7 +380,7 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     }
 
     document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
+    document.addEventListener('touchmove', drag, { passive: false });
 
     document.addEventListener('mouseup', endDragging);
     document.addEventListener('touchend', endDragging);
@@ -1139,23 +1170,35 @@ addToDesignButton.addEventListener('click', addTextToDesign);
 
 
 
+
 function setupTextInteractions(textContainer, textElement, resizeHandle, deleteHandle) {
     let isDragging = false;
     let isResizing = false;
     let startX, startY, startLeft, startTop, startFontSize;
     let currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
+    let activeTouchId = null;
+
     textContainer.style.cursor = 'grab';
     textElement.style.cursor = 'grab';
 
     textContainer.addEventListener('mousedown', startDragging);
-    textContainer.addEventListener('touchstart', startDragging);
+    textContainer.addEventListener('touchstart', handleTouchStart);
+
+    function handleTouchStart(event) {
+        if (event.touches.length === 1) {
+            event.preventDefault();
+            const touch = event.touches[0];
+            activeTouchId = touch.identifier;
+            startDragging(touch);
+        }
+    }
 
     function startDragging(event) {
         if (!isResizing) {
             deselectAllObjects();
             isDragging = true;
-            startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-            startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            startX = event.clientX || event.touches[0].clientX;
+            startY = event.clientY || event.touches[0].clientY;
             startLeft = textContainer.offsetLeft;
             startTop = textContainer.offsetTop;
             textContainer.classList.add('selected');
@@ -1165,13 +1208,23 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
             textContainer.style.cursor = 'grabbing';
             textElement.style.cursor = 'grabbing';
         }
-        event.preventDefault();
+                        event.preventDefault();
+
     }
 
     function drag(event) {
         if (isDragging && !isResizing) {
-            const clientX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-            const clientY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+            let clientX, clientY;
+            if (event.type === 'touchmove') {
+                const touch = Array.from(event.changedTouches).find(t => t.identifier === activeTouchId);
+                if (!touch) return;
+                clientX = touch.clientX;
+                clientY = touch.clientY;
+            } else {
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+
             const dx = clientX - startX;
             const dy = clientY - startY;
             let newLeft = startLeft + dx;
@@ -1237,26 +1290,36 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
         isResizing = false;
         textContainer.style.cursor = 'grab';
         textElement.style.cursor = 'grab';
+        activeTouchId = null;
     }
 
     resizeHandle.addEventListener('mousedown', startResizing);
-    resizeHandle.addEventListener('touchstart', startResizing);
+    resizeHandle.addEventListener('touchstart', function(event) {
+        if (event.touches.length === 1) {
+            event.preventDefault();
+            startResizing(event.touches[0]);
+        }
+    });
 
     function startResizing(event) {
         isResizing = true;
         isDragging = false;
-        startX = event.type.includes('mouse') ? event.clientX : event.touches[0].clientX;
-        startY = event.type.includes('mouse') ? event.clientY : event.touches[0].clientY;
+        startX = event.clientX || event.touches[0].clientX;
+        startY = event.clientY || event.touches[0].clientY;
         currentFontSize = parseInt(window.getComputedStyle(textElement).fontSize);
         startFontSize = currentFontSize;
         startLeft = textContainer.offsetLeft;
         startTop = textContainer.offsetTop;
         event.stopPropagation();
-        event.preventDefault();
+                event.preventDefault();
+
     }
 
     deleteHandle.addEventListener('click', deleteText);
-    deleteHandle.addEventListener('touchend', deleteText);
+    deleteHandle.addEventListener('touchend', function(event) {
+        event.preventDefault();
+        deleteText(event);
+    });
 
     function deleteText() {
         currentCanvas.removeChild(textContainer);
@@ -1296,7 +1359,11 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     }
 
     textContainer.addEventListener('click', selectText);
-    textContainer.addEventListener('touchend', selectText);
+    textContainer.addEventListener('touchend', function(event) {
+        if (!isDragging && !isResizing) {
+            selectText(event);
+        }
+    });
 
     function selectText(event) {
         event.stopPropagation();
@@ -1313,12 +1380,11 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     });
 
     document.addEventListener('mousemove', drag);
-    document.addEventListener('touchmove', drag);
+    document.addEventListener('touchmove', drag, { passive: false });
 
     document.addEventListener('mouseup', endDragging);
     document.addEventListener('touchend', endDragging);
 }
-
 
 
 
