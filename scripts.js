@@ -1199,12 +1199,22 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     textContainer.addEventListener('touchstart', handleTouchStart);
 
 function handleTouchStart(event) {
+        if (isMobile()) {
+          event.stopPropagation();
+          showMobileTextEditStrip();
+          selectText(event);
+        }
     if (event.touches.length === 1) {
         event.preventDefault();
         const touch = event.touches[0];
         activeTouchId = touch.identifier;
         startDragging(touch);
     }
+        if (isMobile()) {
+          event.stopPropagation();
+          showMobileTextEditStrip();
+          selectText(event);
+        }
 }
 
     function startDragging(event) {
@@ -3808,3 +3818,32 @@ function hideMobileScreen() {
     continueButton.style.display = 'block';
     backButton.style.display = 'block';
 }
+
+function showMobileTextEditStrip() {
+  document.querySelector('.mobile-bottom-nav').style.display = 'none';
+  document.getElementById('mobile-text-edit-strip').style.display = 'block';
+}
+
+function hideMobileTextEditStrip() {
+  document.getElementById('mobile-text-edit-strip').style.display = 'none';
+  document.querySelector('.mobile-bottom-nav').style.display = 'flex';
+}
+
+// Add this to hide the strip when clicking outside the text
+document.addEventListener('touchstart', function(event) {
+  if (isMobile() && !event.target.closest('.text-container') && !event.target.closest('#mobile-text-edit-strip')) {
+    hideMobileTextEditStrip();
+  }
+});
+document.querySelector('#mobile-text-edit-strip .option:nth-child(1)').addEventListener('click', function() {
+  if (currentlyEditedTextElement) {
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.value = rgbToHex(window.getComputedStyle(currentlyEditedTextElement).color);
+    colorPicker.click();
+    colorPicker.addEventListener('change', function() {
+      currentlyEditedTextElement.style.color = this.value;
+      captureCanvasState();
+    });
+  }
+});
