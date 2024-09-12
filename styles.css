@@ -2798,7 +2798,7 @@ margin-right: -25px;
     #get-price-button-container,
     #go-back-button-container {
       position: fixed;
-      top: 10px;
+      top: 430px;
       z-index: 1000;
       width: 50px;
       height: 50px;
@@ -3037,8 +3037,7 @@ margin-right: -25px;
     z-index: 1000;
     display: none;
   }
-
-  .mobile-top-bar {
+ .mobile-top-bar {
     background-color: #f0f0f0;
     padding: 10px;
     text-align: center;
@@ -3049,21 +3048,20 @@ margin-right: -25px;
     font-size: 18px;
     font-weight: bold;
   }
-
-  .mobile-close-button {
+  .close-button {
     position: absolute;
-    left: 10px; /* Changed from right to left */
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 30px;
     cursor: pointer;
   }
 
   .mobile-screen-content {
-    padding: 20px;
-    height: calc(100% - 50px); /* Adjust based on top bar height */
+    padding: 10px;
+    height: calc(100% - 40px);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
