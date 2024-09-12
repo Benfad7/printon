@@ -3060,8 +3060,8 @@ margin-right: -25px;
   }
 
   .mobile-screen-content {
-    padding: 10px;
-    height: calc(100% - 40px);
+      margin-left: 25px;
+    padding: 0px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -3104,22 +3104,100 @@ margin-right: -25px;
     width: 100%;
     max-width: 300px; /* Adjust as needed */
     margin: 0 auto;
+
+
   }
 
   /* Center the upload box */
   .upload-box {
     position: static;
     transform: none;
-    margin: 20px auto;
+    margin-top: -170px ;
+    padding-top: 50px;
+    margin-left:3px;
   }
 
   /* Center the text input and button */
   .text-input, .add-to-design-button {
+
     position: static;
     transform: none;
+
     margin: 20px auto;
     width: 90%;
+    margin-top: -170px;
+
   }
+    .mobile-top-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 60px; /* Increased height for better visibility */
+      position: relative;
+    }
+
+    .mobile-screen-title {
+      font-size: 24px; /* Increased font size */
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+    }
+
+    .close-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .screen-header .header-title {
+         display: none;
+       }
+
+       .mobile-top-bar {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 20px; /* Increased height for better visibility */
+         position: relative;
+         background-color: #f0f0f0;
+         padding: 10px;
+       }
+
+       .mobile-screen-title {
+         font-size: 24px; /* Increased font size */
+         font-weight: bold;
+         text-align: center;
+         width: 100%;
+       }
+
+       .close-button {
+         position: absolute;
+         right: 10px;
+         top: 100%;
+         transform: translateY(-50%);
+         background: none;
+         border: none;
+         font-size: 30px;
+         cursor: pointer;
+         z-index: 1; /* Ensure the button is clickable */
+       }
+
+       /* Ensure the mobile title is visible */
+       #mobile-design-container .mobile-top-bar {
+         display: flex;
+       }
+
+       /* Adjust the existing close button to match mobile styling */
+       .screen-header .close-button {
+         right: 3px;
+         top: 170%;
+         transform: translateY(-50%);
+         font-size: 35px;
+       }
 }
 #mobile-background {
     display: none;
@@ -3133,79 +3211,3 @@ margin-right: -25px;
       display: none;
     }
 }
-@media (max-width: 768px) {
-  .mobile-top-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 60px; /* Increased height for better visibility */
-    position: relative;
-  }
-
-  .mobile-screen-title {
-    font-size: 24px; /* Increased font size */
-    font-weight: bold;
-    text-align: center;
-    width: 100%;
-  }
-
-  .close-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    font-size: 30px;
-    cursor: pointer;
-  }
-}
-
-@media (max-width: 768px) {
-   /* Hide the existing title but keep the close button */
-   .screen-header .header-title {
-     display: none;
-   }
-
-   .mobile-top-bar {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: 20px; /* Increased height for better visibility */
-     position: relative;
-     background-color: #f0f0f0;
-     padding: 10px;
-   }
-
-   .mobile-screen-title {
-     font-size: 24px; /* Increased font size */
-     font-weight: bold;
-     text-align: center;
-     width: 100%;
-   }
-
-   .close-button {
-     position: absolute;
-     right: 10px;
-     top: 100%;
-     transform: translateY(-50%);
-     background: none;
-     border: none;
-     font-size: 30px;
-     cursor: pointer;
-     z-index: 1; /* Ensure the button is clickable */
-   }
-
-   /* Ensure the mobile title is visible */
-   #mobile-design-container .mobile-top-bar {
-     display: flex;
-   }
-
-   /* Adjust the existing close button to match mobile styling */
-   .screen-header .close-button {
-     right: 3px;
-     top: 170%;
-     transform: translateY(-50%);
-     font-size: 35px;
-   }
- }
