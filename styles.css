@@ -3063,6 +3063,7 @@ margin-right: -25px;
       margin-left: 25px;
     padding: 0px;
     overflow-y: auto;
+        margin-top: -120px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -3112,7 +3113,7 @@ margin-right: -25px;
   .upload-box {
     position: static;
     transform: none;
-    margin-top: -170px ;
+    margin-top: 80px;
     padding-top: 50px;
     margin-left:3px;
   }
