@@ -1082,10 +1082,12 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     const textInput = document.getElementById('text-input');
     const addToDesignButton = document.getElementById('add-to-design-button');
 function addTextToDesign() {
+    const textInput = document.getElementById('text-input') || mobileContent.querySelector('#text-input');
     const textToAdd = textInput.value;
     if (textToAdd.trim() !== '') {
         createTextObject(textToAdd);
-        showScreen(screen1); // Return to the main screen after adding text
+        hideMobileScreen();
+        showScreen(screen1);
     }
 }
 textInput.addEventListener('keypress', function(event) {
@@ -3695,7 +3697,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const mobileTitle = document.querySelector('.mobile-screen-title');
   const continueButton = document.getElementById('get-price-button-container');
   const backButton = document.getElementById('go-back-button-container');
-  function showMobileScreen(title, content) {
+function showMobileScreen(title, content) {
     mobileTitle.textContent = title;
     mobileContent.innerHTML = content;
     mobileContainer.style.display = 'block';
@@ -3703,15 +3705,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // Find the close button within the newly added content
     const closeButton = mobileContent.querySelector('.close-button');
     if (closeButton) {
-      closeButton.addEventListener('click', hideMobileScreen);
+        closeButton.addEventListener('click', hideMobileScreen);
     }
-  }
 
-  function hideMobileScreen() {
+    // Find the add-to-design button and add event listener
+    const addToDesignButton = mobileContent.querySelector('#add-to-design-button');
+    if (addToDesignButton) {
+        addToDesignButton.addEventListener('click', function() {
+            addTextToDesign();
+            hideMobileScreen();
+        });
+    }
+
+    // Add event listener for Enter key on text input
+    const textInput = mobileContent.querySelector('#text-input');
+    if (textInput) {
+        textInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addTextToDesign();
+                hideMobileScreen();
+            }
+        });
+    }
+
+    continueButton.style.display = 'none';
+    backButton.style.display = 'none';
+}
+
+function hideMobileScreen() {
     mobileContainer.style.display = 'none';
-          continueButton.style.display = 'block';
-            backButton.style.display = 'block';
-  }
+    continueButton.style.display = 'block';
+    backButton.style.display = 'block';
+}
 
   document.getElementById('mobile-upload').addEventListener('click', function() {
     const uploadContent = document.getElementById('screen2').innerHTML;
@@ -3721,10 +3747,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   });
 
-  document.getElementById('mobile-add-text').addEventListener('click', function() {
-    const textContent = document.getElementById('screen3').innerHTML;
-    showMobileScreen('הוספת טקסט', textContent);
-      continueButton.style.display = 'none';
-        backButton.style.display = 'none';
-  });
+document.getElementById('mobile-add-text').addEventListener('click', function() {
+    showMobileScreen('הוספת טקסט', document.getElementById('screen3').innerHTML);
+    document.getElementById('text-input').focus();
+
 });
+});
+
