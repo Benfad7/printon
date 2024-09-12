@@ -213,23 +213,24 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
         }
     }
 
-    function startDragging(event) {
-        if (event.target === img && !isResizing) {
-            deselectAllObjects();
-            isDragging = true;
-            imgContainer.classList.add('selected');
-            startX = event.clientX || event.touches[0].clientX;
-            startY = event.clientY || event.touches[0].clientY;
-            startLeft = imgContainer.offsetLeft;
-            startTop = imgContainer.offsetTop;
-            img.style.cursor = 'grabbing';
-            imgContainer.style.border = '2px solid #000';
-            resizeHandle.style.display = 'block';
-            deleteHandle.style.display = 'block';
-        }
-                event.preventDefault();
-
+function startDragging(event) {
+    if (event.target === img && !isResizing) {
+        deselectAllObjects();
+        isDragging = true;
+        imgContainer.classList.add('selected');
+        startX = event.clientX || event.touches[0].clientX;
+        startY = event.clientY || event.touches[0].clientY;
+        startLeft = imgContainer.offsetLeft;
+        startTop = imgContainer.offsetTop;
+        img.style.cursor = 'grabbing';
+        imgContainer.style.border = '2px solid #000';
+        resizeHandle.style.display = 'block';
+        deleteHandle.style.display = 'block';
     }
+    if (event.preventDefault) {
+        event.preventDefault();
+    }
+}
 
     function drag(event) {
         event.preventDefault(); // Prevent default dragging behavior
@@ -1197,14 +1198,14 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
     textContainer.addEventListener('mousedown', startDragging);
     textContainer.addEventListener('touchstart', handleTouchStart);
 
-    function handleTouchStart(event) {
-        if (event.touches.length === 1) {
-            event.preventDefault();
-            const touch = event.touches[0];
-            activeTouchId = touch.identifier;
-            startDragging(touch);
-        }
+function handleTouchStart(event) {
+    if (event.touches.length === 1) {
+        event.preventDefault();
+        const touch = event.touches[0];
+        activeTouchId = touch.identifier;
+        startDragging(touch);
     }
+}
 
     function startDragging(event) {
         if (!isResizing) {
