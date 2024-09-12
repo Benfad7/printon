@@ -3693,7 +3693,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const mobileContainer = document.getElementById('mobile-design-container');
   const mobileContent = document.querySelector('.mobile-screen-content');
   const mobileTitle = document.querySelector('.mobile-screen-title');
-
+  const continueButton = document.getElementById('get-price-button-container');
+  const backButton = document.getElementById('go-back-button-container');
   function showMobileScreen(title, content) {
     mobileTitle.textContent = title;
     mobileContent.innerHTML = content;
@@ -3708,15 +3709,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function hideMobileScreen() {
     mobileContainer.style.display = 'none';
+          continueButton.style.display = 'block';
+            backButton.style.display = 'block';
   }
 
   document.getElementById('mobile-upload').addEventListener('click', function() {
     const uploadContent = document.getElementById('screen2').innerHTML;
     showMobileScreen('העלאה', uploadContent);
+  continueButton.style.display = 'none';
+    backButton.style.display = 'none';
+
   });
 
   document.getElementById('mobile-add-text').addEventListener('click', function() {
     const textContent = document.getElementById('screen3').innerHTML;
     showMobileScreen('הוספת טקסט', textContent);
+      continueButton.style.display = 'none';
+        backButton.style.display = 'none';
   });
 });
