@@ -3207,7 +3207,7 @@ margin-right: -25px;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     z-index: 1002;
     padding: 10px 0;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
@@ -3230,12 +3230,15 @@ margin-right: -25px;
   .text-edit-options .option i {
     font-size: 24px;
     margin-bottom: 5px;
-    color: #333;
+        color: #1e39d2;
+
   }
 
   .text-edit-options .option span {
     font-size: 12px;
-    color: #333;
+    color: #1e39d2;
+    font-weight: bold;
+
   }
 }
 #mobile-background {

@@ -1197,26 +1197,31 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
     textContainer.addEventListener('mousedown', startDragging);
     textContainer.addEventListener('touchstart', handleTouchStart);
+    textContainer.addEventListener('touchstart', handleTouchStart2);
 
 function handleTouchStart(event) {
-        if (isMobile()) {
-          event.stopPropagation();
-          showMobileTextEditStrip();
-          selectText(event);
-        }
+
     if (event.touches.length === 1) {
         event.preventDefault();
         const touch = event.touches[0];
         activeTouchId = touch.identifier;
         startDragging(touch);
     }
-        if (isMobile()) {
-          event.stopPropagation();
-          showMobileTextEditStrip();
-          selectText(event);
-        }
+            if (isMobile()) {
+              event.stopPropagation();
+              showMobileTextEditStrip();
+              selectText(event);
+            }
 }
 
+function handleTouchStart2(event) {
+
+            if (isMobile()) {
+              event.stopPropagation();
+              showMobileTextEditStrip();
+              selectText(event);
+            }
+}
     function startDragging(event) {
         if (!isResizing) {
             deselectAllObjects();
