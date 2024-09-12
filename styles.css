@@ -2976,10 +2976,10 @@ margin-right: -25px;
        }
 
        .canvas {
-         width: 90vw;
-         height: 90vw; /* Make it square */
+         width: 80vw;
+         height: 100vw; /* Make it square */
          position: absolute;
-         top: 50%;
+         top: 40%;
          left: 50%;
          transform: translate(-50%, -50%);
          margin: 0;
@@ -3016,8 +3016,8 @@ margin-right: -25px;
          display: none;
        }
        .main-container {
-    background-size: auto 100%;
-      background-position: 74% -10px;
+    background-size: auto 107%;
+      background-position: 74% -40px;
        }
 }
 #mobile-background {
