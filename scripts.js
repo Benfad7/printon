@@ -1024,11 +1024,12 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
         // Allow for a small margin of error (e.g., 1 pixel)
         return Math.abs(centerX - imageCenterX) < 5;
     }
-    function updateCenterButtonState(container) {
-        const centerButton = document.getElementById('center-text-button') || document.getElementById('center-image-button');
-            centerButton.querySelector('.button-text').classList.add('disabled');
-
+function updateCenterButtonState(container) {
+    const centerButton = document.getElementById('center-text-button') || document.getElementById('center-image-button');
+    if (centerButton && centerButton.querySelector('.button-text')) {
+        centerButton.querySelector('.button-text').classList.add('disabled');
     }
+}
     function hasImagesOnCanvas() {
         return currentCanvas.querySelector('.image-container, .text-container') !== null;
     }
