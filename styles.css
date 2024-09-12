@@ -3015,6 +3015,10 @@ margin-right: -25px;
        #front-back-control {
          display: none;
        }
+       .main-container {
+    background-size: auto 100%;
+      background-position: 74% -10px;
+       }
 }
 #mobile-background {
     display: none;
