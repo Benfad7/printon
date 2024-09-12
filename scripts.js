@@ -3689,3 +3689,31 @@ currentCanvas.addEventListener('touchstart', function(event) {
         deselectAllObjects();
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileContainer = document.getElementById('mobile-design-container');
+  const mobileContent = document.querySelector('.mobile-screen-content');
+  const mobileTitle = document.querySelector('.mobile-screen-title');
+  const closeButton = document.querySelector('.mobile-close-button');
+
+  function showMobileScreen(title, content) {
+    mobileTitle.textContent = title;
+    mobileContent.innerHTML = content;
+    mobileContainer.style.display = 'block';
+  }
+
+  function hideMobileScreen() {
+    mobileContainer.style.display = 'none';
+  }
+
+  document.getElementById('mobile-upload').addEventListener('click', function() {
+    const uploadContent = document.getElementById('screen2').innerHTML;
+    showMobileScreen('העלאה', uploadContent);
+  });
+
+  document.getElementById('mobile-add-text').addEventListener('click', function() {
+    const textContent = document.getElementById('screen3').innerHTML;
+    showMobileScreen('הוספת טקסט', textContent);
+  });
+
+  closeButton.addEventListener('click', hideMobileScreen);
+});
