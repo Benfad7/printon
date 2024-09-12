@@ -1317,7 +1317,15 @@ function setupTextInteractions(textContainer, textElement, resizeHandle, deleteH
 
     document.addEventListener('mouseup', endDragging);
     document.addEventListener('touchend', endDragging);
-} let currentlyEditedTextElement = null;
+}
+
+
+
+
+
+
+
+let currentlyEditedTextElement = null;
     let currentOutlineColor = '#000000';
     let currentOutlineThickness = 0;
     let currentRotation = 0;
