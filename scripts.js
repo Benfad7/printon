@@ -3756,21 +3756,36 @@ document.getElementById('mobile-upload').addEventListener('click', function() {
 });
 function setupMobileFileUpload() {
     const mobileUploadBox = mobileContent.querySelector('.upload-box');
-    const mobileFileInput = document.createElement('input');
-    mobileFileInput.type = 'file';
-    mobileFileInput.style.display = 'none';
-    mobileContent.appendChild(mobileFileInput);
+    let mobileFileInput = mobileContent.querySelector('#mobile-file-input');
 
-    if (mobileUploadBox) {
-        mobileUploadBox.addEventListener('click', function() {
-            mobileFileInput.click();
-        });
+    // If the file input doesn't exist, create it
+    if (!mobileFileInput) {
+        mobileFileInput = document.createElement('input');
+        mobileFileInput.type = 'file';
+        mobileFileInput.id = 'mobile-file-input';
+        mobileFileInput.style.display = 'none';
+        mobileContent.appendChild(mobileFileInput);
     }
 
-    mobileFileInput.addEventListener('change', function(event) {
-        handleFileSelection(event);
-        hideMobileScreen();
-    });
+    // Remove existing event listeners
+    mobileUploadBox.removeEventListener('click', mobileUploadBoxClick);
+    mobileFileInput.removeEventListener('change', mobileFileInputChange);
+
+    // Add new event listeners
+    mobileUploadBox.addEventListener('click', mobileUploadBoxClick);
+    mobileFileInput.addEventListener('change', mobileFileInputChange);
+}
+
+function mobileUploadBoxClick() {
+    const mobileFileInput = document.getElementById('mobile-file-input');
+    if (mobileFileInput) {
+        mobileFileInput.click();
+    }
+}
+
+function mobileFileInputChange(event) {
+    handleFileSelection(event);
+    hideMobileScreen();
 }
 document.getElementById('mobile-add-text').addEventListener('click', function() {
     showMobileScreen('הוספת טקסט', document.getElementById('screen3').innerHTML);
