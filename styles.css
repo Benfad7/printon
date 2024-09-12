@@ -2782,7 +2782,7 @@ margin-right: -25px;
     }
 
     #front-back-control .cropped-image {
-      width: 60px;
+      width: 40px;
       height: 80px;
       background-size: auto 118%;
       background-position: 76% 43%;
@@ -2798,18 +2798,21 @@ margin-right: -25px;
     #get-price-button-container,
     #go-back-button-container {
       position: fixed;
-      top: 430px;
+      top: 10px;
       z-index: 1000;
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
     }
 
     #get-price-button-container {
-      right: 10px;
+      right: 0px;
+      margin-right: -12px;
     }
 
     #go-back-button-container {
-      left: 10px;
+      left: 7px;
+            margin-left: -12px;
+
     }
 
     #get-price-button,
