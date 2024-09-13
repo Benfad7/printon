@@ -3856,8 +3856,8 @@ function showMobileTextEditStrip() {
   document.querySelector('.mobile-bottom-nav').style.display = 'none';
   document.getElementById('mobile-text-edit-strip').style.display = 'block';
 }
-
 function hideMobileTextEditStrip() {
+  closeAllOptionContainers();
   document.getElementById('mobile-text-edit-strip').style.display = 'none';
   document.querySelector('.mobile-bottom-nav').style.display = 'flex';
 }
@@ -3876,8 +3876,8 @@ document.addEventListener('touchstart', function(event) {
       !event.target.closest('#mobile-rotate-options') &&
       !event.target.closest('#mobile-reorder-options')
 ) {
-    hideMobileTextEditStrip();
-  }
+    closeAllOptionContainers();
+    hideMobileTextEditStrip();  }
 });
 document.addEventListener('click', function(event) {
        const mobileFontSelector = document.getElementById('mobile-font-selector');
@@ -3897,6 +3897,8 @@ document.querySelector('#mobile-text-edit-strip .option:nth-child(3)').addEventL
 });
 
 function showMobileTextEditInput(currentText) {
+  closeAllOptionContainers();
+
   // Remove any existing floating edit box
   const existingBox = document.getElementById('mobile-floating-edit-box');
   if (existingBox) {
@@ -4026,7 +4028,7 @@ const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .optio
             setupTextInteractions(clonedContainer, clonedTextElement,
                 clonedContainer.querySelector('.resize-handle'),
                 clonedContainer.querySelector('.delete-handle'));
-
+            hideMobileTextEditStrip();
             captureCanvasState();
         }
     }
@@ -4039,7 +4041,7 @@ const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .optio
 
     function toggleReorderOptions() {
         mobileReorderOptions.style.display = mobileReorderOptions.style.display === 'none' ? 'block' : 'none';
-        mobileRotateOptions.style.display = 'none';
+            mobileRotateOptions.style.display = 'none';
         // Hide other option containers
     }
 
@@ -4181,4 +4183,62 @@ const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .optio
             mobileOutlineOptions.style.display = 'none';
         }
     });
+});
+function closeAllOptionContainers() {
+  const containers = [
+    document.getElementById('mobile-text-color-options'),
+    document.getElementById('mobile-font-selector'),
+    document.getElementById('mobile-floating-edit-box'),
+    document.getElementById('mobile-outline-options'),
+    document.getElementById('mobile-shape-options'),
+    document.getElementById('mobile-rotate-options'),
+    document.getElementById('mobile-reorder-options')
+  ];
+
+  containers.forEach(container => {
+    if (container) {
+      container.style.display = 'none';
+    }
+  });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileTextEditStrip = document.getElementById('mobile-text-edit-strip');
+
+  if (mobileTextEditStrip) {
+    const options = mobileTextEditStrip.querySelectorAll('.option');
+
+    options.forEach((option, index) => {
+      option.addEventListener('click', function(event) {
+        event.stopPropagation();
+        closeAllOptionContainers();
+
+        switch(index) {
+          case 0: // Color
+            document.getElementById('mobile-text-color-options').style.display = 'block';
+            break;
+          case 1: // Font
+            document.getElementById('mobile-font-selector').style.display = 'block';
+            break;
+          case 2: // Edit
+            showMobileTextEditInput(currentlyEditedTextElement.textContent);
+            break;
+          case 3: // Shape
+            document.getElementById('mobile-shape-options').style.display = 'block';
+            break;
+          case 4: // Outline
+            document.getElementById('mobile-outline-options').style.display = 'block';
+            break;
+          case 5: // Duplicate
+            duplicateText();
+            break;
+          case 6: // Rotate
+            document.getElementById('mobile-rotate-options').style.display = 'block';
+            break;
+          case 7: // Reorder
+            document.getElementById('mobile-reorder-options').style.display = 'block';
+            break;
+        }
+      });
+    });
+  }
 });
