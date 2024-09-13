@@ -3869,6 +3869,8 @@ document.addEventListener('touchstart', function(event) {
       !event.target.closest('.text-container') &&
       !event.target.closest('#mobile-text-edit-strip') &&
       !event.target.closest('#mobile-font-selector') &&
+            !event.target.closest('#mobile-floating-edit-box') &&
+
       mobileFontSelector.style.display !== 'block') {
     hideMobileTextEditStrip();
   }
