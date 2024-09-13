@@ -3202,48 +3202,53 @@ margin-right: -25px;
          transform: translateY(-50%);
          font-size: 35px;
        }
-  #mobile-text-edit-strip {
-      direction: rtl; /* This will set the overall direction to right-to-left */
-
+ #mobile-text-edit-strip {
+    direction: rtl;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     background-color: #ffffff;
     z-index: 1002;
-    padding: 10px 0;
+    padding: 1.2px 0;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
-    direction: rtl; /* Add this line */
-    /* Remove these lines:
-    overflow-x: auto;
-    white-space: nowrap;
-    */
   }
 
   .text-edit-options {
     display: flex;
+    justify-content: space-around;
     padding: 0 10px;
   }
 
   .text-edit-options .option {
+    flex: 1;
+    height: 60px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+  }
+
+  .text-edit-options .option-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 0 15px;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
   }
 
   .text-edit-options .option i {
     font-size: 24px;
     margin-bottom: 5px;
-        color: #1e39d2;
-
+    color: #1e39d2;
   }
 
   .text-edit-options .option span {
     font-size: 14px;
     color: #1e39d2;
     font-weight: bold;
-
   }
 }
 #mobile-background {
