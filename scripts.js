@@ -4400,8 +4400,8 @@ function toggleBackgroundRemoval() {
         // Save the current position relative to its parent
         const parentRect = selectedImageContainer.offsetParent.getBoundingClientRect();
         const imgRect = selectedImageContainer.getBoundingClientRect();
-        const savedLeft = imgRect.left - parentRect.left;
-        const savedTop = imgRect.top - parentRect.top;
+        const savedLeft = imgRect.left - parentRect.left -2;
+        const savedTop = imgRect.top - parentRect.top - 2;
 
         // Save current styles
         const savedWidth = img.style.width;
@@ -4419,10 +4419,10 @@ function toggleBackgroundRemoval() {
             applyStyles();
 
             // Apply styles again after a short delay to ensure correct positioning
-            setTimeout(applyStyles, 50);
+            setTimeout(applyStyles, 0.01);
 
             // Capture the state after styles have been applied
-            setTimeout(captureCanvasState, 100);
+            setTimeout(captureCanvasState, 1);
         };
 
         // Function to apply saved styles
