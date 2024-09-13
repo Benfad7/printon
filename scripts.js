@@ -4441,58 +4441,17 @@ function toggleBackgroundRemoval() {
         const img = selectedImageContainer.querySelector('img');
         const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
 
-        // Save the current position relative to its parent
-        const parentRect = selectedImageContainer.offsetParent.getBoundingClientRect();
-        const imgRect = selectedImageContainer.getBoundingClientRect();
-        const savedLeft = imgRect.left - parentRect.left -2;
-        const savedTop = imgRect.top - parentRect.top - 2;
-
-        // Save current styles
-        const savedWidth = img.style.width;
-        const savedHeight = img.style.height;
-        const savedTransform = selectedImageContainer.style.transform;
-        const savedPosition = selectedImageContainer.style.position;
-
-        // Create a temporary image to preload the new src
-        const tempImg = new Image();
-        tempImg.onload = function() {
-            // Apply the new src to the actual image
-            img.src = this.src;
-
-            // Immediately apply saved styles to prevent jump
-            applyStyles();
-
-            // Apply styles again after a short delay to ensure correct positioning
-            setTimeout(applyStyles, 0.01);
-
-            // Capture the state after styles have been applied
-            setTimeout(captureCanvasState, 1);
-        };
-
-        // Function to apply saved styles
-        function applyStyles() {
-            selectedImageContainer.style.position = savedPosition || 'absolute';
-            selectedImageContainer.style.left = `${savedLeft}px`;
-            selectedImageContainer.style.top = `${savedTop}px`;
-            selectedImageContainer.style.transform = savedTransform;
-            img.style.width = savedWidth;
-            img.style.height = savedHeight;
-        }
-
-        // Toggle background removal
         if (isBackgroundRemoved) {
-            tempImg.src = img.getAttribute('data-original-src');
+            img.src = img.getAttribute('data-original-src') || img.src;
             selectedImageContainer.setAttribute('data-background-removed', 'false');
         } else {
-            tempImg.src = removeBackground(img);
+            const newSrc = removeBackground(img);
+            img.src = newSrc;
             selectedImageContainer.setAttribute('data-background-removed', 'true');
         }
-
-        // Apply styles immediately to prevent any visual jump
-        applyStyles();
+        captureCanvasState();
     }
-}
-function flipImage() {
+}function flipImage() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
         toggleTransform(img, 'scaleX(-1)');
