@@ -3524,3 +3524,7 @@ margin-right: -25px;
      -ms-overflow-style: none;  /* IE and Edge */
      scrollbar-width: none;  /* Firefox */
  }
+ .text-edit-options-scroll {
+     overflow-x: auto;
+     -webkit-overflow-scrolling: touch;
+ }

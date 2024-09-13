@@ -4242,3 +4242,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+function enableScrolling() {
+    const scrollContainer = document.querySelector('.text-edit-options-scroll');
+    let isScrolling = false;
+    let startX;
+    let scrollLeft;
+
+    scrollContainer.addEventListener('touchstart', (e) => {
+        isScrolling = true;
+        startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+        scrollLeft = scrollContainer.scrollLeft;
+    });
+
+    scrollContainer.addEventListener('touchmove', (e) => {
+        if (!isScrolling) return;
+        e.preventDefault();
+        const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+        const walk = (x - startX) * 2;
+        scrollContainer.scrollLeft = scrollLeft - walk;
+    });
+
+    scrollContainer.addEventListener('touchend', () => {
+        isScrolling = false;
+    });
+}
+
+// Call this function after adding any new objects to the canvas
+enableScrolling();
