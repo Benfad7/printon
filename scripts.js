@@ -3983,7 +3983,43 @@ document.addEventListener('DOMContentLoaded', function() {
    const mobileTextColorButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(1)');
     const mobileTextColorOptions = document.getElementById('mobile-text-color-options');
     const mobileTextColorPicker = document.getElementById('mobile-text-color');
+   const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(4)');
+    const mobileShapeOptions = document.getElementById('mobile-shape-options');
+    const shapeOptions = document.querySelectorAll('.shape-option');
+    const mobileShapeIntensitySlider = document.getElementById('mobile-shape-intensity');
 
+    mobileShapeButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        mobileShapeOptions.style.display = mobileShapeOptions.style.display === 'none' ? 'block' : 'none';
+        mobileTextColorOptions.style.display = 'none';
+        mobileOutlineOptions.style.display = 'none';
+    });
+
+    shapeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            shapeOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            updateTextShape();
+        });
+    });
+
+    mobileShapeIntensitySlider.addEventListener('input', updateTextShape);
+
+    function updateTextShape() {
+        if (currentlyEditedTextElement) {
+            const selectedShape = document.querySelector('.shape-option.selected');
+            currentTextShape = selectedShape ? selectedShape.dataset.shape : 'normal';
+            currentShapeIntensity = mobileShapeIntensitySlider.value;
+            applyTextShape();
+        }
+    }
+
+    // Close shape options when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!mobileShapeOptions.contains(event.target) && event.target !== mobileShapeButton) {
+            mobileShapeOptions.style.display = 'none';
+        }
+    });
     mobileTextColorButton.addEventListener('click', function(event) {
         event.stopPropagation();
         mobileTextColorOptions.style.display = mobileTextColorOptions.style.display === 'none' ? 'block' : 'none';
