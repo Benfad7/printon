@@ -3339,7 +3339,7 @@ margin-right: -25px;
       font-size: 16px;
       text-align: right;
       direction: rtl;
-      order: 1; /* Move label to the left */
+      order: 1;
   }
 
   .outline-color-picker input[type="color"] {
@@ -3352,7 +3352,7 @@ margin-right: -25px;
       border-radius: 50%;
       overflow: hidden;
       cursor: pointer;
-      order: 0; /* Keep color picker on the right */
+      order: 0;
   }
 
   .outline-color-picker input[type="color"]::-webkit-color-swatch-wrapper {
@@ -3381,6 +3381,21 @@ margin-right: -25px;
       text-align: center;
       font-weight: bold;
   }
+
+  .outline-option:nth-child(1) {
+      order: 3;
+  }  .outline-option:nth-child(2) {
+      order: 2;
+  }  .outline-option:nth-child(3) {
+      order: 1;
+  }  .outline-option:nth-child(4) {
+      order: 6;
+  }  .outline-option:nth-child(5) {
+      order: 5;
+  }  .outline-option:nth-child(6) {
+      order: 4;
+  }
+
 
   .outline-option.selected {
       background-color: #007bff;
