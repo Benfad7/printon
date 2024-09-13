@@ -4392,25 +4392,62 @@ function showImageReorderOptions() {
         }
     });
 }
-
-
 function toggleBackgroundRemoval() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
         const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
 
+        // Save the current position relative to its parent
+        const parentRect = selectedImageContainer.offsetParent.getBoundingClientRect();
+        const imgRect = selectedImageContainer.getBoundingClientRect();
+        const savedLeft = imgRect.left - parentRect.left;
+        const savedTop = imgRect.top - parentRect.top;
+
+        // Save current styles
+        const savedWidth = img.style.width;
+        const savedHeight = img.style.height;
+        const savedTransform = selectedImageContainer.style.transform;
+        const savedPosition = selectedImageContainer.style.position;
+
+        // Create a temporary image to preload the new src
+        const tempImg = new Image();
+        tempImg.onload = function() {
+            // Apply the new src to the actual image
+            img.src = this.src;
+
+            // Immediately apply saved styles to prevent jump
+            applyStyles();
+
+            // Apply styles again after a short delay to ensure correct positioning
+            setTimeout(applyStyles, 50);
+
+            // Capture the state after styles have been applied
+            setTimeout(captureCanvasState, 100);
+        };
+
+        // Function to apply saved styles
+        function applyStyles() {
+            selectedImageContainer.style.position = savedPosition || 'absolute';
+            selectedImageContainer.style.left = `${savedLeft}px`;
+            selectedImageContainer.style.top = `${savedTop}px`;
+            selectedImageContainer.style.transform = savedTransform;
+            img.style.width = savedWidth;
+            img.style.height = savedHeight;
+        }
+
+        // Toggle background removal
         if (isBackgroundRemoved) {
-            img.src = img.getAttribute('data-original-src');
+            tempImg.src = img.getAttribute('data-original-src');
             selectedImageContainer.setAttribute('data-background-removed', 'false');
         } else {
-            const newSrc = removeBackground(img);
-            img.src = newSrc;
+            tempImg.src = removeBackground(img);
             selectedImageContainer.setAttribute('data-background-removed', 'true');
         }
-        captureCanvasState();
+
+        // Apply styles immediately to prevent any visual jump
+        applyStyles();
     }
 }
-
 function flipImage() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
