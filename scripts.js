@@ -4338,22 +4338,7 @@ function startCropping1() {
     }
 }
 
-function toggleBackgroundRemoval() {
-    if (selectedImageContainer) {
-        const img = selectedImageContainer.querySelector('img');
-        const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
 
-        if (isBackgroundRemoved) {
-            img.src = img.getAttribute('data-original-src') || img.src;
-            selectedImageContainer.setAttribute('data-background-removed', 'false');
-        } else {
-            const newSrc = removeBackground(img);
-            img.src = newSrc;
-            selectedImageContainer.setAttribute('data-background-removed', 'true');
-        }
-        captureCanvasState();
-    }
-}
 
 function flipImageHorizontally() {
     if (selectedImageContainer) {
@@ -4407,13 +4392,7 @@ function showImageReorderOptions() {
         }
     });
 }
-function startCropping1() {
-    if (selectedImageContainer) {
-        // Use the existing startCropping function
-        isCropping = true;
-        // ... (implement mobile-specific cropping UI if needed)
-    }
-}
+
 
 function toggleBackgroundRemoval() {
     if (selectedImageContainer) {
