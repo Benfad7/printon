@@ -3731,6 +3731,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const mobileFontSelector = document.getElementById('mobile-font-selector');
 
       mobileFontButton.addEventListener('click', function() {
+
           mobileFontSelector.style.display = mobileFontSelector.style.display === 'none' ? 'block' : 'none';
       });
 
@@ -3739,6 +3740,7 @@ document.addEventListener('DOMContentLoaded', function() {
               const selectedFont = e.target.dataset.font;
               updateTextFont(selectedFont);
               mobileFontSelector.style.display = 'none';
+              showMobileTextEditStrip();
           }
       });
 
@@ -3860,7 +3862,13 @@ function hideMobileTextEditStrip() {
 
 // Add this to hide the strip when clicking outside the text
 document.addEventListener('touchstart', function(event) {
-  if (isMobile() && !event.target.closest('.text-container') && !event.target.closest('#mobile-text-edit-strip')) {
+  const mobileFontSelector = document.getElementById('mobile-font-selector');
+
+  if (isMobile() &&
+      !event.target.closest('.text-container') &&
+      !event.target.closest('#mobile-text-edit-strip') &&
+      !event.target.closest('#mobile-font-selector') &&
+      mobileFontSelector.style.display !== 'block') {
     hideMobileTextEditStrip();
   }
 });
