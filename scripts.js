@@ -206,6 +206,8 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
             if (!isDragging && !isResizing) {
                 selectImage(event);
                 if (isMobile()) {
+                                hideMobileTextEditStrip(); // Hide text edit strip
+
                     showMobileImageEditStrip();
                 }
             }
@@ -4312,14 +4314,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 1: // Remove background
                         toggleBackgroundRemoval();
                         break;
-                    case 2: // Flip
-                        flipImage();
+                    case 2: // Flip horizontally
+                        flipImageHorizontally();
                         break;
-                    case 3: // Duplicate
+                    case 3: // Flip vertically
+                        flipImageVertically();
+                        break;
+                    case 4: // Duplicate
                         duplicateImage();
                         break;
-                    case 4: // Reorder
-                        showReorderOptions();
+                    case 5: // Reorder
+                        showImageReorderOptions();
                         break;
                 }
             });
@@ -4327,6 +4332,81 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function startCropping1() {
+    if (selectedImageContainer) {
+        startCropping(); // Use the existing startCropping function
+    }
+}
+
+function toggleBackgroundRemoval() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
+
+        if (isBackgroundRemoved) {
+            img.src = img.getAttribute('data-original-src') || img.src;
+            selectedImageContainer.setAttribute('data-background-removed', 'false');
+        } else {
+            const newSrc = removeBackground(img);
+            img.src = newSrc;
+            selectedImageContainer.setAttribute('data-background-removed', 'true');
+        }
+        captureCanvasState();
+    }
+}
+
+function flipImageHorizontally() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        toggleTransform(img, 'scaleX(-1)');
+        captureCanvasState();
+    }
+}
+
+function flipImageVertically() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        toggleTransform(img, 'scaleY(-1)');
+        captureCanvasState();
+    }
+}
+
+function showImageReorderOptions() {
+    const reorderOptions = document.createElement('div');
+    reorderOptions.id = 'mobile-reorder-options';
+    reorderOptions.className = 'mobile-reorder-options';
+    reorderOptions.innerHTML = `
+        <div class="reorder-buttons">
+            <button class="reorder-button" id="move-image-forward">
+                <i class="fas fa-arrow-up"></i>
+                <span>העבר קדימה</span>
+            </button>
+            <button class="reorder-button" id="move-image-backward">
+                <i class="fas fa-arrow-down"></i>
+                <span>העבר אחורה</span>
+            </button>
+        </div>
+    `;
+    document.body.appendChild(reorderOptions);
+
+    document.getElementById('move-image-forward').addEventListener('click', () => {
+        moveLayerForward(selectedImageContainer);
+        reorderOptions.remove();
+    });
+
+    document.getElementById('move-image-backward').addEventListener('click', () => {
+        moveLayerBackward(selectedImageContainer);
+        reorderOptions.remove();
+    });
+
+    // Close reorder options when clicking outside
+    document.addEventListener('click', function closeReorderOptions(e) {
+        if (!reorderOptions.contains(e.target) && e.target.textContent !== 'סדר') {
+            reorderOptions.remove();
+            document.removeEventListener('click', closeReorderOptions);
+        }
+    });
+}
 function startCropping1() {
     if (selectedImageContainer) {
         // Use the existing startCropping function
