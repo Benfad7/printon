@@ -1431,8 +1431,11 @@ let currentlyEditedTextElement = null;
         currentlyEditedTextElement = textElement;
         const editTextInput = document.getElementById('edit-text-input');
         const textColorPicker = document.getElementById('text-color-picker');
-        const fontSelector = document.getElementById('font-selector');
-        const outlineColorPicker = document.getElementById('outline-color-picker');
+    const fontSelector = document.getElementById('font-selector');
+    fontSelector.removeEventListener('change', updateTextFont);
+    fontSelector.addEventListener('change', function() {
+        updateTextFont(this.value);
+    });        const outlineColorPicker = document.getElementById('outline-color-picker');
         const outlineThicknessSelector = document.getElementById('outline-thickness-selector');
 
         // Set text content
@@ -3724,6 +3727,27 @@ document.addEventListener('DOMContentLoaded', function() {
   const mobileTitle = document.querySelector('.mobile-screen-title');
   const continueButton = document.getElementById('get-price-button-container');
   const backButton = document.getElementById('go-back-button-container');
+   const mobileFontButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(2)');
+      const mobileFontSelector = document.getElementById('mobile-font-selector');
+
+      mobileFontButton.addEventListener('click', function() {
+          mobileFontSelector.style.display = mobileFontSelector.style.display === 'none' ? 'block' : 'none';
+      });
+
+      mobileFontSelector.addEventListener('click', function(e) {
+          if (e.target.classList.contains('font-option')) {
+              const selectedFont = e.target.dataset.font;
+              updateTextFont(selectedFont);
+              mobileFontSelector.style.display = 'none';
+          }
+      });
+
+      function updateTextFont(font) {
+          if (currentlyEditedTextElement) {
+              currentlyEditedTextElement.style.fontFamily = font;
+              captureCanvasState();
+          }
+      }
 function showMobileScreen(title, content) {
     mobileTitle.textContent = title;
     mobileContent.innerHTML = content;
@@ -3851,4 +3875,11 @@ document.querySelector('#mobile-text-edit-strip .option:nth-child(1)').addEventL
       captureCanvasState();
     });
   }
-});
+});document.addEventListener('click', function(event) {
+       const mobileFontSelector = document.getElementById('mobile-font-selector');
+       const mobileFontButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(2)');
+
+       if (!mobileFontSelector.contains(event.target) && event.target !== mobileFontButton) {
+           mobileFontSelector.style.display = 'none';
+       }
+   });

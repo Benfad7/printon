@@ -3253,3 +3253,24 @@ margin-right: -25px;
       display: none;
     }
 }
+.mobile-font-selector {
+    position: fixed;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    z-index: 1003;
+    max-height: 50vh;
+    overflow-y: auto;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.font-option {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.font-option:active {
+    background-color: #f0f0f0;
+}
