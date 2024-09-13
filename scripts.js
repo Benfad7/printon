@@ -3907,8 +3907,13 @@ function hideMobileScreen() {
 }
 
 function showMobileTextEditStrip() {
-  document.querySelector('.mobile-bottom-nav').style.display = 'none';
-  document.getElementById('mobile-text-edit-strip').style.display = 'block';
+    document.querySelector('.mobile-bottom-nav').style.display = 'none';
+    const editStrip = document.getElementById('mobile-text-edit-strip');
+    editStrip.style.display = 'block';
+
+    // Scroll to the right end
+    const scrollContainer = editStrip.querySelector('.text-edit-options-scroll');
+    scrollContainer.scrollLeft = scrollContainer.scrollWidth;
 }
 function hideMobileTextEditStrip() {
   closeAllOptionContainers();
@@ -4326,7 +4331,12 @@ document.addEventListener('DOMContentLoaded', function() {
    enableScrolling();
 function showMobileImageEditStrip() {
     document.querySelector('.mobile-bottom-nav').style.display = 'none';
-    document.getElementById('mobile-image-edit-strip').style.display = 'block';
+    const editStrip = document.getElementById('mobile-image-edit-strip');
+    editStrip.style.display = 'block';
+
+    // Scroll to the right end
+    const scrollContainer = editStrip.querySelector('.text-edit-options-scroll');
+    scrollContainer.scrollLeft = scrollContainer.scrollWidth;
 }
 
 function hideMobileImageEditStrip() {
