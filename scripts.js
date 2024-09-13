@@ -3983,10 +3983,11 @@ document.addEventListener('DOMContentLoaded', function() {
    const mobileTextColorButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(1)');
     const mobileTextColorOptions = document.getElementById('mobile-text-color-options');
     const mobileTextColorPicker = document.getElementById('mobile-text-color');
-   const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(4)');
+const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(4)');
     const mobileShapeOptions = document.getElementById('mobile-shape-options');
     const shapeOptions = document.querySelectorAll('.shape-option');
     const mobileShapeIntensitySlider = document.getElementById('mobile-shape-intensity');
+    const removeShapeButton = document.getElementById('remove-shape-button');
 
     mobileShapeButton.addEventListener('click', function(event) {
         event.stopPropagation();
@@ -4004,6 +4005,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     mobileShapeIntensitySlider.addEventListener('input', updateTextShape);
+
+    removeShapeButton.addEventListener('click', function() {
+        shapeOptions.forEach(opt => opt.classList.remove('selected'));
+        document.querySelector('.shape-option[data-shape="normal"]').classList.add('selected');
+        mobileShapeIntensitySlider.value = 50;
+        updateTextShape();
+    });
 
     function updateTextShape() {
         if (currentlyEditedTextElement) {
