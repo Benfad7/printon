@@ -3529,10 +3529,13 @@ margin-right: -25px;
      z-index: 1003;
      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
      padding: 15px;
+
+ }
+ .mobile-reorder-options {
+
          direction: rtl;
 
  }
-
  .rotate-slider {
      display: flex;
      flex-direction: column;
