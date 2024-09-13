@@ -3892,3 +3892,81 @@ document.querySelector('#mobile-text-edit-strip .option:nth-child(1)').addEventL
            mobileFontSelector.style.display = 'none';
        }
    });
+
+
+document.querySelector('#mobile-text-edit-strip .option:nth-child(3)').addEventListener('click', function(event) {
+  if (currentlyEditedTextElement) {
+    showMobileTextEditInput(currentlyEditedTextElement.textContent, event.target);
+  }
+});
+
+function showMobileTextEditInput(currentText, targetElement) {
+  // Remove any existing floating edit box
+  const existingBox = document.getElementById('mobile-floating-edit-box');
+  if (existingBox) {
+    existingBox.remove();
+  }
+
+  // Create floating edit box
+  const floatingBox = document.createElement('div');
+  floatingBox.id = 'mobile-floating-edit-box';
+  floatingBox.style.cssText = `
+    position: absolute;
+    bottom: 60px;
+    left: 10px;
+    right: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    padding: 5px;
+    z-index: 1000;
+  `;
+
+  floatingBox.innerHTML = `
+    <input type="text" id="mobile-text-input" value="${currentText}" style="flex-grow: 1; margin-right: 5px; padding: 5px;">
+    <button id="mobile-confirm-text" style="padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 3px;">אישור</button>
+  `;
+
+  document.body.appendChild(floatingBox);
+
+  const textInput = document.getElementById('mobile-text-input');
+  textInput.focus();
+  textInput.setSelectionRange(textInput.value.length, textInput.value.length);
+
+  document.getElementById('mobile-confirm-text').addEventListener('click', confirmMobileTextEdit);
+  textInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      confirmMobileTextEdit();
+    }
+  });
+
+  // Close the floating box when clicking outside
+  document.addEventListener('click', closeFloatingBoxOutside);
+}
+
+function confirmMobileTextEdit() {
+  const newText = document.getElementById('mobile-text-input').value;
+  if (currentlyEditedTextElement) {
+    currentlyEditedTextElement.textContent = newText;
+    updateTextContent.call({value: newText}); // Use existing function to update text
+    captureCanvasState();
+  }
+  closeFloatingBox();
+}
+
+function closeFloatingBox() {
+  const floatingBox = document.getElementById('mobile-floating-edit-box');
+  if (floatingBox) {
+    floatingBox.remove();
+  }
+  document.removeEventListener('click', closeFloatingBoxOutside);
+}
+
+function closeFloatingBoxOutside(event) {
+  const floatingBox = document.getElementById('mobile-floating-edit-box');
+  if (floatingBox && !floatingBox.contains(event.target) && !event.target.closest('#mobile-text-edit-strip')) {
+    closeFloatingBox();
+  }
+}
