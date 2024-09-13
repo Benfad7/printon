@@ -738,82 +738,123 @@ function startDragging(event) {
     let originalZIndex;
     let originalPosition;
 
-    function startCropping() {
-        document.addEventListener('mousedown', handleOutsideClick);
+function startCropping() {
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
 
-        isCropping = true;
-        cropButton.classList.add('active');
+    isCropping = true;
+    cropButton.classList.add('active');
 
-        // Bring the image to the front
-        originalZIndex = selectedImageContainer.style.zIndex;
-        originalPosition = {
-            left: selectedImageContainer.style.left,
-            top: selectedImageContainer.style.top
+    // Bring the image to the front
+    originalZIndex = selectedImageContainer.style.zIndex;
+    originalPosition = {
+        left: selectedImageContainer.style.left,
+        top: selectedImageContainer.style.top
+    };
+    selectedImageContainer.style.zIndex = '1000';
+
+    const img = selectedImageContainer.querySelector('img');
+    const imgRect = img.getBoundingClientRect();
+
+    // Create crop overlay
+    cropOverlay = document.createElement('div');
+    cropOverlay.className = 'crop-overlay';
+    cropOverlay.style.position = 'absolute';
+    cropOverlay.style.top = '0';
+    cropOverlay.style.left = '0';
+    cropOverlay.style.right = '0';
+    cropOverlay.style.bottom = '0';
+    cropOverlay.style.border = '2px solid #fff';
+    selectedImageContainer.appendChild(cropOverlay);
+
+    // Create crop handles
+    const handlePositions = ['nw', 'ne', 'se', 'sw'];
+    handlePositions.forEach(pos => {
+        const handle = document.createElement('div');
+        handle.className = `crop-handle ${pos}`;
+        cropOverlay.appendChild(handle);
+        cropHandles.push(handle);
+
+        // Event handler for mobile touch events
+        const handleTouchStart = (e) => {
+            e.stopPropagation();
+            const startX = e.touches[0].clientX; // Use touches[0].clientX for touch events
+            const startY = e.touches[0].clientY;
+            const startRect = cropOverlay.getBoundingClientRect();
+
+            const touchmove = (moveEvent) => {
+                const deltaX = moveEvent.touches[0].clientX - startX;
+                const deltaY = moveEvent.touches[0].clientY - startY;
+
+                let newTop = startRect.top - imgRect.top + (pos.includes('n') ? deltaY : 0);
+                let newBottom = imgRect.bottom - startRect.bottom - (pos.includes('s') ? deltaY : 0);
+                let newLeft = startRect.left - imgRect.left + (pos.includes('w') ? deltaX : 0);
+                let newRight = imgRect.right - startRect.right - (pos.includes('e') ? deltaX : 0);
+
+                // Ensure crop area stays within image bounds
+                newTop = Math.max(0, Math.min(newTop, imgRect.height - 10));
+                newBottom = Math.max(0, Math.min(newBottom, imgRect.height - 10));
+                newLeft = Math.max(0, Math.min(newLeft, imgRect.width - 10));
+                newRight = Math.max(0, Math.min(newRight, imgRect.width - 10));
+
+                cropOverlay.style.top = `${newTop}px`;
+                cropOverlay.style.bottom = `${newBottom}px`;
+                cropOverlay.style.left = `${newLeft}px`;
+                cropOverlay.style.right = `${newRight}px`;
+            };
+
+            const touchend = () => {
+                document.removeEventListener('touchmove', touchmove);
+                document.removeEventListener('touchend', touchend);
+            };
+
+            document.addEventListener('touchmove', touchmove);
+            document.addEventListener('touchend', touchend);
         };
-        selectedImageContainer.style.zIndex = '1000';
 
-        const img = selectedImageContainer.querySelector('img');
-        const imgRect = img.getBoundingClientRect();
+        // Event handler for desktop mouse events
+        const handleMouseDown = (e) => {
+            e.stopPropagation();
+            const startX = e.clientX;
+            const startY = e.clientY;
+            const startRect = cropOverlay.getBoundingClientRect();
 
-        // Create crop overlay
-        cropOverlay = document.createElement('div');
-        cropOverlay.className = 'crop-overlay';
-        cropOverlay.style.position = 'absolute';
-        cropOverlay.style.top = '0';
-        cropOverlay.style.left = '0';
-        cropOverlay.style.right = '0';
-        cropOverlay.style.bottom = '0';
-        cropOverlay.style.border = '2px solid #fff';
-        selectedImageContainer.appendChild(cropOverlay);
+            const mousemove = (moveEvent) => {
+                const deltaX = moveEvent.clientX - startX;
+                const deltaY = moveEvent.clientY - startY;
 
-        // Create crop handles
-        const handlePositions = ['nw', 'ne', 'se', 'sw'];
-        handlePositions.forEach(pos => {
-            const handle = document.createElement('div');
-            handle.className = `crop-handle ${pos}`;
-            cropOverlay.appendChild(handle);
-            cropHandles.push(handle);
+                let newTop = startRect.top - imgRect.top + (pos.includes('n') ? deltaY : 0);
+                let newBottom = imgRect.bottom - startRect.bottom - (pos.includes('s') ? deltaY : 0);
+                let newLeft = startRect.left - imgRect.left + (pos.includes('w') ? deltaX : 0);
+                let newRight = imgRect.right - startRect.right - (pos.includes('e') ? deltaX : 0);
 
-            handle.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-                const startX = e.clientX;
-                const startY = e.clientY;
-                const startRect = cropOverlay.getBoundingClientRect();
+                // Ensure crop area stays within image bounds
+                newTop = Math.max(0, Math.min(newTop, imgRect.height - 10));
+                newBottom = Math.max(0, Math.min(newBottom, imgRect.height - 10));
+                newLeft = Math.max(0, Math.min(newLeft, imgRect.width - 10));
+                newRight = Math.max(0, Math.min(newRight, imgRect.width - 10));
 
-                const mousemove = (moveEvent) => {
-                    const deltaX = moveEvent.clientX - startX;
-                    const deltaY = moveEvent.clientY - startY;
+                cropOverlay.style.top = `${newTop}px`;
+                cropOverlay.style.bottom = `${newBottom}px`;
+                cropOverlay.style.left = `${newLeft}px`;
+                cropOverlay.style.right = `${newRight}px`;
+            };
 
-                    let newTop = startRect.top - imgRect.top + (pos.includes('n') ? deltaY : 0);
-                    let newBottom = imgRect.bottom - startRect.bottom - (pos.includes('s') ? deltaY : 0);
-                    let newLeft = startRect.left - imgRect.left + (pos.includes('w') ? deltaX : 0);
-                    let newRight = imgRect.right - startRect.right - (pos.includes('e') ? deltaX : 0);
+            const mouseup = () => {
+                document.removeEventListener('mousemove', mousemove);
+                document.removeEventListener('mouseup', mouseup);
+            };
 
-                    // Ensure crop area stays within image bounds
-                    newTop = Math.max(0, Math.min(newTop, imgRect.height - 10));
-                    newBottom = Math.max(0, Math.min(newBottom, imgRect.height - 10));
-                    newLeft = Math.max(0, Math.min(newLeft, imgRect.width - 10));
-                    newRight = Math.max(0, Math.min(newRight, imgRect.width - 10));
+            document.addEventListener('mousemove', mousemove);
+            document.addEventListener('mouseup', mouseup);
+        };
 
-                    cropOverlay.style.top = `${newTop}px`;
-                    cropOverlay.style.bottom = `${newBottom}px`;
-                    cropOverlay.style.left = `${newLeft}px`;
-                    cropOverlay.style.right = `${newRight}px`;
-                };
+        // Add event listeners for both touch and mouse events
+        handle.addEventListener('touchstart', handleTouchStart);
+        handle.addEventListener('mousedown', handleMouseDown);
+    });
 
-                const mouseup = () => {
-                    document.removeEventListener('mousemove', mousemove);
-                    document.removeEventListener('mouseup', mouseup);
-                };
-
-                document.addEventListener('mousemove', mousemove);
-                document.addEventListener('mouseup', mouseup);
-            });
-        });
-
-        // Create crop button below the image
-      // Create crop button below the image
-        // Create crop button below the image
+    // Create crop button below the image
     const buttonContainer = document.createElement('div');
     buttonContainer.style.position = 'absolute';
     buttonContainer.style.top = '100%';
@@ -830,7 +871,7 @@ function startDragging(event) {
 
     // Create cancel button
     cancelCropButton = createButton('בטל', 'fa-times');
-    cancelCropButton.style.marginRight = '100px'; // P osition on the right
+    cancelCropButton.style.marginRight = '100px'; // Position on the right
 
     // Add buttons to the container
     buttonContainer.appendChild(cropButtonBelow);
@@ -841,7 +882,9 @@ function startDragging(event) {
 
     cropButtonBelow.querySelector('button').addEventListener('click', finishCropping);
     cancelCropButton.querySelector('button').addEventListener('click', cancelCropping);
-        }
+    cropButtonBelow.querySelector('button').addEventListener('touchstart', finishCropping);
+    cancelCropButton.querySelector('button').addEventListener('touchstart', cancelCropping);
+}
 
     function createButton(text, iconClass) {
         const button = document.createElement('div');
@@ -918,6 +961,7 @@ function startDragging(event) {
         cropButtonBelow = null;
         cancelCropButton = null;
         document.removeEventListener('mousedown', handleOutsideClick);
+        document.removeEventListener('touchstart', handleOutsideClick);
     }
     function handleOutsideClick(event) {
         if (isCropping && selectedImageContainer && !selectedImageContainer.contains(event.target)) {
