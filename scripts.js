@@ -202,6 +202,14 @@ function setupImageInteractions(imgContainer, img, resizeHandle, deleteHandle, f
     let activeTouchId = null;
 
     imgContainer.addEventListener('mousedown', startDragging);
+       imgContainer.addEventListener('touchstart', function(event) {
+            if (!isDragging && !isResizing) {
+                selectImage(event);
+                if (isMobile()) {
+                    showMobileImageEditStrip();
+                }
+            }
+        });
     imgContainer.addEventListener('touchstart', handleTouchStart);
 
     function handleTouchStart(event) {
@@ -4241,31 +4249,155 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
-});
-function enableScrolling() {
-    const scrollContainer = document.querySelector('.text-edit-options-scroll');
-    let isScrolling = false;
-    let startX;
-    let scrollLeft;
+});function enableScrolling() {
+       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll');
+       scrollContainers.forEach(scrollContainer => {
+           let isScrolling = false;
+           let startX;
+           let scrollLeft;
 
-    scrollContainer.addEventListener('touchstart', (e) => {
-        isScrolling = true;
-        startX = e.touches[0].pageX - scrollContainer.offsetLeft;
-        scrollLeft = scrollContainer.scrollLeft;
-    });
+           scrollContainer.addEventListener('touchstart', (e) => {
+               isScrolling = true;
+               startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+               scrollLeft = scrollContainer.scrollLeft;
+           });
 
-    scrollContainer.addEventListener('touchmove', (e) => {
-        if (!isScrolling) return;
-        e.preventDefault();
-        const x = e.touches[0].pageX - scrollContainer.offsetLeft;
-        const walk = (x - startX) * 2;
-        scrollContainer.scrollLeft = scrollLeft - walk;
-    });
+           scrollContainer.addEventListener('touchmove', (e) => {
+               if (!isScrolling) return;
+               e.preventDefault();
+               const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+               const walk = (x - startX) * 2;
+               scrollContainer.scrollLeft = scrollLeft - walk;
+           });
 
-    scrollContainer.addEventListener('touchend', () => {
-        isScrolling = false;
-    });
+           scrollContainer.addEventListener('touchend', () => {
+               isScrolling = false;
+           });
+       });
+   }
+
+   // Call this function after adding any new objects to the canvas
+   enableScrolling();
+function showMobileImageEditStrip() {
+    document.querySelector('.mobile-bottom-nav').style.display = 'none';
+    document.getElementById('mobile-image-edit-strip').style.display = 'block';
 }
 
-// Call this function after adding any new objects to the canvas
-enableScrolling();
+function hideMobileImageEditStrip() {
+    document.getElementById('mobile-image-edit-strip').style.display = 'none';
+    document.querySelector('.mobile-bottom-nav').style.display = 'flex';
+}
+
+document.addEventListener('touchstart', function(event) {
+    if (isMobile() &&
+        !event.target.closest('.image-container') &&
+        !event.target.closest('#mobile-image-edit-strip')) {
+        hideMobileImageEditStrip();
+    }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileImageEditStrip = document.getElementById('mobile-image-edit-strip');
+
+    if (mobileImageEditStrip) {
+        const options = mobileImageEditStrip.querySelectorAll('.option');
+
+        options.forEach((option, index) => {
+            option.addEventListener('click', function(event) {
+                event.stopPropagation();
+
+                switch(index) {
+                    case 0: // Crop
+                        startCropping1();
+                        break;
+                    case 1: // Remove background
+                        toggleBackgroundRemoval();
+                        break;
+                    case 2: // Flip
+                        flipImage();
+                        break;
+                    case 3: // Duplicate
+                        duplicateImage();
+                        break;
+                    case 4: // Reorder
+                        showReorderOptions();
+                        break;
+                }
+            });
+        });
+    }
+});
+
+function startCropping1() {
+    if (selectedImageContainer) {
+        // Use the existing startCropping function
+        isCropping = true;
+        // ... (implement mobile-specific cropping UI if needed)
+    }
+}
+
+function toggleBackgroundRemoval() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        const isBackgroundRemoved = selectedImageContainer.getAttribute('data-background-removed') === 'true';
+
+        if (isBackgroundRemoved) {
+            img.src = img.getAttribute('data-original-src');
+            selectedImageContainer.setAttribute('data-background-removed', 'false');
+        } else {
+            const newSrc = removeBackground(img);
+            img.src = newSrc;
+            selectedImageContainer.setAttribute('data-background-removed', 'true');
+        }
+        captureCanvasState();
+    }
+}
+
+function flipImage() {
+    if (selectedImageContainer) {
+        const img = selectedImageContainer.querySelector('img');
+        toggleTransform(img, 'scaleX(-1)');
+        captureCanvasState();
+    }
+}
+
+function duplicateImage() {
+    if (selectedImageContainer) {
+        const clonedContainer = selectedImageContainer.cloneNode(true);
+        const clonedImg = clonedContainer.querySelector('img');
+
+        clonedContainer.style.left = (parseFloat(selectedImageContainer.style.left) + 20) + 'px';
+        clonedContainer.style.top = (parseFloat(selectedImageContainer.style.top) + 20) + 'px';
+
+        currentCanvas.appendChild(clonedContainer);
+
+        setupImageInteractions(clonedContainer, clonedImg,
+            clonedContainer.querySelector('.resize-handle'),
+            clonedContainer.querySelector('.delete-handle'),
+            clonedImg.getAttribute('data-original-src'));
+
+        captureCanvasState();
+    }
+}
+
+function showReorderOptions() {
+    // Implement a mobile-friendly UI for reordering
+    // This could be a simple dialog with "Move Forward" and "Move Backward" buttons
+    const reorderDialog = document.createElement('div');
+    reorderDialog.innerHTML = `
+        <div style="position: fixed; bottom: 60px; left: 0; right: 0; background: white; padding: 10px; text-align: center;">
+            <button id="move-forward-btn">העבר קדימה</button>
+            <button id="move-backward-btn">העבר אחורה</button>
+        </div>
+    `;
+    document.body.appendChild(reorderDialog);
+
+    document.getElementById('move-forward-btn').addEventListener('click', () => {
+        moveLayerForward(selectedImageContainer);
+        reorderDialog.remove();
+    });
+
+    document.getElementById('move-backward-btn').addEventListener('click', () => {
+        moveLayerBackward(selectedImageContainer);
+        reorderDialog.remove();
+    });
+}
