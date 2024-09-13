@@ -3894,13 +3894,14 @@ document.querySelector('#mobile-text-edit-strip .option:nth-child(1)').addEventL
    });
 
 
+
 document.querySelector('#mobile-text-edit-strip .option:nth-child(3)').addEventListener('click', function(event) {
   if (currentlyEditedTextElement) {
-    showMobileTextEditInput(currentlyEditedTextElement.textContent, event.target);
+    showMobileTextEditInput(currentlyEditedTextElement.textContent);
   }
 });
 
-function showMobileTextEditInput(currentText, targetElement) {
+function showMobileTextEditInput(currentText) {
   // Remove any existing floating edit box
   const existingBox = document.getElementById('mobile-floating-edit-box');
   if (existingBox) {
@@ -3911,23 +3912,30 @@ function showMobileTextEditInput(currentText, targetElement) {
   const floatingBox = document.createElement('div');
   floatingBox.id = 'mobile-floating-edit-box';
   floatingBox.style.cssText = `
-    position: absolute;
+    position: fixed;
     bottom: 60px;
-    left: 10px;
-    right: 10px;
+    left: 0;
+    right: 0;
     background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-top: 1px solid #ccc;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
     display: flex;
-    padding: 5px;
+    flex-direction: column;
+    padding: 10px;
     z-index: 1000;
   `;
 
-  floatingBox.innerHTML = `
-    <input type="text" id="mobile-text-input" value="${currentText}" style="flex-grow: 1; margin-right: 5px; padding: 5px;">
-    <button id="mobile-confirm-text" style="padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 3px;">אישור</button>
-  `;
+floatingBox.innerHTML = `
+  <div style="display: flex; align-items: center; gap: 10px;">
+      <button id="mobile-confirm-text" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px;">אישור</button>
+
+    <input type="text" id="mobile-text-input" value="${currentText}"
+           style="width: 60%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;
+           text-align: right; direction: rtl; caret-color: blue; color: black;">
+  </div>
+`;
+
+
 
   document.body.appendChild(floatingBox);
 
@@ -3942,7 +3950,12 @@ function showMobileTextEditInput(currentText, targetElement) {
     }
   });
 
-  // Close the floating box when clicking outside
+  // Prevent closing when clicking inside the floating box
+  floatingBox.addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
+  // Close the floating box when clicking outside, except on the edit strip
   document.addEventListener('click', closeFloatingBoxOutside);
 }
 
