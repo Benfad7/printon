@@ -3865,14 +3865,17 @@ function hideMobileTextEditStrip() {
 // Add this to hide the strip when clicking outside the text
 document.addEventListener('touchstart', function(event) {
   const mobileFontSelector = document.getElementById('mobile-font-selector');
-
   if (isMobile() &&
       !event.target.closest('.text-container') &&
       !event.target.closest('#mobile-text-edit-strip') &&
       !event.target.closest('#mobile-font-selector') &&
-            !event.target.closest('#mobile-floating-edit-box') &&
-
-      mobileFontSelector.style.display !== 'block') {
+      !event.target.closest('#mobile-floating-edit-box') &&
+      !event.target.closest('#mobile-text-color-options') &&
+      !event.target.closest('#mobile-outline-options') &&
+      !event.target.closest('#mobile-shape-options') &&
+      !event.target.closest('#mobile-rotate-options') &&
+      !event.target.closest('#mobile-reorder-options')
+) {
     hideMobileTextEditStrip();
   }
 });
