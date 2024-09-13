@@ -3988,7 +3988,101 @@ const mobileShapeButton = document.querySelector('#mobile-text-edit-strip .optio
     const shapeOptions = document.querySelectorAll('.shape-option');
     const mobileShapeIntensitySlider = document.getElementById('mobile-shape-intensity');
     const removeShapeButton = document.getElementById('remove-shape-button');
+   const mobileDuplicateButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(6)');
+    const mobileRotateButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(7)');
+    const mobileReorderButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(8)');
 
+    const mobileRotateOptions = document.getElementById('mobile-rotate-options');
+    const mobileReorderOptions = document.getElementById('mobile-reorder-options');
+
+    const mobileRotateSlider = document.getElementById('mobile-rotate-angle');
+    const mobileRotateValue = document.getElementById('mobile-rotate-value');
+
+    const moveForwardButton = document.getElementById('move-forward');
+    const moveBackwardButton = document.getElementById('move-backward');
+
+    mobileDuplicateButton.addEventListener('click', duplicateText);
+    mobileRotateButton.addEventListener('click', toggleRotateOptions);
+    mobileReorderButton.addEventListener('click', toggleReorderOptions);
+
+    mobileRotateSlider.addEventListener('input', updateTextRotation);
+    moveForwardButton.addEventListener('click', moveTextForward);
+    moveBackwardButton.addEventListener('click', moveTextBackward);
+
+    function duplicateText() {
+        if (currentlyEditedTextElement) {
+            const originalContainer = currentlyEditedTextElement.parentNode;
+            const clonedContainer = originalContainer.cloneNode(true);
+            const clonedTextElement = clonedContainer.querySelector('p');
+
+            clonedContainer.style.left = (parseFloat(originalContainer.style.left) + 20) + 'px';
+            clonedContainer.style.top = (parseFloat(originalContainer.style.top) + 20) + 'px';
+
+            currentCanvas.appendChild(clonedContainer);
+
+            setupTextInteractions(clonedContainer, clonedTextElement,
+                clonedContainer.querySelector('.resize-handle'),
+                clonedContainer.querySelector('.delete-handle'));
+
+            captureCanvasState();
+        }
+    }
+
+    function toggleRotateOptions() {
+        mobileRotateOptions.style.display = mobileRotateOptions.style.display === 'none' ? 'block' : 'none';
+        mobileReorderOptions.style.display = 'none';
+        // Hide other option containers
+    }
+
+    function toggleReorderOptions() {
+        mobileReorderOptions.style.display = mobileReorderOptions.style.display === 'none' ? 'block' : 'none';
+        mobileRotateOptions.style.display = 'none';
+        // Hide other option containers
+    }
+
+    function updateTextRotation() {
+        if (currentlyEditedTextElement) {
+            const rotation = mobileRotateSlider.value;
+            currentlyEditedTextElement.style.transform = `rotate(${rotation}deg)`;
+            mobileRotateValue.textContent = `${rotation}°`;
+            captureCanvasState();
+        }
+    }
+
+    function moveTextForward() {
+        if (currentlyEditedTextElement) {
+            const container = currentlyEditedTextElement.parentNode;
+            if (container.nextElementSibling) {
+                currentCanvas.insertBefore(container.nextElementSibling, container);
+                captureCanvasState();
+            }
+        }
+    }
+
+    function moveTextBackward() {
+        if (currentlyEditedTextElement) {
+            const container = currentlyEditedTextElement.parentNode;
+            if (container.previousElementSibling) {
+                currentCanvas.insertBefore(container, container.previousElementSibling);
+                captureCanvasState();
+            }
+        }
+    }
+
+    // Close options when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!mobileRotateOptions.contains(event.target) && event.target !== mobileRotateButton) {
+            mobileRotateOptions.style.display = 'none';
+        }
+        if (!mobileReorderOptions.contains(event.target) && event.target !== mobileReorderButton) {
+            mobileReorderOptions.style.display = 'none';
+        }
+    });
+        function getCurrentRotation(element) {
+            const transform = element.style.transform;
+            const match = transform.match(/rotate\(([-\d.]+)deg\)/);
+            return match ? parseInt(match[1]) : 0;
+        }
     mobileShapeButton.addEventListener('click', function(event) {
         event.stopPropagation();
         mobileShapeOptions.style.display = mobileShapeOptions.style.display === 'none' ? 'block' : 'none';
