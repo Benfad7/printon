@@ -3876,18 +3876,7 @@ document.addEventListener('touchstart', function(event) {
     hideMobileTextEditStrip();
   }
 });
-document.querySelector('#mobile-text-edit-strip .option:nth-child(1)').addEventListener('click', function() {
-  if (currentlyEditedTextElement) {
-    const colorPicker = document.createElement('input');
-    colorPicker.type = 'color';
-    colorPicker.value = rgbToHex(window.getComputedStyle(currentlyEditedTextElement).color);
-    colorPicker.click();
-    colorPicker.addEventListener('change', function() {
-      currentlyEditedTextElement.style.color = this.value;
-      captureCanvasState();
-    });
-  }
-});document.addEventListener('click', function(event) {
+document.addEventListener('click', function(event) {
        const mobileFontSelector = document.getElementById('mobile-font-selector');
        const mobileFontButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(2)');
 
@@ -3991,7 +3980,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileOutlineOptions = document.getElementById('mobile-outline-options');
     const mobileOutlineColorPicker = document.getElementById('mobile-outline-color');
     const outlineThicknessOptions = document.querySelectorAll('.outline-option');
+   const mobileTextColorButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(1)');
+    const mobileTextColorOptions = document.getElementById('mobile-text-color-options');
+    const mobileTextColorPicker = document.getElementById('mobile-text-color');
 
+    mobileTextColorButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        mobileTextColorOptions.style.display = mobileTextColorOptions.style.display === 'none' ? 'block' : 'none';
+        mobileOutlineOptions.style.display = 'none'; // Hide outline options if open
+    });
+
+    mobileTextColorPicker.addEventListener('input', updateTextColor);
+
+    function updateTextColor() {
+        if (currentlyEditedTextElement) {
+            currentlyEditedTextElement.style.color = mobileTextColorPicker.value;
+            captureCanvasState();
+        }
+    }
+
+    // Close text color options when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!mobileTextColorOptions.contains(event.target) && event.target !== mobileTextColorButton) {
+            mobileTextColorOptions.style.display = 'none';
+        }
+    });
     mobileOutlineButton.addEventListener('click', function(event) {
         event.stopPropagation();
         mobileOutlineOptions.style.display = mobileOutlineOptions.style.display === 'none' ? 'block' : 'none';
