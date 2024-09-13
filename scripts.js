@@ -1402,6 +1402,7 @@ function handleTouchStart2(event) {
         resizeHandle.style.display = 'block';
         deleteHandle.style.display = 'block';
         showTextEditScreen(textElement);
+
     }
 
     textElement.addEventListener('selectstart', function(e) {
@@ -3985,3 +3986,45 @@ function closeFloatingBoxOutside(event) {
     closeFloatingBox();
   }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileOutlineButton = document.querySelector('#mobile-text-edit-strip .option:nth-child(5)');
+    const mobileOutlineOptions = document.getElementById('mobile-outline-options');
+    const mobileOutlineColorPicker = document.getElementById('mobile-outline-color');
+    const outlineThicknessOptions = document.querySelectorAll('.outline-option');
+
+    mobileOutlineButton.addEventListener('click', function(event) {
+        event.stopPropagation();
+        mobileOutlineOptions.style.display = mobileOutlineOptions.style.display === 'none' ? 'block' : 'none';
+    });
+
+    mobileOutlineColorPicker.addEventListener('input', updateTextOutline);
+
+    outlineThicknessOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            outlineThicknessOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            updateTextOutline();
+        });
+    });
+
+    function updateTextOutline() {
+        if (currentlyEditedTextElement) {
+            const outlineColor = mobileOutlineColorPicker.value;
+            const selectedThickness = document.querySelector('.outline-option.selected');
+            const outlineStrength = selectedThickness ? selectedThickness.dataset.thickness : '0';
+
+            currentlyEditedTextElement.dataset.outlineColor = outlineColor;
+            currentlyEditedTextElement.dataset.outlineStrength = outlineStrength;
+
+            applyTextOutline(currentlyEditedTextElement);
+            captureCanvasState();
+        }
+    }
+
+    // Close outline options when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!mobileOutlineOptions.contains(event.target) && event.target !== mobileOutlineButton) {
+            mobileOutlineOptions.style.display = 'none';
+        }
+    });
+});
