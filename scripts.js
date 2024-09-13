@@ -3731,6 +3731,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const mobileFontSelector = document.getElementById('mobile-font-selector');
 
       mobileFontButton.addEventListener('click', function() {
+  event.stopPropagation(); // Add this line
 
           mobileFontSelector.style.display = mobileFontSelector.style.display === 'none' ? 'block' : 'none';
       });
