@@ -4487,14 +4487,15 @@ function showImageReorderOptions(event) {
         reorderOptionsContainer.className = 'mobile-reorder-options';
         reorderOptionsContainer.innerHTML = `
             <div class="reorder-buttons">
+                            <button class="reorder-button" id="move-image-backward">
+                                <i class="fas fa-arrow-down"></i>
+                                <span>לאחורה</span>
+                            </button>
                 <button class="reorder-button" id="move-image-forward">
                     <i class="fas fa-arrow-up"></i>
-                    <span>העבר קדימה</span>
+                    <span>לקדימה</span>
                 </button>
-                <button class="reorder-button" id="move-image-backward">
-                    <i class="fas fa-arrow-down"></i>
-                    <span>העבר אחורה</span>
-                </button>
+
             </div>
         `;
         document.body.appendChild(reorderOptionsContainer);
