@@ -3975,7 +3975,22 @@ document.addEventListener('touchstart', function(event) {
       !event.target.closest('#mobile-reorder-options')
 ) {
     closeAllOptionContainers();
-    hideMobileTextEditStrip();  }
+    hideMobileTextEditStrip();
+     }
+       if (isMobile() &&
+           !event.target.closest('.text-container') &&
+           !event.target.closest('#mobile-text-edit-strip') &&
+           !event.target.closest('#mobile-image-edit-strip') &&
+           !event.target.closest('#mobile-font-selector') &&
+           !event.target.closest('#mobile-floating-edit-box') &&
+           !event.target.closest('#mobile-text-color-options') &&
+           !event.target.closest('#mobile-outline-options') &&
+           !event.target.closest('#mobile-shape-options') &&
+           !event.target.closest('#mobile-rotate-options') &&
+           !event.target.closest('#mobile-reorder-options')
+     ) {
+          deselectAllObjects();
+          }
 });
 document.addEventListener('click', function(event) {
        const mobileFontSelector = document.getElementById('mobile-font-selector');
