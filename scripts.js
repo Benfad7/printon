@@ -3936,7 +3936,7 @@ function hideMobileScreen() {
 }
 
 function showMobileTextEditStrip() {
- reorderOptionsContainer.style.display = 'none';
+ //reorderOptionsContainer.style.display = 'none';
     document.querySelector('.mobile-bottom-nav').style.display = 'none';
     const editStrip = document.getElementById('mobile-text-edit-strip');
     editStrip.style.display = 'block';
