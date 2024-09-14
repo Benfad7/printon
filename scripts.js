@@ -4604,6 +4604,7 @@ function duplicateImage() {
             clonedContainer.querySelector('.resize-handle'),
             clonedContainer.querySelector('.delete-handle'),
             clonedImg.getAttribute('data-original-src'));
+            hideMobileImageEditStrip();
 
         captureCanvasState();
     }
