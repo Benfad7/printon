@@ -2601,6 +2601,94 @@ margin-right: -25px;
     padding: 12px;
     font-size: 16px;
   }
+  #size-selection-screen {
+      padding: 1rem;
+    }
+
+    #size-selection-screen .container {
+      width: 95%;
+      padding: 1rem;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    #size-selection-screen h1 {
+      font-size: 24px;
+      margin-bottom: 1rem;
+      padding-top: 1rem;
+    }
+
+    .color-selection {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .color-buttons {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .color-button {
+      margin-bottom: 5px;
+    }
+
+    .add-color-container {
+      width: 100%;
+    }
+
+    .add-color-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .size-row {
+      padding: 0.8rem;
+    }
+
+    .size-label {
+      font-size: 1rem;
+    }
+
+    .quantity-control {
+      flex-wrap: nowrap;
+    }
+
+    .quantity-btn {
+      width: 25px;
+      height: 25px;
+      font-size: 1rem;
+    }
+
+    .quantity-input {
+      width: 30px;
+      font-size: 0.9rem;
+    }
+
+    .total-section {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+    }
+
+    .action-buttons {
+      flex-direction: column-reverse;
+      gap: 10px;
+    }
+
+    .action-buttons button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .color-dropdown {
+      width: 100%;
+      left: 0;
+    }
+
+    .color-option {
+      padding: 10px;
+      font-size: 14px;
+    }
 #mobile-undo-redo-container {
   position: fixed;
   top: 60px;
