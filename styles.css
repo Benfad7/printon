@@ -2547,6 +2547,60 @@ margin-right: -25px;
 
 
 @media (max-width: 768px) {
+#next-step-screen {
+    padding: 1rem;
+  }
+
+  #next-step-screen .content-wrapper {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  #next-step-screen .next-step-title {
+    font-size: 24px;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+  }
+
+  #next-step-screen .design-preview {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  #next-step-screen .preview-side {
+    margin-bottom: -0.4rem;
+  }
+
+  #next-step-screen .preview-side h2 {
+    font-size: 1.2rem;
+  }
+
+  #next-step-screen .preview-side img {
+    max-width: 150px;
+    max-height: 150px;
+  }
+
+  #next-step-screen .comment-section {
+      margin-right: 5rem;
+
+    width: 93%;
+  }
+
+  #next-step-screen .comment-section textarea {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  #next-step-screen .navigation-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #next-step-screen .navigation-buttons button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
 #mobile-undo-redo-container {
   position: fixed;
   top: 60px;
