@@ -3916,6 +3916,7 @@ function hideMobileScreen() {
 }
 
 function showMobileTextEditStrip() {
+ reorderOptionsContainer.style.display = 'none';
     document.querySelector('.mobile-bottom-nav').style.display = 'none';
     const editStrip = document.getElementById('mobile-text-edit-strip');
     editStrip.style.display = 'block';
@@ -4401,11 +4402,20 @@ function hideMobileImageEditStrip() {
 }
 
 document.addEventListener('touchstart', function(event) {
-    if (isMobile() &&
-        !event.target.closest('.image-container') &&
-        !event.target.closest('#mobile-image-edit-strip') &&
-        !event.target.closest('#mobile-reorder-options')) {
-        hideMobileImageEditStrip();
+    if (isMobile()) {
+        if (!event.target.closest('.image-container') &&
+            !event.target.closest('#mobile-image-edit-strip')&&!event.target.closest('#mobile-reorder-options')) {
+            hideMobileImageEditStrip();
+            if (reorderOptionsContainer) {
+                reorderOptionsContainer.style.display = 'none';
+            }
+        } else if (event.target.closest('#mobile-image-edit-strip') &&
+                   !event.target.closest('.option[data-action="reorder"]') &&
+                   !event.target.closest('#mobile-reorder-options')) {
+            if (reorderOptionsContainer) {
+                reorderOptionsContainer.style.display = 'none';
+            }
+        }
     }
 });
 document.addEventListener('DOMContentLoaded', function() {
@@ -4468,8 +4478,8 @@ function flipImageVertically() {
 }
 let reorderOptionsContainer = null;
 
-function showImageReorderOptions() {
-    event.stopPropagation(); // Add this line to prevent the event from bubbling up
+function showImageReorderOptions(event) {
+    event.stopPropagation();
 
     if (!reorderOptionsContainer) {
         reorderOptionsContainer = document.createElement('div');
@@ -4489,30 +4499,24 @@ function showImageReorderOptions() {
         `;
         document.body.appendChild(reorderOptionsContainer);
 
-        document.getElementById('move-image-forward').addEventListener('click', () => {
+        document.getElementById('move-image-forward').addEventListener('click', (e) => {
+            e.stopPropagation();
             moveLayerForward(selectedImageContainer);
-            reorderOptionsContainer.style.display = 'none';
         });
 
-        document.getElementById('move-image-backward').addEventListener('click', () => {
+        document.getElementById('move-image-backward').addEventListener('click', (e) => {
+            e.stopPropagation();
             moveLayerBackward(selectedImageContainer);
-            reorderOptionsContainer.style.display = 'none';
         });
     }
 
-    // Toggle the visibility of the reorder options
-    if (reorderOptionsContainer.style.display === 'none' || reorderOptionsContainer.style.display === '') {
-        reorderOptionsContainer.style.display = 'block';
-    } else {
-        reorderOptionsContainer.style.display = 'block';
-    }
+    reorderOptionsContainer.style.display = 'block';
 }
 
 function closeReorderOptions(event) {
     if (reorderOptionsContainer &&
         !reorderOptionsContainer.contains(event.target) &&
-        !event.target.closest('.option[data-action="reorder"]') &&
-        !event.target.closest('#mobile-image-edit-strip')) {
+        !event.target.closest('.option[data-action="reorder"]')) {
         reorderOptionsContainer.style.display = 'none';
     }
 }
