@@ -2547,6 +2547,94 @@ margin-right: -25px;
 
 
 @media (max-width: 768px) {
+ #image-upload-screen {
+    padding: 1.55rem;
+    min-height: calc(100vh - 60px); /* Adjust for mobile bottom nav */
+  }
+
+  #image-upload-screen .container {
+    width: 95%;
+    padding: 1rem;
+    margin-top: 10px;
+    margin-bottom: 60px; /* Space for bottom nav */
+  }
+
+  #image-upload-screen .upload-title {
+    font-size: 24px;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+  }
+
+  #image-upload-screen .upload-subtitle {
+    font-size: 16px;
+    margin-bottom: 0.5rem;
+  }
+
+  #image-upload-screen .upload-options {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #print-type {
+    width: 100%;
+    margin-bottom: 0rem;
+  }
+
+  #image-upload-screen .comment-section textarea {
+    width: 91%;
+    font-size: 16px;
+    height: 50px;
+  }
+
+  #image-upload-screen .file-upload-container {
+    margin: 2rem 0;
+  }
+
+  #image-upload-screen .file-upload-row {
+    flex-direction: row;
+
+    gap: 1px;
+  }
+
+  #image-upload-screen .file-upload {
+    width: 100%;
+
+  }
+
+  #image-upload-screen .file-upload label {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  #image-upload-screen .file-name {
+    font-size: 0px;
+  }
+
+  #image-upload-screen .remove-file {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+
+  #image-upload-screen .info-text {
+    font-size: 14px;
+    margin: 15px 0;
+  }
+
+  #image-upload-screen .navigation-buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  #image-upload-screen .navigation-buttons button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  #image-upload-screen .primary-button,
+  #image-upload-screen .secondary-button {
+    margin: 0px 0;
+  }
 #next-step-screen {
     padding: 1rem;
   }
