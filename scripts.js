@@ -4300,8 +4300,9 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
-});function enableScrolling() {
-       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll');
+});
+function enableScrolling() {
+       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll, input[type="range"], .shape-scroll-container');
        scrollContainers.forEach(scrollContainer => {
            let isScrolling = false;
            let startX;
@@ -4315,10 +4316,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
            scrollContainer.addEventListener('touchmove', (e) => {
                if (!isScrolling) return;
-               e.preventDefault();
+               e.stopPropagation(); // Stop propagation to prevent other handlers from interfering
                const x = e.touches[0].pageX - scrollContainer.offsetLeft;
                const walk = (x - startX) * 2;
-               scrollContainer.scrollLeft = scrollLeft - walk;
+               if (scrollContainer.type === 'range') {
+                   // For range inputs (sliders), update the value directly
+                   const range = scrollContainer.max - scrollContainer.min;
+                   const moveRatio = walk / scrollContainer.offsetWidth;
+                   const newValue = parseFloat(scrollContainer.value) + range * moveRatio;
+                   scrollContainer.value = Math.max(scrollContainer.min, Math.min(scrollContainer.max, newValue));
+                   // Trigger input event to ensure any listeners are notified
+                   scrollContainer.dispatchEvent(new Event('input'));
+               } else {
+                   scrollContainer.scrollLeft = scrollLeft - walk;
+               }
            });
 
            scrollContainer.addEventListener('touchend', () => {
@@ -4326,9 +4337,45 @@ document.addEventListener('DOMContentLoaded', function() {
            });
        });
    }
+function enableScrolling1() {
+       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll, input[type="range"]');
+       scrollContainers.forEach(scrollContainer => {
+           let isScrolling = false;
+           let startX;
+           let scrollLeft;
 
+           scrollContainer.addEventListener('mousedown', (e) => {
+               isScrolling = true;
+               startX = e.touches[0].pageX - scrollContainer.offsetLeft;
+               scrollLeft = scrollContainer.scrollLeft;
+           });
+
+           scrollContainer.addEventListener('mousemove', (e) => {
+               if (!isScrolling) return;
+               e.stopPropagation(); // Stop propagation to prevent other handlers from interfering
+               const x = e.touches[0].pageX - scrollContainer.offsetLeft;
+               const walk = (x - startX) * 2;
+               if (scrollContainer.type === 'range') {
+                   // For range inputs (sliders), update the value directly
+                   const range = scrollContainer.max - scrollContainer.min;
+                   const moveRatio = walk / scrollContainer.offsetWidth;
+                   const newValue = parseFloat(scrollContainer.value) + range * moveRatio;
+                   scrollContainer.value = Math.max(scrollContainer.min, Math.min(scrollContainer.max, newValue));
+                   // Trigger input event to ensure any listeners are notified
+                   scrollContainer.dispatchEvent(new Event('input'));
+               } else {
+                   scrollContainer.scrollLeft = scrollLeft - walk;
+               }
+           });
+
+           scrollContainer.addEventListener('mouseup', () => {
+               isScrolling = false;
+           });
+       });
+   }
    // Call this function after adding any new objects to the canvas
    enableScrolling();
+   enableScrolling1();
 function showMobileImageEditStrip() {
     document.querySelector('.mobile-bottom-nav').style.display = 'none';
     const editStrip = document.getElementById('mobile-image-edit-strip');
