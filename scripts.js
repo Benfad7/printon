@@ -4321,7 +4321,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const options = mobileTextEditStrip.querySelectorAll('.option');
 
     options.forEach((option, index) => {
-      option.addEventListener('click', function(event) {
+      option.addEventListener('touchstart', function(event) {
         event.stopPropagation();
         closeAllOptionContainers();
 
