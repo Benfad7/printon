@@ -2550,24 +2550,26 @@ margin-right: -25px;
 #mobile-undo-redo-container {
   position: fixed;
   top: 60px;
-  left: 10px;
+  left: 9.5px;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   z-index: 1000;
+    flex-direction: column; /* Change to column layout */
+
 }
 
 .mobile-action-button {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: rgba(164, 164, 164, 1); /* 40% translucent */
   border: none;
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 20px;
-  color: #333333;
+  color: #ffffff;
 }
 
 .mobile-action-button:disabled {
