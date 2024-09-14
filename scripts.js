@@ -4050,7 +4050,6 @@ floatingBox.innerHTML = `
   document.body.appendChild(floatingBox);
 
   const textInput = document.getElementById('mobile-text-input');
-  textInput.focus();
   textInput.setSelectionRange(textInput.value.length, textInput.value.length);
 
   document.getElementById('mobile-confirm-text').addEventListener('click', confirmMobileTextEdit);
