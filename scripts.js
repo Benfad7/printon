@@ -1262,7 +1262,7 @@ function handleTouchStart(event) {
         startDragging(touch);
     }
             if (isMobile()) {
-              event.stopPropagation();
+              //event.stopPropagation();
               showMobileTextEditStrip();
               selectText(event);
             }
@@ -1271,7 +1271,7 @@ function handleTouchStart(event) {
 function handleTouchStart2(event) {
 
             if (isMobile()) {
-              event.stopPropagation();
+              //event.stopPropagation();
               showMobileTextEditStrip();
               selectText(event);
             }
@@ -1291,7 +1291,10 @@ function handleTouchStart2(event) {
             textContainer.style.cursor = 'grabbing';
             textElement.style.cursor = 'grabbing';
         }
+                    if (!isMobile()) {
                         event.preventDefault();
+
+                    }
 
     }
 
@@ -1393,8 +1396,11 @@ function handleTouchStart2(event) {
         startFontSize = currentFontSize;
         startLeft = textContainer.offsetLeft;
         startTop = textContainer.offsetTop;
+                            if (!isMobile()) {
         event.stopPropagation();
                 event.preventDefault();
+
+                            }
 
     }
 
@@ -1545,9 +1551,12 @@ let currentlyEditedTextElement = null;
             currentTextShape === 'normal' ? 'רגיל' : currentTextShape;
 
         // Prevent clicks within the white square from closing the screen
+                            if (!isMobile()) {
         screen5.querySelector('.white-square').addEventListener('click', function(event) {
             event.stopPropagation();
         });
+                            }
+
         // Update layer buttons
         updateLayerButtons(currentlyEditedTextElement.parentNode);
 
