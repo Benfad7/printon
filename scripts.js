@@ -3926,7 +3926,7 @@ function mobileFileInputChange(event) {
 }
 document.getElementById('mobile-add-text').addEventListener('click', function() {
     showMobileScreen('הוספת טקסט', document.getElementById('screen3').innerHTML);
-    document.getElementById('text-input').focus();
+   // document.getElementById('text-input').focus();
 
 });
 });
