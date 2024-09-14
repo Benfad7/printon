@@ -4611,3 +4611,41 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileUndoButton = document.getElementById('mobile-undo-button');
+  const mobileRedoButton = document.getElementById('mobile-redo-button');
+
+  mobileUndoButton.addEventListener('click', undo);
+  mobileRedoButton.addEventListener('click', redo);
+
+  // Update the updateUndoRedoButtons function
+  function updateUndoRedoButtons() {
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+    const mobileUndoButton = document.getElementById('mobile-undo-button');
+    const mobileRedoButton = document.getElementById('mobile-redo-button');
+
+    if (currentCanvas === frontCanvas) {
+      undoButton.classList.toggle('disabled', frontCurrentStateIndex <= 0);
+      redoButton.classList.toggle('disabled', frontCurrentStateIndex >= frontCanvasStates.length - 1);
+      mobileUndoButton.disabled = frontCurrentStateIndex <= 0;
+      mobileRedoButton.disabled = frontCurrentStateIndex >= frontCanvasStates.length - 1;
+    } else {
+      undoButton.classList.toggle('disabled', backCurrentStateIndex <= 0);
+      redoButton.classList.toggle('disabled', backCurrentStateIndex >= backCanvasStates.length - 1);
+      mobileUndoButton.disabled = backCurrentStateIndex <= 0;
+      mobileRedoButton.disabled = backCurrentStateIndex >= backCanvasStates.length - 1;
+    }
+  }
+
+  // Call updateUndoRedoButtons when switching canvases
+  function switchCanvas(newCanvas) {
+    currentCanvas.style.display = 'none';
+    newCanvas.style.display = 'block';
+    currentCanvas = newCanvas;
+    updateBackgroundAndButtons();
+    updateCanvasState();
+    reattachEventListeners();
+    updateUndoRedoButtons(); // Add this line
+  }
+});

@@ -2547,6 +2547,42 @@ margin-right: -25px;
 
 
 @media (max-width: 768px) {
+#mobile-undo-redo-container {
+  position: fixed;
+  top: 60px;
+  left: 10px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.mobile-action-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  color: #333333;
+}
+
+.mobile-action-button:disabled {
+  opacity: 0.5;
+}
+
+
+  #go-back-button-container {
+    top: 10px;
+  }
+
+  #mobile-undo-redo-container {
+    top: 60px;
+  }
+
   #mobile-switch-view-button {
     display: block;
   }
