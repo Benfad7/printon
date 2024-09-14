@@ -4100,3 +4100,30 @@ input[type="range"] {
 body {
     overscroll-behavior-y: contain;
 }
+.text-edit-options-scroll,
+.shape-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  touch-action: pan-x;
+}
+
+.text-edit-options,
+.shape-options-row {
+  display: inline-flex;
+  padding: 0 10px;
+}
+
+.option,
+.shape-option {
+  flex: 0 0 auto;
+}
+.text-edit-options-scroll,
+.shape-scroll-container {
+  will-change: transform;
+  transform: translateZ(0);
+}
+body.interacting-with-strip {
+  overflow: hidden;
+}
