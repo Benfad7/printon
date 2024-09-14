@@ -4465,43 +4465,54 @@ function flipImageVertically() {
         captureCanvasState();
     }
 }
+let reorderOptionsContainer = null;
 
 function showImageReorderOptions() {
-    const reorderOptions = document.createElement('div');
-    reorderOptions.id = 'mobile-reorder-options';
-    reorderOptions.className = 'mobile-reorder-options';
-    reorderOptions.innerHTML = `
-        <div class="reorder-buttons">
-            <button class="reorder-button" id="move-image-forward">
-                <i class="fas fa-arrow-up"></i>
-                <span>העבר קדימה</span>
-            </button>
-            <button class="reorder-button" id="move-image-backward">
-                <i class="fas fa-arrow-down"></i>
-                <span>העבר אחורה</span>
-            </button>
-        </div>
-    `;
-    document.body.appendChild(reorderOptions);
+    if (!reorderOptionsContainer) {
+        reorderOptionsContainer = document.createElement('div');
+        reorderOptionsContainer.id = 'mobile-reorder-options';
+        reorderOptionsContainer.className = 'mobile-reorder-options';
+        reorderOptionsContainer.innerHTML = `
+            <div class="reorder-buttons">
+                <button class="reorder-button" id="move-image-forward">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>העבר קדימה</span>
+                </button>
+                <button class="reorder-button" id="move-image-backward">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>העבר אחורה</span>
+                </button>
+            </div>
+        `;
+        document.body.appendChild(reorderOptionsContainer);
 
-    document.getElementById('move-image-forward').addEventListener('click', () => {
-        moveLayerForward(selectedImageContainer);
-        reorderOptions.remove();
-    });
+        document.getElementById('move-image-forward').addEventListener('click', () => {
+            moveLayerForward(selectedImageContainer);
+            reorderOptionsContainer.style.display = 'none';
+        });
 
-    document.getElementById('move-image-backward').addEventListener('click', () => {
-        moveLayerBackward(selectedImageContainer);
-        reorderOptions.remove();
-    });
+        document.getElementById('move-image-backward').addEventListener('click', () => {
+            moveLayerBackward(selectedImageContainer);
+            reorderOptionsContainer.style.display = 'none';
+        });
+    }
 
-    // Close reorder options when clicking outside
-    document.addEventListener('click', function closeReorderOptions(e) {
-        if (!reorderOptions.contains(e.target) && e.target.textContent !== 'סדר') {
-            reorderOptions.remove();
-            document.removeEventListener('click', closeReorderOptions);
-        }
-    });
+    // Toggle the visibility of the reorder options
+    if (reorderOptionsContainer.style.display === 'none' || reorderOptionsContainer.style.display === '') {
+        reorderOptionsContainer.style.display = 'block';
+    } else {
+        reorderOptionsContainer.style.display = 'block';
+    }
 }
+
+// Add this function to close the reorder options when clicking outside
+function closeReorderOptions(event) {
+    if (reorderOptionsContainer && !reorderOptionsContainer.contains(event.target) && !event.target.closest('.option[data-action="reorder"]')) {
+        reorderOptionsContainer.style.display = 'none';
+    }
+}
+document.addEventListener('click', closeReorderOptions);
+
 function toggleBackgroundRemoval() {
     if (selectedImageContainer) {
         const img = selectedImageContainer.querySelector('img');
