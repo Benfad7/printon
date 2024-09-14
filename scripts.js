@@ -2454,6 +2454,8 @@ function findContentBounds(imageData) {
         reattachEventListeners();
           if (isMobile()) {
             document.getElementById('mobile-switch-view-button').style.display = 'block';
+               enableScrolling();
+                    enableRangeSliderScrolling();
           }
     }
     function updateBackgroundAndButtons() {
@@ -4355,7 +4357,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 function enableScrolling() {
-       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll, input[type="range"], .shape-scroll-container');
+       const scrollContainers = document.querySelectorAll('.text-edit-options-scroll, .shape-scroll-container');
        scrollContainers.forEach(scrollContainer => {
            let isScrolling = false;
            let startX;
@@ -4387,6 +4389,38 @@ function enableScrolling() {
 
            scrollContainer.addEventListener('touchend', () => {
                isScrolling = false;
+           });
+       });
+   }
+   function enableRangeSliderScrolling() {
+       const rangeInputs = document.querySelectorAll('input[type="range"]');
+       rangeInputs.forEach(input => {
+           let isAdjusting = false;
+           let startX;
+           let startValue;
+
+           input.addEventListener('touchstart', (e) => {
+               isAdjusting = true;
+               startX = e.touches[0].clientX;
+               startValue = parseFloat(input.value);
+               e.preventDefault();
+           }, { passive: false });
+
+           input.addEventListener('touchmove', (e) => {
+               if (!isAdjusting) return;
+               e.preventDefault();
+               const x = e.touches[0].clientX;
+               const diffX = x - startX;
+               const range = input.max - input.min;
+               const changePerPixel = range / 200; // Adjust this value to change sensitivity
+               let newValue = startValue + (diffX * changePerPixel);
+               newValue = Math.max(input.min, Math.min(input.max, newValue));
+               input.value = newValue;
+               input.dispatchEvent(new Event('input'));
+           }, { passive: false });
+
+           input.addEventListener('touchend', () => {
+               isAdjusting = false;
            });
        });
    }
@@ -4427,8 +4461,9 @@ function enableScrolling1() {
        });
    }
    // Call this function after adding any new objects to the canvas
-   enableScrolling();
-   enableScrolling1();
+// Call these functions after adding any new objects to the canvas
+enableScrolling();
+enableRangeSliderScrolling();   enableScrolling1();
 function showMobileImageEditStrip() {
     document.querySelector('.mobile-bottom-nav').style.display = 'none';
     const editStrip = document.getElementById('mobile-image-edit-strip');

@@ -4090,3 +4090,13 @@ margin-right: -25px;
   height:80%;
   object-fit: contain;
 }
+.text-edit-options-scroll,
+.shape-scroll-container,
+input[type="range"] {
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    overscroll-behavior-y: contain;
+}
