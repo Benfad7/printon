@@ -3710,24 +3710,30 @@ margin-right: -25px;
      overflow: hidden;
      margin-right: auto; /* Push the color picker to the left */
  }
- #mobile-switch-view-button {
-   position: fixed;
-   top: 10px;
-   right: 60px;
-   z-index: 1000;
-   display: none;
- }
+#mobile-switch-view-button {
+  position: fixed;
+  top: 10px;
+  right: 60px;
+  z-index: 1000;
+  display: none;
+}
 
- #switch-view {
-   width: 40px;
-   height: 40px;
-   border-radius: 50%;
-   background-color: #0066cc;
-   color: white;
-   border: none;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   font-size: 20px;
-   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
- }
+#switch-view {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0066cc;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  overflow: hidden;
+}
+
+#switch-view img {
+  width: 80%;
+  height:80%;
+  object-fit: contain;
+}
