@@ -4403,7 +4403,8 @@ function hideMobileImageEditStrip() {
 document.addEventListener('touchstart', function(event) {
     if (isMobile() &&
         !event.target.closest('.image-container') &&
-        !event.target.closest('#mobile-image-edit-strip')) {
+        !event.target.closest('#mobile-image-edit-strip') &&
+        !event.target.closest('#mobile-reorder-options')) {
         hideMobileImageEditStrip();
     }
 });
@@ -4434,7 +4435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         duplicateImage();
                         break;
                     case 5: // Reorder
-                        showImageReorderOptions();
+                        showImageReorderOptions(event);
                         break;
                 }
             });
@@ -4468,6 +4469,8 @@ function flipImageVertically() {
 let reorderOptionsContainer = null;
 
 function showImageReorderOptions() {
+    event.stopPropagation(); // Add this line to prevent the event from bubbling up
+
     if (!reorderOptionsContainer) {
         reorderOptionsContainer = document.createElement('div');
         reorderOptionsContainer.id = 'mobile-reorder-options';
@@ -4505,9 +4508,11 @@ function showImageReorderOptions() {
     }
 }
 
-// Add this function to close the reorder options when clicking outside
 function closeReorderOptions(event) {
-    if (reorderOptionsContainer && !reorderOptionsContainer.contains(event.target) && !event.target.closest('.option[data-action="reorder"]')) {
+    if (reorderOptionsContainer &&
+        !reorderOptionsContainer.contains(event.target) &&
+        !event.target.closest('.option[data-action="reorder"]') &&
+        !event.target.closest('#mobile-image-edit-strip')) {
         reorderOptionsContainer.style.display = 'none';
     }
 }
