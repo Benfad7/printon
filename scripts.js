@@ -1655,7 +1655,7 @@ let currentlyEditedTextElement = null;
             applyTextShape();
         }
     });
-    document.getElementById('remove-shape-button').addEventListener('click', function() {
+    document.getElementById('remove-shape-button1').addEventListener('click', function() {
         currentTextShape = 'normal';
         currentShapeIntensity = 50;
         document.getElementById('shape-slider').value = 50;
