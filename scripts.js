@@ -4321,36 +4321,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const options = mobileTextEditStrip.querySelectorAll('.option');
 
     options.forEach((option, index) => {
-      option.addEventListener('touchstart', function(event) {
-        event.stopPropagation();
-        closeAllOptionContainers();
+      option.addEventListener('touchend', function(event) {
+        if (dragging)
+        {
+                event.stopPropagation();
+                closeAllOptionContainers();
 
-        switch(index) {
-          case 0: // Color
-            document.getElementById('mobile-text-color-options').style.display = 'block';
-            break;
-          case 1: // Font
-            document.getElementById('mobile-font-selector').style.display = 'block';
-            break;
-          case 2: // Edit
-            showMobileTextEditInput(currentlyEditedTextElement.textContent);
-            break;
-          case 3: // Shape
-            document.getElementById('mobile-shape-options').style.display = 'block';
-            break;
-          case 4: // Outline
-            document.getElementById('mobile-outline-options').style.display = 'block';
-            break;
-          case 5: // Duplicate
-            duplicateText();
-            break;
-          case 6: // Rotate
-            document.getElementById('mobile-rotate-options').style.display = 'block';
-            break;
-          case 7: // Reorder
-            document.getElementById('mobile-reorder-options').style.display = 'block';
-            break;
+                switch(index) {
+                  case 0: // Color
+                    document.getElementById('mobile-text-color-options').style.display = 'block';
+                    break;
+                  case 1: // Font
+                    document.getElementById('mobile-font-selector').style.display = 'block';
+                    break;
+                  case 2: // Edit
+                    showMobileTextEditInput(currentlyEditedTextElement.textContent);
+                    break;
+                  case 3: // Shape
+                    document.getElementById('mobile-shape-options').style.display = 'block';
+                    break;
+                  case 4: // Outline
+                    document.getElementById('mobile-outline-options').style.display = 'block';
+                    break;
+                  case 5: // Duplicate
+                    duplicateText();
+                    break;
+                  case 6: // Rotate
+                    document.getElementById('mobile-rotate-options').style.display = 'block';
+                    break;
+                  case 7: // Reorder
+                    document.getElementById('mobile-reorder-options').style.display = 'block';
+                    break;
+                }
         }
+
       });
     });
   }
@@ -4682,4 +4686,11 @@ document.addEventListener('DOMContentLoaded', function() {
     reattachEventListeners();
     updateUndoRedoButtons(); // Add this line
   }
+});
+var dragging = false;
+$("body").on("touchmove", function(){
+      dragging = true;
+});
+$("body").on("touchstart", function(){
+    dragging = false;
 });
