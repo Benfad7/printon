@@ -2225,14 +2225,22 @@ function deselectAllObjects() {
         // Set initial background
         updateBackgroundAndButtons();
     });
-    function switchCanvas(newCanvas) {
-        currentCanvas.style.display = 'none';
-        newCanvas.style.display = 'block';
-        currentCanvas = newCanvas;
-        updateBackgroundAndButtons();
-        updateCanvasState();
-        reattachEventListeners();
-    }
+function switchCanvas(newCanvas) {
+  currentCanvas.style.display = 'none';
+  newCanvas.style.display = 'block';
+  currentCanvas = newCanvas;
+  updateBackgroundAndButtons();
+  updateCanvasState();
+  reattachEventListeners();
+
+  // Update the switch view button icon
+  const switchViewButton = document.getElementById('switch-view');
+  if (currentCanvas === frontCanvas) {
+    switchViewButton.innerHTML = '<i class="fas fa-tshirt"></i>';
+  } else {
+    switchViewButton.innerHTML = '<i class="fas fa-tshirt fa-flip-horizontal"></i>';
+  }
+}
 
 
 
@@ -2388,6 +2396,8 @@ function findContentBounds(imageData) {
 
         // Display saved designs
         displaySavedDesigns();
+          document.getElementById('mobile-switch-view-button').style.display = 'none';
+
     }
 
     function showDesignScreen() {
@@ -2426,6 +2436,9 @@ function findContentBounds(imageData) {
 
         // Reattach event listeners
         reattachEventListeners();
+          if (isMobile()) {
+            document.getElementById('mobile-switch-view-button').style.display = 'block';
+          }
     }
     function updateBackgroundAndButtons() {
         const frontButton = document.getElementById('front-button');
@@ -4587,3 +4600,14 @@ function showReorderOptions() {
         reorderDialog.remove();
     });
 }
+document.addEventListener('DOMContentLoaded', function() {
+  const switchViewButton = document.getElementById('switch-view');
+
+  switchViewButton.addEventListener('click', function() {
+    if (currentCanvas === frontCanvas) {
+      switchCanvas(backCanvas);
+    } else {
+      switchCanvas(frontCanvas);
+    }
+  });
+});
