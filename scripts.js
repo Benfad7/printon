@@ -663,7 +663,16 @@ function startDragging(event) {
 
     const flipHorizontal = document.getElementById('flip-horizontal');
     const flipVertical = document.getElementById('flip-vertical');
+    const moveForwardImage = document.getElementById('move-forward-btn');
+    const moveBackwardImage = document.getElementById('move-backward-btn');
+        moveForwardImage.addEventListener('click', function() {
+            moveLayerForward(selectedImageContainer);
 
+        });
+            moveBackwardImage.addEventListener('click', function() {
+            moveLayerBackward(selectedImageContainer);
+
+            });
     function toggleTransform(img, transform) {
         const currentTransform = img.style.transform || '';
         if (currentTransform.includes(transform)) {
@@ -4598,6 +4607,7 @@ function showReorderOptions() {
     document.body.appendChild(reorderDialog);
 
     document.getElementById('move-forward-btn').addEventListener('click', () => {
+    console.log("fds");
         moveLayerForward(selectedImageContainer);
         reorderDialog.remove();
     });
