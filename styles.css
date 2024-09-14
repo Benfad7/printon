@@ -2634,7 +2634,7 @@ margin-right: -25px;
     }
 
     .add-color-container {
-      width: 100%;
+      width: 77%;
     }
 
     .add-color-button {
@@ -2643,11 +2643,11 @@ margin-right: -25px;
     }
 
     .size-row {
-      padding: 0.8rem;
+      padding: 0.4rem;
     }
 
     .size-label {
-      font-size: 1rem;
+      font-size: 1.1rem;
     }
 
     .quantity-control {
@@ -2657,21 +2657,21 @@ margin-right: -25px;
     .quantity-btn {
       width: 25px;
       height: 25px;
-      font-size: 1rem;
+      font-size: 1.5rem;
     }
 
     .quantity-input {
       width: 30px;
-      font-size: 0.9rem;
+      font-size: 1.2rem;
     }
 
     .total-section {
-      font-size: 1.1rem;
-      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      margin-top: 0rem;
     }
 
     .action-buttons {
-      flex-direction: column-reverse;
+      flex-direction: column;
       gap: 10px;
     }
 
