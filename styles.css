@@ -2550,7 +2550,7 @@ margin-right: -25px;
 #mobile-undo-redo-container {
   position: fixed;
   top: 60px;
-  left: 9.5px;
+  left: 8px;
   display: flex;
   gap: 8px;
   z-index: 1000;

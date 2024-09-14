@@ -2172,40 +2172,46 @@ function deselectAllObjects() {
     }
 
     // Undo function
-    function undo() {
-        if (currentCanvas === frontCanvas && frontCurrentStateIndex > 0) {
-            frontCurrentStateIndex--;
-            applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
-        } else if (currentCanvas === backCanvas && backCurrentStateIndex > 0) {
-            backCurrentStateIndex--;
-            applyCanvasState(backCanvasStates[backCurrentStateIndex]);
-        }
-        updateUndoRedoButtons();
+function undo() {
+    if (currentCanvas === frontCanvas && frontCurrentStateIndex > 0) {
+        frontCurrentStateIndex--;
+        applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
+    } else if (currentCanvas === backCanvas && backCurrentStateIndex > 0) {
+        backCurrentStateIndex--;
+        applyCanvasState(backCanvasStates[backCurrentStateIndex]);
     }
+    updateUndoRedoButtons();
+}
 
-    function redo() {
-        if (currentCanvas === frontCanvas && frontCurrentStateIndex < frontCanvasStates.length - 1) {
-            frontCurrentStateIndex++;
-            applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
-        } else if (currentCanvas === backCanvas && backCurrentStateIndex < backCanvasStates.length - 1) {
-            backCurrentStateIndex++;
-            applyCanvasState(backCanvasStates[backCurrentStateIndex]);
-        }
-        updateUndoRedoButtons();
+function redo() {
+    if (currentCanvas === frontCanvas && frontCurrentStateIndex < frontCanvasStates.length - 1) {
+        frontCurrentStateIndex++;
+        applyCanvasState(frontCanvasStates[frontCurrentStateIndex]);
+    } else if (currentCanvas === backCanvas && backCurrentStateIndex < backCanvasStates.length - 1) {
+        backCurrentStateIndex++;
+        applyCanvasState(backCanvasStates[backCurrentStateIndex]);
     }
+    updateUndoRedoButtons();
+}
 
-    function updateUndoRedoButtons() {
-        const undoButton = document.getElementById('undo-button');
-        const redoButton = document.getElementById('redo-button');
+function updateUndoRedoButtons() {
+    const undoButton = document.getElementById('undo-button');
+    const redoButton = document.getElementById('redo-button');
+    const mobileUndoButton = document.getElementById('mobile-undo-button');
+    const mobileRedoButton = document.getElementById('mobile-redo-button');
 
-        if (currentCanvas === frontCanvas) {
-            undoButton.classList.toggle('disabled', frontCurrentStateIndex <= 0);
-            redoButton.classList.toggle('disabled', frontCurrentStateIndex >= frontCanvasStates.length - 1);
-        } else {
-            undoButton.classList.toggle('disabled', backCurrentStateIndex <= 0);
-            redoButton.classList.toggle('disabled', backCurrentStateIndex >= backCanvasStates.length - 1);
-        }
+    if (currentCanvas === frontCanvas) {
+        undoButton.classList.toggle('disabled', frontCurrentStateIndex <= 0);
+        redoButton.classList.toggle('disabled', frontCurrentStateIndex >= frontCanvasStates.length - 1);
+        mobileUndoButton.disabled = frontCurrentStateIndex <= 0;
+        mobileRedoButton.disabled = frontCurrentStateIndex >= frontCanvasStates.length - 1;
+    } else {
+        undoButton.classList.toggle('disabled', backCurrentStateIndex <= 0);
+        redoButton.classList.toggle('disabled', backCurrentStateIndex >= backCanvasStates.length - 1);
+        mobileUndoButton.disabled = backCurrentStateIndex <= 0;
+        mobileRedoButton.disabled = backCurrentStateIndex >= backCanvasStates.length - 1;
     }
+}
 
     // Event listeners for undo and redo buttons
     document.getElementById('undo-button').addEventListener('click', undo);
@@ -2232,6 +2238,7 @@ function switchCanvas(newCanvas) {
   updateBackgroundAndButtons();
   updateCanvasState();
   reattachEventListeners();
+    updateUndoRedoButtons(); // Add this line
 
   // Update the switch view button icon
   const switchViewButton = document.getElementById('switch-view');
