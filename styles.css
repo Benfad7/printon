@@ -2547,6 +2547,90 @@ margin-right: -25px;
 
 
 @media (max-width: 768px) {
+ #return-from-previous-designs {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+ #previous-descriptions-screen {
+    padding: 1rem;
+    min-height: calc(100vh - 60px); /* Adjust for mobile bottom nav */
+  }
+
+  #previous-descriptions-screen .container {
+    width: 95%;
+    padding: 1rem;
+    margin-top: 10px;
+    margin-bottom: 60px; /* Space for bottom nav */
+    max-height: calc(100vh - 120px); /* Limit height and enable scrolling */
+    overflow-y: auto;
+  }
+
+  #previous-descriptions-screen .screen-title {
+    font-size: 24px;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+    margin-top: -10px;
+  }
+
+  #previous-descriptions-container {
+    gap: 15px;
+  }
+
+  .description-item {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .description-title {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .description-date,
+  .description-type,
+  .description-comment {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .description-comment {
+    max-height: 50px;
+    -webkit-line-clamp: 2; /* Show only 2 lines on mobile */
+  }
+
+  .description-images {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .description-images img {
+    max-width: 48%;
+    height: auto;
+  }
+
+  #return-from-previous-descriptions {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  /* Adjust scrollbar for WebKit browsers */
+  #previous-descriptions-screen .container::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  #previous-descriptions-screen .container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+  #previous-descriptions-screen .container::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
  #image-upload-screen {
     padding: 1.55rem;
     min-height: calc(100vh - 60px); /* Adjust for mobile bottom nav */
