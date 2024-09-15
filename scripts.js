@@ -1153,6 +1153,12 @@ function updateCenterButtonState(container) {
     const addToDesignButton = document.getElementById('add-to-design-button');
 function addTextToDesign() {
     const textInput = document.getElementById('text-input') || mobileContent.querySelector('#text-input');
+        textInput.setAttribute('readonly', 'readonly');
+
+        // Remove readonly after a short delay
+        setTimeout(() => {
+            textInput.removeAttribute('readonly');
+        }, 100);
     const textToAdd = textInput.value;
     if (textToAdd.trim() !== '') {
         createTextObject(textToAdd);
@@ -3872,7 +3878,7 @@ function showMobileScreen(title, content) {
                     addTextToDesign();
                 }
             });
-            textInput.focus();
+            //textInput.focus();
         }
     } else if (title === 'העלאה') {
         setupMobileFileUpload();
@@ -4051,6 +4057,10 @@ floatingBox.innerHTML = `
   document.body.appendChild(floatingBox);
 
   const textInput = document.getElementById('mobile-text-input');
+    textInput.setAttribute('readonly', 'readonly'); // Add this line
+  setTimeout(() => {
+    textInput.removeAttribute('readonly'); // Remove readonly after a short delay
+  }, 1);
   textInput.setSelectionRange(textInput.value.length, textInput.value.length);
 
   document.getElementById('mobile-confirm-text').addEventListener('click', confirmMobileTextEdit);
