@@ -4322,7 +4322,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     options.forEach((option, index) => {
       option.addEventListener('touchend', function(event) {
-        if (dragging)
+        if (!dragging)
         {
                 event.stopPropagation();
                 closeAllOptionContainers();
@@ -4678,9 +4678,44 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 var dragging = false;
-$("body").on("touchmove", function(){
-      dragging = true;
-});
-$("body").on("touchstart", function(){
+
+// Function to handle touchstart
+function handleTouchStartStrip() {
     dragging = false;
-});
+    document.body.classList.add('interacting-with-strip');
+}
+
+// Function to handle touchmove
+function handleTouchMove() {
+    dragging = true;
+}
+
+// Function to handle touchend
+function handleTouchEnd() {
+    document.body.classList.remove('interacting-with-strip');
+    if (!dragging) {
+        // Handle tap event here if needed
+    }
+    dragging = false;
+}
+
+// Function to add event listeners to an element
+function addStripListeners(element) {
+    if (element) {
+        element.addEventListener('touchstart', handleTouchStartStrip, { passive: true });
+        element.addEventListener('touchmove', handleTouchMove, { passive: true });
+        element.addEventListener('touchend', handleTouchEnd);
+    }
+}
+
+// Add listeners to text edit strip
+var textEditStrip = document.getElementById('mobile-text-edit-strip');
+addStripListeners(textEditStrip);
+
+// Add listeners to image edit strip
+var imageEditStrip = document.getElementById('mobile-image-edit-strip');
+addStripListeners(imageEditStrip);
+
+// Optional: Add listeners to shape options if needed
+var shapeOptions = document.querySelector('.shape-scroll-container');
+addStripListeners(shapeOptions);
