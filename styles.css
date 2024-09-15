@@ -2753,9 +2753,9 @@ margin-right: -25px;
   }
 
   #next-step-screen .comment-section {
-      margin-right: 5rem;
+      margin-right: 30px;
 
-    width: 93%;
+    width: 85%;
   }
 
   #next-step-screen .comment-section textarea {
