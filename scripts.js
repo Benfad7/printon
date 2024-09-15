@@ -4464,8 +4464,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const options = mobileImageEditStrip.querySelectorAll('.option');
 
         options.forEach((option, index) => {
-            option.addEventListener('click', function(event) {
+      option.addEventListener('touchend', function(event) {
+        if (!dragging)
+        {
                 event.stopPropagation();
+                closeAllOptionContainers();
 
                 switch(index) {
                     case 0: // Crop
@@ -4486,6 +4489,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     case 5: // Reorder
                         showImageReorderOptions(event);
                         break;
+                }
                 }
             });
         });
