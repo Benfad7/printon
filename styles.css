@@ -2819,6 +2819,8 @@ margin-right: -25px;
 
     .size-row {
       padding: 0.2rem;
+      padding-left: 0.4rem;
+      padding-right: 0.4rem;
     }
 
     .size-label {
@@ -2829,16 +2831,22 @@ margin-right: -25px;
       flex-wrap: nowrap;
     }
 
-    .quantity-btn {
-      width: 25px;
-      height: 25px;
-      font-size: 1.5rem;
-    }
 
-    .quantity-input {
-      width: 30px;
-      font-size: 1.2rem;
-    }
+.quantity-btn {
+  width: 20px;  /* Reduced from 25px */
+  height: 20px;  /* Reduced from 25px */
+  font-size: 1.2rem;  /* Reduced from 1.5rem */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quantity-input {
+  width: 30px;  /* Reduced from 30px */
+  font-size: 1rem;  /* Reduced from 1.2rem */
+  padding: 2px;  /* Added to reduce the height */
+  text-align: center;
+}
 
     .total-section {
       font-size: 1.3rem;
