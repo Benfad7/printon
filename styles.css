@@ -2787,7 +2787,7 @@ margin-right: -25px;
     }
 
     #size-selection-screen h1 {
-      font-size: 24px;
+      font-size: 20px;
       margin-bottom: 1rem;
     }
 
@@ -2798,6 +2798,7 @@ margin-right: -25px;
 
     .color-buttons {
       width: 100%;
+
       margin-top: 6px;
     }
 
@@ -2806,6 +2807,8 @@ margin-right: -25px;
     }
 
     .add-color-container {
+                font-size: 14px;
+
       width: 77%;
     }
 
@@ -2815,7 +2818,7 @@ margin-right: -25px;
     }
 
     .size-row {
-      padding: 0.4rem;
+      padding: 0.2rem;
     }
 
     .size-label {
