@@ -3085,7 +3085,6 @@ function findContentBounds(imageData) {
                 backImage: SbackImageURL
             }, "*");
 
-            alert('עיצוב עודכן בהצלחה');
         } else {
             sizeScreen = "designPrints";
             showSizeSelectionScreen();
