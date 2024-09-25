@@ -2593,7 +2593,7 @@ function findContentBounds(imageData) {
         const commentTextarea = document.getElementById('comment');
 
         if (isEditMode) {
-            document.querySelector('#next-step-screen h1').textContent = 'האם אתה בטוח שאתה רוצה לשנות את ההדפסה?';
+            document.querySelector('#next-step-screen h1').textContent = '?האם אתה בטוח שאתה רוצה לשנות את ההדפסה';
             document.getElementById('proceed-to-next').textContent = 'ערוך הדפסה';
 
             // Load the saved comment for the current design
